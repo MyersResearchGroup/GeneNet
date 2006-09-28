@@ -254,8 +254,9 @@ int main(int argc, char* argv[]){
     callGeneNet(s.c_str(), T);
 
     //clear things
-    cout << "Clearing the species that we have created\n";
+    cout << "Clearing the species that we created\n";
     Specie::clearAllInstances();
+	cout << "Done\n";
 	
 	
     return 0;
@@ -301,24 +302,10 @@ void GeneNet(Species &S, Experiments &E, NetCon &C, Thresholds &T, Encodings &L)
   int ParentSetsRemoved = 0;
 
   for (int i = 0; i < S.size(); i++){
-	if (scoreCache != NULL){
-		delete scoreCache;
-	}
 	scoreCache = new map<Specie*, map<Set, map<Set, vector<float> > > >();
     Specie * s = S.get(i);
     cout << "\nUsing specie " << *s << " as a child\n";
 
-    /*
-    Set a;
-    Set b;
-    a.insert(Specie::getInstance("tmp",1));
-    a.insert(Specie::getInstance("tmp",2));
-    a.insert(Specie::getInstance("tmp",3));
-    b.insert(Specie::getInstance("tmp",4));
-    ScoreBetter(*s,b,a,E,T,L);
-	exit(0);
-	*/
-	
     if (!C.containsAnyEdges(*s)){
       Experiments Ep = E.removeMutations(s);
       SelectInitialParents(*s,S,Ep,C,T,L);
@@ -336,9 +323,9 @@ void GeneNet(Species &S, Experiments &E, NetCon &C, Thresholds &T, Encodings &L)
       }
       */
     }
+	delete scoreCache;
   }
   
-  delete scoreCache;
   cout << "All Network Connections are\n" << C << "\n";
   cout << "Parent Sets Removed By Post Filter: " << ParentSetsRemoved << "\n";
   cout << "Exiting the GeneNet algorithm\n";
