@@ -921,7 +921,7 @@ public:
     }
     void testGeneNet(void){
 		Thresholds T(1.15,0.75,0.5,1,1,3, 0.01, 0.025);
-    	char * c = "../../examples/GeneNet/Ext_Guet/work/ext_guet_1_4_20_100_20000";
+    	char * c = "../examples/GeneNet/Ext_Guet/work/ext_guet_1_4_20_100_20000";
 	    callGeneNet(c, T);
     }
     
