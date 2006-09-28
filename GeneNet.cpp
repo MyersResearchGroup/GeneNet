@@ -793,7 +793,8 @@ void writeDot(const char dir[], NetCon * C){
 				ofile << "s" << parent->getGeneUID() << " -> s" << i << " ";
 				string color;
 				string arrowhead;
-				if (p->getIndividualScore(p->get(k)->getGeneUID()) < 0){
+				//if (p->getIndividualScore(p->get(k)->getGeneUID()) < 0){
+				if (p->getScore() < 0){
 					color = "firebrick4";
 					arrowhead = "tee";
 				}
