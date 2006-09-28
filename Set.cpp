@@ -1,0 +1,293 @@
+#include "Set.h"
+#include "Specie.h"
+#include <cassert>
+#include <cmath>
+
+
+Set::Set()
+{
+	myScore = 0;
+}
+
+Set::~Set()
+{
+}
+
+Set::Set(const Set & s){
+	mySet = s.mySet;
+	myScore = s.myScore;
+	individualScores = s.individualScores;
+}
+
+float Set::getScore() const{
+	return myScore;
+}
+
+float Set::getIndividualScore(int specieUID) const{
+	for (int i = 0; i < (int) mySet.size(); i++){
+		if (specieUID == mySet.at(i)->getGeneUID()){
+			return individualScores[i];
+		}
+	}
+	std::cout << "ERROR in getIndividualScore: unable to find specie id " << specieUID << " in " << *this << "\n";
+	exit(0);
+	return -1;
+}
+
+void Set::setScore(int specieUID, float x){
+	if (specieUID == -1){
+		myScore = x;
+		//if there is only 1 specie, give it this score as well
+		if (mySet.size() == 1){
+			individualScores[0] = (x);
+		}
+		return;
+	}
+	else{
+		for (int i = 0; i < (int) mySet.size(); i++){
+			if (specieUID == mySet.at(i)->getGeneUID()){
+				individualScores[i] = x;
+				return;
+			}
+		}
+	}
+	std::cout << "ERROR in setScore: unable to find specie id " << specieUID << " in " << *this << "\n";
+	exit(0);
+}
+
+bool Set::sortsLowToHigh(int specieUID) const{
+	//if it is the majority it sorts low to high
+	//else it sorts high to low
+	int activators = 0;
+	int repressors = 0;
+	int isActivator = -1;
+	for (int j = 0; j < size(); j++){
+		if (individualScores[j] >= 0){
+			activators++;
+		}
+		else{
+			repressors++;
+		}
+		if (specieUID == get(j)->getGeneUID()){
+			if (individualScores[j] >= 0){
+				isActivator = 1;
+			}
+			else{
+				isActivator = 0;
+			}
+		}
+	}
+	if (isActivator == -1){
+		std::cout << "Specie uid " << specieUID << " not found, but is should have been found, or this was a bad call for isActivator\n";
+		assert(false);
+		return false;
+	}
+	else if (activators == 0 || repressors == 0){
+		return true;	
+	}	
+	//tie goes to activators, so activators must be >=
+	else if (isActivator == 1 && activators >= repressors){
+		return true;
+	}
+	else if (isActivator == 0 && repressors > activators){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
+const Set & Set::operator=(const Set & s){
+	if (this != &s){
+		mySet = s.mySet;
+		myScore = s.myScore;
+		individualScores = s.individualScores;
+	}	
+	return *this;
+}
+
+int Set::size() const{
+	return mySet.size();
+}
+Specie * Set::get(int i) const{
+	assert(i >= 0 && i < size());
+	return mySet[i];
+}
+void Set::insert(Specie * s, float individualScore){
+	//keep the ordering
+	bool added = false;
+	std::vector<float>::iterator where = individualScores.begin();
+	for (std::vector<Specie *>::iterator iter = mySet.begin(); iter != mySet.end() && added == false; iter++){
+		if (s->getGeneUID() == (*iter)->getGeneUID()){
+			added = true;
+		}
+		else if (s->getGeneUID() < (*iter)->getGeneUID()){
+			mySet.insert(iter,s);
+			individualScores.insert(where,individualScore);
+			added = true;
+		}
+		where++;
+	}
+	if (!added){
+		mySet.push_back(s);	
+		individualScores.push_back(individualScore);
+	}
+}
+
+bool Set::containsSpecieID(const int s1) const{
+	bool found = false;
+	for (int j = 0; j < size()  && !found; j++){
+		if (s1 == get(j)->getGeneUID()){
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Set::contains(const Set& s1) const{
+	//as the list is sorted, we can keep the current position in the array
+	int current_me = 0;
+	for (int i = 0; i < s1.size(); i++){
+		bool found = false;
+		for (int j = current_me; j < size()  && !found; j++){
+			if (*s1.get(i) == *get(j)){
+				found = true;
+			}
+			current_me++;
+		}
+		if (found == false){
+			return false;	
+		}
+	}	
+	return true;
+}
+
+
+Set unionIt(const Set& s1,const Set& s2){
+	Set newSet;
+	int i = 0;
+	int j = 0;
+	//As the sets are sorted, add things piecewise, keeping them sorted
+	//The same specie could be in both sets, we want to 'remove' it
+	while(i < s1.size() || j < s2.size()){
+		if (i >= s1.size()){
+			newSet.insert(s2.get(j), s2.getIndividualScore(s2.get(j)->getGeneUID()));
+			j++;
+		}
+		else if (j >= s2.size()){
+			newSet.insert(s1.get(i), s1.getIndividualScore(s1.get(i)->getGeneUID()));
+			i++;
+		}
+		else{
+			int s1_id = s1.get(i)->getGeneUID();
+			int s2_id = s2.get(j)->getGeneUID();
+			if (s1_id < s2_id){
+				newSet.insert(s1.get(i), s1.getIndividualScore(s1.get(i)->getGeneUID()));
+				i++;
+			}
+			else if (s2_id < s1_id){
+				newSet.insert(s2.get(j), s2.getIndividualScore(s2.get(j)->getGeneUID()));
+				j++;
+			}
+			else{
+				newSet.insert(s1.get(i), s1.getIndividualScore(s1.get(i)->getGeneUID()));
+				i++;
+				j++;
+			}
+		}
+	}
+	return newSet;
+}
+
+bool operator == (const Set& s1, const Set& s2){
+	if(s1.size() != s2.size()){
+		return false;	
+	}
+	if (!(s1.getScore() + Set::DELTA > s2.getScore() && s2.getScore() + Set::DELTA > s1.getScore())){
+		return false;	
+	}
+	for (int i = 0; i < s1.size(); i++){
+		if (s1.mySet[i] != s2.mySet[i]){
+			return false;
+		}
+	}
+	return true;
+}
+bool operator != (const Set& s1, const Set& s2){
+	return ! (s1 == s2);
+}
+
+bool operator <  (const Set& s1, const Set& s2){
+	//order the sets based on size (so the contains function works easier, then on the values of their variables, then on score
+	if (s1.size() < s2.size()){
+		return true;
+	}
+	else if (s1.size() > s2.size()){
+		return false;
+	}
+	for (int i = 0; i < s1.size(); i++){
+		int one = s1.get(i)->getGeneUID();
+		int two = s2.get(i)->getGeneUID();
+		if (one < two){
+			return true;
+		}
+		else if (one > two){
+			return false;	
+		}
+	}
+	if (fabs(s1.getScore()) + Set::DELTA < fabs(s2.getScore())){
+		return true;	
+	}
+	else if (fabs(s1.getScore()) > fabs(s2.getScore()) + Set::DELTA){
+		return false;
+	}
+	//they are the same
+	return false;
+}
+bool operator >  (const Set& s1, const Set& s2){
+	if (s1 < s2 || s2 == s1){
+			return false;
+	}
+	return true;
+}
+
+std::ostream & operator << (std::ostream& cout, const Set & source){
+	cout << "{ " << source.getScore() << ", ";
+	for ( int i = 0; i < source.size(); i++){
+		cout << " " << source.getIndividualScore(source.get(i)->getGeneUID()) << " " << *source.get(i) << ", ";
+	}
+	cout << "}";
+	return cout;
+}
+
+
+Set operator -(const Set& s1,const Set& s2){
+	Set newSet;
+	int i = 0;
+	int j = 0;
+	//As the sets are sorted, add things piecewise, keeping them sorted
+	//The same specie could be in both sets, we want to 'remove' it
+	while(i < s1.size()){
+		if (j >= s2.size()){
+			newSet.insert(s1.get(i), s1.getIndividualScore(s1.get(i)->getGeneUID()));
+			i++;
+		}
+		else{
+			int s1_id = s1.get(i)->getGeneUID();
+			int s2_id = s2.get(j)->getGeneUID();
+			if (s1_id < s2_id){
+				newSet.insert(s1.get(i), s1.getIndividualScore(s1.get(i)->getGeneUID()));
+				i++;
+			}
+			else if (s2_id < s1_id){
+				j++;
+			}
+			else{
+				i++;
+				j++;
+			}
+		}
+	}
+	return newSet;
+}
+

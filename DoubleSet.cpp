@@ -1,0 +1,195 @@
+#include "DoubleSet.h"
+#include "Set.h"
+#include "Specie.h"
+#include <cmath>
+#include <cassert>
+
+extern int DEBUG_LEVEL;
+
+DoubleSet::DoubleSet()
+{
+}
+
+DoubleSet::~DoubleSet()
+{
+	deleteMyDoubleSet();
+}
+
+void DoubleSet::deleteMyDoubleSet(){
+	while((int)myDoubleSet.size() > 0){
+		Set * d = myDoubleSet.back();
+		myDoubleSet.pop_back();
+		delete d;	
+	}
+}
+void DoubleSet::fillMyDoubleSet(const DoubleSet & d){
+	for (int i = 0; i < d.size(); i++){
+		myDoubleSet.push_back(new Set(*d.get(i)));
+	}	
+}
+
+DoubleSet::DoubleSet(const DoubleSet &d){
+	fillMyDoubleSet(d);
+}
+
+const DoubleSet & DoubleSet::operator=(const DoubleSet & s){
+	if (this != &s){
+		deleteMyDoubleSet();
+		fillMyDoubleSet(s);
+	}	
+	return *this;
+}
+
+
+int DoubleSet::size() const{
+	return myDoubleSet.size();
+}
+
+Set DoubleSet::remove(int i){
+	assert(i >= 0 && i < size());
+	Set * s = myDoubleSet[i];
+	myDoubleSet.erase(myDoubleSet.begin()+i);
+	Set p(*s);
+	delete s;
+	return p;
+}
+
+Set DoubleSet::remove(const Set & s1){
+	for (int i = 0; i < (int)myDoubleSet.size(); i++){
+		if ((*myDoubleSet.at(i)) == s1){
+			Set * s = myDoubleSet.at(i);
+			myDoubleSet.erase(myDoubleSet.begin()+i);
+			Set p(*s);
+			delete s;
+			return p;
+		}
+	}
+	Set p;
+	return p;
+}
+
+bool DoubleSet::addIfScoreBetterThanSubsets(const Set & s){
+	bool better = true;
+	for (int i = 0; i < (int)myDoubleSet.size(); i++){
+		Set * s2 = myDoubleSet.at(i);
+		if (s.contains(*s2) && fabs(s2->getScore()) > fabs(s.getScore())){
+			if (DEBUG_LEVEL>0){
+				std::cout << "\tNot Better because " << fabs(s2->getScore()) << " > " << fabs(s.getScore()) << "\n";
+			}
+			better = false;
+			i = (int)myDoubleSet.size();
+		}
+	}
+	if (better){
+		unionIt(s);
+	}
+	return better;
+}
+
+
+void DoubleSet::removeSubsets(){
+	//std::vector<Set * > v;
+	for (int i = myDoubleSet.size()-1; i > 0; i--){
+		for (int j = i-1; j >= 0; j--){
+			if (myDoubleSet.at(i)->contains(*myDoubleSet.at(j))){
+				//v.push_back(myDoubleSet.at(i));
+				Set * s = *(myDoubleSet.begin()+j);
+				myDoubleSet.erase(myDoubleSet.begin()+j);
+				delete s;
+				i--;
+			}
+		}	
+	}
+	//return v;
+}
+
+bool DoubleSet::contains(const Set & s){
+	for (int i = 0; i < (int) myDoubleSet.size(); i++){
+		if (*myDoubleSet.at(i) == s){
+			return true;	
+		}	
+	}
+	return false;
+}
+
+
+Set * DoubleSet::get(int i) const{
+	assert(i >= 0 && i < size());
+	return myDoubleSet[i];
+}
+
+
+void DoubleSet::unionIt(const Set & s2){
+	//insert the 'set' into the correct position
+	//zero elements
+	//std::cout << "Inserting " << *s2 << " into a size of " << size() << "\n";
+	if (myDoubleSet.size() == 0){
+		myDoubleSet.push_back(new Set(s2));
+		return;	
+	}
+
+	//std::cout << "Printing elements\n";
+	//std::vector<Set*>::iterator tmp = myDoubleSet.begin();
+	//while (tmp != myDoubleSet.end()){
+	//	std::cout << **tmp << "\n";	
+	//	tmp++;
+	//}
+
+	//check at the first, then the rest
+	std::vector<Set*>::iterator iter = myDoubleSet.begin();
+	if (s2 < *(*iter)){
+		myDoubleSet.insert(iter,new Set(s2));
+		return;
+	}
+	//std::cout << "Element " << *(*iter) << "\n";
+	iter++;
+	while(iter != myDoubleSet.end()){
+		Set * prev = (*(iter-1));
+		Set * cur = (*iter);
+		//std::cout << "Element " << *(*iter) << "\n";
+		if (s2 == *prev || s2 == *cur){
+			//it is already in the set
+			return;		
+		}
+		else if (s2 > *prev && s2 < *cur){
+			myDoubleSet.insert(iter,new Set(s2));
+			return;
+		}
+		iter++;
+	}
+	if (s2 > *myDoubleSet.at(size()-1)){
+		myDoubleSet.push_back(new Set(s2));
+		return;
+	}
+	//std::cout << "Somehow made it to here, so " << s2 << " !> " << *myDoubleSet.at(size()-1) << "\n";
+	return;
+}
+
+Set DoubleSet::colapseToSet() const{
+	Set S;
+	for (int i = 0; i < (int)myDoubleSet.size(); i++){
+		Set * p = myDoubleSet.at(i);
+		for (int j = 0; j < p->size(); j++){
+			S.insert(p->get(j),p->getIndividualScore(p->get(j)->getGeneUID()));
+		}
+	}
+	return S;
+}
+
+
+DoubleSet unionIt(const DoubleSet& s1, Set& s2){
+	DoubleSet newSet(s1);
+	newSet.unionIt(s2);
+	return newSet;
+}
+
+std::ostream& operator << (std::ostream& cout, const DoubleSet & source){
+	cout << "<";
+	for (int i = 0; i < source.size(); i++){
+		cout << " " << *source.get(i) << " ";	
+	}	
+	cout << ">";
+	return cout;
+}
+
+

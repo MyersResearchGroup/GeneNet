@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?fileVersion 3.0.0?>
+
+<ManagedProjectBuildInfo>
+<project id="GeneNet.cdt.managedbuild.target.gnu.exe.1613598892" name="Executable (Gnu)" projectType="cdt.managedbuild.target.gnu.exe">
+<configuration artifactName="GeneNet" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser" id="cdt.managedbuild.config.gnu.exe.debug.1793523845" name="Debug" parent="cdt.managedbuild.config.gnu.exe.debug" prebuildStep="">
+<toolChain id="cdt.managedbuild.toolchain.gnu.exe.debug.1843650723" name="GCC Tool Chain" superClass="cdt.managedbuild.toolchain.gnu.exe.debug">
+<builder arguments="-k" id="cdt.managedbuild.target.gnu.builder.exe.debug.1832855395" name="Gnu Make.Debug" superClass="cdt.managedbuild.target.gnu.builder.exe.debug"/>
+<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.907983880" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug"/>
+<tool command="g++" id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.680663001" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug">
+<option id="gnu.cpp.compiler.option.include.paths.31973604" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+<listOptionValue builtIn="false" value="&quot;/opt/eclipse/plugins/net.sf.webcat.eclipse.cxxtest.framework_1.2.1/cxxtest/&quot;"/>
+<listOptionValue builtIn="false" value="/home/chou/barkern/nobackup/tstubd/src/GeneNet"/>
+</option>
+</tool>
+<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.1446377784" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug"/>
+<tool command="g++" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.741040902" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug">
+<option id="gnu.cpp.link.option.libs.981622801" superClass="gnu.cpp.link.option.libs" valueType="libs">
+<listOptionValue builtIn="false" value="l"/>
+<listOptionValue builtIn="false" value="bfd"/>
+<listOptionValue builtIn="false" value="iberty"/>
+</option>
+<option id="gnu.cpp.link.option.paths.375346715" superClass="gnu.cpp.link.option.paths"/>
+<option id="gnu.cpp.link.option.userobjs.761124482" superClass="gnu.cpp.link.option.userobjs"/>
+<option id="gnu.cpp.link.option.flags.1917791986" superClass="gnu.cpp.link.option.flags" value="" valueType="string"/>
+</tool>
+<tool id="cdt.managedbuild.tool.gnu.assembler.exe.debug.883563656" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.debug"/>
+<macros/>
+</toolChain>
+<resourceConfiguration exclude="false" id="cdt.managedbuild.config.gnu.exe.debug.1793523845.789801849" name="lex.l" rcbsApplicability="override" resourcePath="/GeneNet/lex.l" toolsToInvoke="org.eclipse.cdt.managedbuilder.ui.rcbs.1454742108">
+<tool announcement="Invoking: Resource Custom Build Step" command="ls ; cd ../; flex lex.l ; g++ -c lex.yy.c -o Debug/lex.o" customBuildStep="true" id="org.eclipse.cdt.managedbuilder.ui.rcbs.1454742108" name="Resource Custom Build Step">
+<inputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype.1649507010" name="Resource Custom Build Step Input Type">
+<additionalInput kind="additionalinputdependency" paths="Debug/yacc.o"/>
+</inputType>
+<outputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype.729955451" name="Resource Custom Build Step Output Type" outputNames="lex.o"/>
+</tool>
+</resourceConfiguration>
+<resourceConfiguration exclude="false" id="cdt.managedbuild.config.gnu.exe.debug.1793523845.1275635717" name="yacc.y" rcbsApplicability="override" resourcePath="/GeneNet/yacc.y" toolsToInvoke="org.eclipse.cdt.managedbuilder.ui.rcbs.335680762">
+<tool announcement="Invoking: Resource Custom Build Step" command="ls ; cd ../; bison -d yacc.y ; g++ yacc.tab.c -c -o Debug/yacc.o" customBuildStep="true" id="org.eclipse.cdt.managedbuilder.ui.rcbs.335680762" name="Resource Custom Build Step">
+<inputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype.44620356" name="Resource Custom Build Step Input Type">
+<additionalInput kind="additionalinputdependency" paths=""/>
+</inputType>
+<outputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype.1330178701" name="Resource Custom Build Step Output Type" outputNames="yacc.o"/>
+</tool>
+</resourceConfiguration>
+</configuration>
+<configuration artifactName="GeneNet" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser" id="cdt.managedbuild.config.gnu.exe.release.2079503014" name="Release" parent="cdt.managedbuild.config.gnu.exe.release">
+<toolChain id="cdt.managedbuild.toolchain.gnu.exe.release.1606767377" name="GCC Tool Chain" superClass="cdt.managedbuild.toolchain.gnu.exe.release">
+<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.release.110365637" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.release"/>
+<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.1354080307" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release">
+<option id="gnu.cpp.compiler.option.include.paths.1534290731" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+<listOptionValue builtIn="false" value="&quot;/opt/eclipse/plugins/net.sf.webcat.eclipse.cxxtest.framework_1.2.1/cxxtest/&quot;"/>
+</option>
+</tool>
+<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.release.1928065929" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.release"/>
+<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.release.1659092136" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.release">
+<option id="gnu.cpp.link.option.libs.716016776" superClass="gnu.cpp.link.option.libs" valueType="libs">
+<listOptionValue builtIn="false" value="l"/>
+<listOptionValue builtIn="false" value="bfd"/>
+<listOptionValue builtIn="false" value="iberty"/>
+</option>
+</tool>
+<tool id="cdt.managedbuild.tool.gnu.assembler.exe.release.875946128" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.release"/>
+<macros/>
+</toolChain>
+<resourceConfiguration exclude="true" id="cdt.managedbuild.config.gnu.exe.release.2079503014.707560157" name="myTestSuite.h" rcbsApplicability="disable" resourcePath="/GeneNet/myTestSuite.h" toolsToInvoke=""/>
+<resourceConfiguration exclude="false" id="cdt.managedbuild.config.gnu.exe.release.2079503014.1987792571" name="lex.l" rcbsApplicability="override" resourcePath="/GeneNet/lex.l" toolsToInvoke="org.eclipse.cdt.managedbuilder.ui.rcbs.1485540340">
+<tool announcement="Invoking: Resource Custom Build Step" command="ls ; flex ../lex.l ; g++ -c lex.yy.c -o lex.o" customBuildStep="true" id="org.eclipse.cdt.managedbuilder.ui.rcbs.1485540340" name="Resource Custom Build Step">
+<inputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype.1327181425" name="Resource Custom Build Step Input Type">
+<additionalInput kind="additionalinputdependency" paths="Release/yacc.o"/>
+</inputType>
+<outputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype.65020881" name="Resource Custom Build Step Output Type" outputNames="lex.o"/>
+</tool>
+</resourceConfiguration>
+<resourceConfiguration exclude="false" id="cdt.managedbuild.config.gnu.exe.release.2079503014.776301414" name="yacc.y" rcbsApplicability="override" resourcePath="/GeneNet/yacc.y" toolsToInvoke="org.eclipse.cdt.managedbuilder.ui.rcbs.968287981">
+<tool announcement="Invoking: Resource Custom Build Step" command="ls ; bison -d ../yacc.y ; g++ yacc.tab.c -c -o yacc.o" customBuildStep="true" id="org.eclipse.cdt.managedbuilder.ui.rcbs.968287981" name="Resource Custom Build Step">
+<inputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype.604595888" name="Resource Custom Build Step Input Type">
+<additionalInput kind="additionalinputdependency" paths=""/>
+</inputType>
+<outputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype.1043146990" name="Resource Custom Build Step Output Type" outputNames="yacc.o"/>
+</tool>
+</resourceConfiguration>
+</configuration>
+<macros/>
+</project>
+</ManagedProjectBuildInfo>
