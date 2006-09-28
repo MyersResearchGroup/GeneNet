@@ -364,6 +364,9 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
 			votesu++;
 		}
   	}
+	if (votesa+votesr+votesu < 0.001){
+	  return 0;
+	}
 	return (votesa - votesr)/(votesa+votesr+votesu);
   }
   vector<float> * fillProbVector = &(*scoreCache)[&s][P][G];
@@ -496,6 +499,9 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
   if (DEBUG_LEVEL>0){
 	  cout << "\t\tvotes (a,r,u) (" << votesa << " " << votesr << " " << votesu << ") or ";
 	  cout << "(" << votesa << " - " << votesr << ")/(" << votesa+votesr+votesu << ")\n";
+  }
+  if (votesa+votesr+votesu < 0.001){
+    return 0;
   }
   return (votesa - votesr)/(votesa+votesr+votesu);
 }

@@ -2,11 +2,17 @@
 SRCS := $(subst runAllTests.cpp, , $(wildcard *.cpp))
 OBJS := $(addsuffix .o, $(basename $(SRCS))) lex.o yacc.o
 
-REB2SAC = ../bin/reb2sac
-
+EXAMPLES_DIR = ../examples/GeneNet/
 GENENET_EXE = ../bin/GeneNet
+GENENET_TSD := $(wildcard $(EXAMPLES_DIR)*/work/*/run-1.tsd)
+GENENET_EXAMPLES := $(addsuffix method.dot, $(dir $(GENENET_TSD)))
 
 all: $(GENENET_EXE)
+
+Bioinformatics: $(GENENET_EXAMPLES)
+
+%/method.dot: %/run-1.tsd
+	/bin/nice -n19 /usr/bin/time -o $(dir $<)time.txt $(GENENET_EXE) $(dir $<) > $(dir $<)run.log
 
 #GeneNet creation Tool Chain
 $(GENENET_EXE): $(SRCS) $(OBJS)
