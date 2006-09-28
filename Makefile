@@ -25,7 +25,6 @@ yacc.o: yacc.y
 
 clean:
 	rm -rf $(shell cat .cvsignore)
-	rm -rf $(OBJS) $(GENENET_EXE)
-	rm *~
+	rm -rf $(OBJS) $(GENENET_EXE) *~
 
 
