@@ -7,12 +7,12 @@ GENENET_EXE = ../bin/GeneNet
 GENENET_TSD := $(wildcard $(EXAMPLES_DIR)*/work/*/run-1.tsd)
 GENENET_EXAMPLES := $(addsuffix GeneNet_method.dot, $(dir $(GENENET_TSD)))
 GENENET_CHECKED := $(addsuffix GeneNet_checked.dot, $(dir $(GENENET_TSD)))
-GENENET_POST_FILTER := $(addsuffix GeneNet_PF_0_4_method.dot, $(dir $(GENENET_TSD))) $(addsuffix GeneNet_PF_0_5_method.dot, $(dir $(GENENET_TSD)))
+GENENET_POST_FILTER := $(addsuffix GeneNet_PF_0_4_method.dot, $(dir $(GENENET_TSD))) $(addsuffix GeneNet_PF_0_51_method.dot, $(dir $(GENENET_TSD)))
 GENENET_POST_FILTER_CHECKED := $(subst _method,_checked, $(GENENET_POST_FILTER))
 
 all: $(GENENET_EXE)
 
-Bioinformatics: $(GENENET_EXAMPLES) $(GENENET_CHECKED) $(GENENET_POST_FILTER_CHECKED)
+Bioinformatics: $(GENENET_EXAMPLES) $(GENENET_CHECKED) $(GENENET_POST_FILTER) $(GENENET_POST_FILTER_CHECKED)
 
 #GeneNet creation Tool Chain
 $(GENENET_EXE): $(SRCS) $(OBJS)
@@ -26,12 +26,12 @@ $(GENENET_EXE): $(SRCS) $(OBJS)
 #post filter the GeneNet files
 %/GeneNet_PF_0_4_method.dot: %/GeneNet_method.dot
 	../bin/apply_post_filter.pl 0.4 $< $(subst /work,, $*.dot) $@
-%/GeneNet_PF_0_5_method.dot: %/GeneNet_method.dot
-	../bin/apply_post_filter.pl 0.4 $< $(subst /work,, $*.dot) $@
+%/GeneNet_PF_0_51_method.dot: %/GeneNet_method.dot
+	../bin/apply_post_filter.pl 0.51 $< $(subst /work,, $*.dot) $@
 %/GeneNet_PF_0_4_checked.dot: %/GeneNet_PF_0_4_method.dot
 	../bin/check_dot.pl $< $(subst work/,, $(subst /GeneNet_PF_0_4_checked.dot,.dot, $@)) $@
-%/GeneNet_PF_0_5_checked.dot: %/GeneNet_PF_0_5_method.dot
-	../bin/check_dot.pl $< $(subst work/,, $(subst /GeneNet_PF_0_5_checked.dot,.dot, $@)) $@
+%/GeneNet_PF_0_51_checked.dot: %/GeneNet_PF_0_51_method.dot
+	../bin/check_dot.pl $< $(subst work/,, $(subst /GeneNet_PF_0_51_checked.dot,.dot, $@)) $@
 
 
 

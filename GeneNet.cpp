@@ -551,6 +551,7 @@ float Score(const Specie& s, const Set& P, const Set& G, const Experiments& E, c
 
 void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, NetCon& C, const Thresholds& T, const Encodings& L){
   Thresholds newT(T);
+  bool relaxedTheBounds = false;
   while (C.getParentsFor(s)->size() == 0){
   	for (int i = 0; i < S.size(); i++){
   		Specie * p = S.get(i);
@@ -558,22 +559,35 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
   			cout << "\tTesting specie " << *p << " as a parent\n";
   			float alpha = ScoreBetter(s,*p->toSet(),*s.toSet(),E,newT,L);
   			
-  			cout << "\tScore of " << alpha << " and threshold +-" << T.getV() << "\n";
-  			if (alpha >= T.getV()){
+  			cout << "\tScore of " << alpha << " and threshold +-" << newT.getV() << "\n";
+  			if (alpha >= newT.getV()){
   				cout << "\t\tMeans an activation parent\n";
   				C.unionIt(*p->toSet(),C.ACTIVATION,s,alpha);
   			}
-  			else if (alpha <= -T.getV()){
+  			else if (alpha <= -newT.getV()){
   				cout << "\t\tMeans a represion parent\n";
   				C.unionIt(*p->toSet(),C.REPRESSION,s,alpha);
   			}
   		}
   	}
   	if (C.getParentsFor(s)->size() == 0){
+  		relaxedTheBounds = true;
   		cout << "There are no parents for " << s << ", relaxing the thresholds\n";
 		newT.relaxInitialParentsThresholds();
   	}
- }
+  }
+  if (relaxedTheBounds){
+	  cout << "Rescoring parents with harsher numbers, as we relaxed the bounds\n";
+	  DoubleSet * rescore = C.getParentsFor(s);
+	  for (int i = 0; i < rescore->size(); i++){
+	  	  Set * rescoreSet = rescore->get(i);
+		  assert(rescoreSet->size() == 1);
+	  	  Specie * p = rescoreSet->get(0);
+		  float alpha = ScoreBetter(s,*p->toSet(),*s.toSet(),E,T,L);
+		  cout << "\tScore of " << alpha << " and threshold +-" << T.getV() << "\n";
+		  rescoreSet->setScore(p->getGeneUID(), alpha);
+	  }
+  }
   //now print out the parents
   cout << "Initial parents for " << s << " are: " <<  *C.getParentsFor(s) << "\n";  	
 }
