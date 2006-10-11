@@ -1,7 +1,7 @@
 #include "Thresholds.h"
 #include <iostream>
 
-Thresholds::Thresholds(float A, float R, float V, int RisingAmount, int WindowSize, int NumBins, float InfluenceLevelDelta, float RelaxInitialParentsDelta)
+Thresholds::Thresholds(float A, float R, float V, int RisingAmount, int WindowSize, int NumBins, float InfluenceLevelDelta, float RelaxInitialParentsDelta, int MaxParentSetSize)
 {
 	a = A;
 	r = R;
@@ -11,6 +11,7 @@ Thresholds::Thresholds(float A, float R, float V, int RisingAmount, int WindowSi
 	numBins = NumBins;
 	influenceLevelDelta = InfluenceLevelDelta;
 	relaxInitialParentsDelta = RelaxInitialParentsDelta;
+	maxParentSetSize = MaxParentSetSize;
 	//postFilter = PostFilter;
 }
 
@@ -25,7 +26,7 @@ void Thresholds::relaxInitialParentsThresholds(){
 	if (a < 1){
 		a = 1;	
 	}
-	if (r < 1){
+	if (r > 1){
 		r = 1;	
 	}
 	

@@ -143,7 +143,7 @@ void callGeneNet(const char * dir, Thresholds & T){
 }
 
 int main(int argc, char* argv[]){
-	Thresholds T(1.15,0.75,0.5,1,1,3, 0.01, 0.025);
+	Thresholds T(1.15,0.75,0.5,1,1,3, 0.01, 0.025,2);
 	cout << "GeneNet Arugments:\n";
 	for (int i = 0; i < argc; i++){
 		cout << "\t" << argv[i] << "\n";	
@@ -393,6 +393,7 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
   float nextR = 0;
   float nextS = 0;
   float prob1 = -1;
+  float nValue = 0;
   int end = (int)TSDPoint::initialValues->size();
   for (int i = 0; i <= end; i++){
   	//we have to do the very end one for a score
@@ -401,6 +402,11 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
   		rising = base->risings[s.getGeneUID()];	
   		seen = base->seen[s.getGeneUID()];
   		prob1 = -1;
+  		//Find out how many values are at this level for use later
+		nValue = seen;
+		for (int j = i+1; j < end && ! base->cannotCompareLevels((*TSDPoint::initialValues)[j]); j++){
+			nValue += (*TSDPoint::initialValues)[j]->seen[s.getGeneUID()];
+		}
 		//reset the other values
 		next = NULL;
 		nextR = 0;
@@ -430,11 +436,17 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
 		if (i < end){
 			i--;
 		}
-		if (rising == 0 || seen == 0){
+		if (rising == 0 || seen == 0 || (seen <= nValue/10.0f && seen < 20)){
 			//don't fill it, but let base start from this value
 			if (DEBUG_LEVEL>0){
 				cout << "\t\t\t\tBase prob " << base->rowValues << " = " << rising << " / " << seen << " = " << prob1 << " BUT!!\n";
-				cout << "\t\t\t\t\t\tNot using current as base because = " << rising << " / " << seen << " instead trying " << nextR << " / " << nextS << "\n";
+				if (rising == 0 || seen == 0){
+					cout << "\t\t\t\t\t\tNot using current as base because = " << rising << " / " << seen;
+				}
+				else{
+					cout << "\t\t\t\t\t\tNot using current as base because of N Value " << rising << " / " << seen << " and nValue " << nValue;
+				}
+			    cout << " instead trying " << nextR << " / " << nextS << "\n";
 			}
 			base = next;
 			rising = nextR;
@@ -451,7 +463,7 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
 			if (prob1 == -1){ // we only have to print this one time until it resets
 				prob1 = rising/seen;
 				if (DEBUG_LEVEL>0){
-					cout << "\t\t\t\tBase prob " << base->rowValues << " = " << rising << " / " << seen << " = " << prob1 << "\n";
+					cout << "\t\t\t\tBase prob " << base->rowValues << " = " << rising << " / " << seen << " = " << prob1 << " with nValue of " << nValue << "\n";
 				}
 			}
 			if (nextR == 0 || nextS == 0){
@@ -470,7 +482,7 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
 				if (DEBUG_LEVEL>0){
 					cout << "\t\t\t\t\tRatio is " << prob1 << " / " << probN << " = " << probRatio << "\n";
 				}
-				if (nextS <= seen/10.0f && nextS < 20){
+				if (nextS <= nValue/10.0f && nextS < 20){
 					//the difference in amount is too large to use
 					if (DEBUG_LEVEL>0){
 						cout << "\t\t\t\t\t\tHOWEVER, not using it as (" << nextS << " <= " << seen << "/10.0" << " && " << nextS << " < 20)\n";
@@ -572,8 +584,8 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
   	}
   	if (C.getParentsFor(s)->size() == 0){
   		relaxedTheBounds = true;
-  		cout << "There are no parents for " << s << ", relaxing the thresholds\n";
 		newT.relaxInitialParentsThresholds();
+  		cout << "There are no parents for " << s << ", relaxing the thresholds to [" << newT.getA() << ", " << newT.getR() << "]\n";
   	}
   }
   if (relaxedTheBounds){
@@ -584,8 +596,8 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
 		  assert(rescoreSet->size() == 1);
 	  	  Specie * p = rescoreSet->get(0);
 		  float alpha = ScoreBetter(s,*p->toSet(),*s.toSet(),E,T,L);
-		  cout << "\tScore of " << alpha << " and threshold +-" << T.getV() << "\n";
-		  rescoreSet->setScore(p->getGeneUID(), alpha);
+		  cout << "\tScore of " << alpha << " and threshold +-" << T.getV() << "for " << *p << "\n";
+		  rescoreSet->setScore(-1, alpha);
 	  }
   }
   //now print out the parents
@@ -631,7 +643,7 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
   cout << "\tWhich colapses to " << baseSet << "\n";
   bool addedASetAtLevel = baseSet.size() > 1;
   int currentNumOfBasesUsed = 2;
-  while(addedASetAtLevel){
+  while(addedASetAtLevel && currentNumOfBasesUsed <= T.getMaxParentSetSize()){
   	cout << "\tCreating parents sets of " << currentNumOfBasesUsed << " bases\n";
   	addedASetAtLevel = false;
 	int * currentBases = new int[currentNumOfBasesUsed];
