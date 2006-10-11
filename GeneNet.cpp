@@ -585,7 +585,7 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
   	if (C.getParentsFor(s)->size() == 0){
   		relaxedTheBounds = true;
 		newT.relaxInitialParentsThresholds();
-  		cout << "There are no parents for " << s << ", relaxing the thresholds to [" << newT.getA() << ", " << newT.getR() << "]\n";
+  		cout << "There are no parents for " << s << ", relaxing the thresholds to [" << newT.getR() << ", " << newT.getA() << "]\n";
   	}
   }
   if (relaxedTheBounds){
@@ -825,8 +825,12 @@ void writeDot(const char dir[], NetCon * C){
 				ofile << "s" << parent->getGeneUID() << " -> s" << i << " ";
 				string color;
 				string arrowhead;
-				//if (p->getIndividualScore(p->get(k)->getGeneUID()) < 0){
-				if (p->getScore() < 0){
+				bool isActivator = true;
+				//the direction of the arc is based on the individual score
+				if (p->getIndividualScore(p->get(k)->getGeneUID()) < 0){
+					isActivator = false;
+				}
+				if (isActivator == false){
 					color = "firebrick4";
 					arrowhead = "tee";
 				}

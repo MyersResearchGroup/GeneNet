@@ -38,7 +38,8 @@ void Set::setScore(int specieUID, float x){
 	if (specieUID == -1){
 		myScore = x;
 		//if there is only 1 specie, give it this score as well
-		if (mySet.size() == 1){
+		//however, don't give it a score if it is a 0 score, as this meant that using harsher numbers resulted in a lessened score.
+		if (mySet.size() == 1 && fabs(x) > 0.001){
 			individualScores[0] = (x);
 		}
 		return;
