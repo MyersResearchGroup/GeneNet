@@ -28,6 +28,8 @@ const int SPECIES_NAME_SIZE = 100;
 
 int DEBUG_LEVEL = 0;
 
+string * globDir = NULL;
+
 map<Specie*, map<Set, map<Set, vector<float> > > > * scoreCache = NULL;
 
 #if defined(_MSC_VER)
@@ -123,6 +125,8 @@ void callGeneNet(const char * dir, Thresholds & T){
 	Experiments E;
 	NetCon C;
 	Encodings L;
+	//used to let score function know about dir
+	globDir = new string(dir);
 		
 	cout << "Reading the TSD files\n";
 	if (! fillFromTSD(dir, &S, &E, &C, &T, &L)){
@@ -139,7 +143,11 @@ void callGeneNet(const char * dir, Thresholds & T){
 		
 	GeneNet(S,E,C,T,L);
 	cout << "Exiting and destroying Species, Experiments, NetCon, Thresholds, Encodings\n";
+	if (DEBUG_LEVEL > 1){
+		writeLevels(dir, L,E,T);
+	}
 	writeDot(dir, &C);
+	delete globDir;
 }
 
 int main(int argc, char* argv[]){
@@ -386,6 +394,27 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
   }
   */
 
+  ofstream fout;
+  if (DEBUG_LEVEL > 1){
+	string sa = *globDir;
+	sa.append("/gnuplot");
+	//sa.append(s.getGeneName());
+	//sa.append("-");
+	for (int j = 0; j < P.size(); j++){
+		sa.append("_");
+		sa.append(P.get(j)->getGeneName());
+	}
+	sa.append("_-");
+	for (int j = 0; j < G.size(); j++){
+		sa.append("_");
+		sa.append(G.get(j)->getGeneName());
+	}
+	sa.append(".dat");
+	cout << "Opening " << s << " for write\n";
+	fout.open(sa.c_str(),ios::out);
+	fout << "#P Levels, G Levels, seen, rising, prob\n";
+  }
+
   TSDPoint * base = NULL;
   TSDPoint * next = NULL;
   float rising = 0;
@@ -464,6 +493,29 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
 				prob1 = rising/seen;
 				if (DEBUG_LEVEL>0){
 					cout << "\t\t\t\tBase prob " << base->rowValues << " = " << rising << " / " << seen << " = " << prob1 << " with nValue of " << nValue << "\n";
+					if(DEBUG_LEVEL>1){
+						int gLevels = 0;
+						int pLevels = 0;
+						int power = 1;
+						for (int j = 0; j < P.size(); j++){
+							char c[2];
+							c[0] = base->rowValues[P.get(j)->getGeneUID()];
+							c[1] = 0;
+							int a = atoi(c);
+							pLevels += a * power;
+							power = power * 10;
+						}
+						power = 1;
+						for (int j = 0; j < G.size(); j++){
+							char c[2];
+							c[0] = base->rowValues[G.get(j)->getGeneUID()];
+							c[1] = 0;
+							int a = atoi(c);
+							gLevels += a * power;
+							power = power * 10;
+						}
+						fout << gLevels << " " << pLevels << " " << seen << " " << rising << " " << prob1 << "\n";
+					}
 				}
 			}
 			if (nextR == 0 || nextS == 0){
@@ -488,21 +540,50 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
 						cout << "\t\t\t\t\t\tHOWEVER, not using it as (" << nextS << " <= " << seen << "/10.0" << " && " << nextS << " < 20)\n";
 					}
 				}
-				else if (probRatio > T.getA() ){
-					fillProbVector->push_back(probRatio);
-					votesa++;
-			    }
-			    else if (probRatio < T.getR()){
-					fillProbVector->push_back(probRatio);
-					votesr++;
-			    }
-			    else{
-					fillProbVector->push_back(probRatio);
-					votesu++;
+				else{
+					if(DEBUG_LEVEL>1){
+						int gLevels = 0;
+						int pLevels = 0;
+						int power = 1;
+						for (int j = 0; j < P.size(); j++){
+							char c[2];
+							c[0] = nextStr[P.get(j)->getGeneUID()];
+							c[1] = 0;
+							int a = atoi(c);
+							pLevels += a * power;
+							power = power * 10;
+						}
+						power = 1;
+						for (int j = 0; j < G.size(); j++){
+							char c[2];
+							c[0] = nextStr[G.get(j)->getGeneUID()];
+							c[1] = 0;
+							int a = atoi(c);
+							gLevels += a * power;
+							power = power * 10;
+						}
+						fout << gLevels << " " << pLevels << " " << nextS << " " << nextR << " " << probN << "\n";
+					}
+					if (probRatio > T.getA() ){
+						fillProbVector->push_back(probRatio);
+						votesa++;
+				    }
+				    else if (probRatio < T.getR()){
+						fillProbVector->push_back(probRatio);
+						votesr++;
+				    }
+				    else{
+						fillProbVector->push_back(probRatio);
+						votesu++;
+				    }
 			    }
 			}
 		}
 	 }
+  }
+
+  if (DEBUG_LEVEL > 1){
+ 	fout.close();
   }
 
   TSDPoint::G = NULL;
@@ -789,12 +870,22 @@ vector<DoubleSet> assignMatchups(const Specie& s, const Species& S, const Experi
 	if (a->size() % 2 == 1){ // the highest gets a by if there is an odd number
 		odd++;
 	}
+	//Pick the lowest and highest scores to compete
 	for (int i = 0; i < a->size()/2; i++){
 		DoubleSet c;
 		c.unionIt(*b[i+odd]);
 		c.unionIt(*b[b.size()-i-1]);
 		myDS.push_back(c);
 	}
+	//pick score close to each other
+	/*
+	for (int i = odd; i < a->size(); i = i+2){
+		DoubleSet c;
+		c.unionIt(*b[i]);
+		c.unionIt(*b[i+1]);
+		myDS.push_back(c);
+	}
+	*/
 	return myDS;
 }
 
@@ -848,4 +939,154 @@ void writeDot(const char dir[], NetCon * C){
 	}
 	ofile << "}\n";
 	ofile.close();
+}
+
+void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & T){
+	string s = dir;
+	s.append("/levels.lvl");
+	cout << "Opening " << s << " for write\n";
+	ofstream lvl_file(s.c_str(),ios::out);
+
+
+	//get the histogram sizes
+	float histogram_size = 5;
+	vector<vector<int> > seen;
+	vector<vector<int> > rose;
+	vector<int> max_seen;
+	int num_entries = 0;
+	const float h_offset = 1.05;
+	for (int i = 0; i <= L.totalSpecies(); i++){
+		vector<int> a;
+		vector<int> b;
+		seen.push_back(a);
+		rose.push_back(b);
+		max_seen.push_back(0);
+	}
+	//cout << "Put in " << L.totalSpecies()+1 << " into the seen and rose\n";
+	for (int i = 0; i < E.totalExperiments(); i++){
+		for (int j = 0; j < E.totalRows(i) - T.getWindowSize(); j++){
+			std::vector<float> * current = E.getRow(i, j);
+			std::vector<float> * next = E.getRow(i, j+T.getWindowSize());
+			num_entries++;
+			/*
+			cout << "Testing vector [";
+			for (int k = 0; k < (int)current->size(); k++){
+				cout << " " << current->at(k);	
+			}
+			cout << " ]\n";
+			*/
+
+			//calculate if things rose
+			for (int k = 0; k < (int)current->size(); k++){
+				//add things into the seen and rose array;
+				int num = (int)current->at(k);
+				while((int)seen[k].size() <= num){
+					seen[k].push_back(0);
+					rose[k].push_back(0);
+					//cout << "\t\tAdding a level to grow size to " << (int)seen[k].size() << "\n";
+				}
+				//cout << "\tSeen[" << k << "] now has " << (int)seen[k].size() << " things, and adding at " << (int)(current->at(k)/histogram_size) << " into it\n";
+				seen[k][num]++;
+				if (current->at(k)+T.getRisingAmount() <= next->at(k)){
+					rose[k][num]++;
+				}
+			}
+		}	
+	}
+	for (int i = 0; i < L.totalSpecies(); i++){
+		Specie * p = Specie::getInstance("??",i);
+		string t = dir;
+		t.append("/histogram_");
+		t.append(p->getGeneName());
+		t.append(".dat");
+		if (DEBUG_LEVEL > 0){
+			cout << "\tOpening " << t << " for write\n";
+		}
+		ofstream histogram(t.c_str(),ios::out);
+		histogram << "#amount seen rose\n";
+		const int num_boxes = 20;
+		const float offset = 2.5;
+		float h_size = ((float)(seen[i].size())/(float)num_boxes);
+		int addInNum = (int)(((int)seen[i].size()) - h_size/2);
+		float cur_h_size = h_size;
+		for (int j = 0; j < (int)seen[i].size(); ){
+			int seen_i = 0;
+			int rose_i = 0;
+			for (; (j < (int)cur_h_size || j > addInNum) && j < (int)seen[i].size(); j++){
+				seen_i += seen[i][j];
+				rose_i += rose[i][j];
+			}
+			histogram << ((float)((int)((cur_h_size-h_size)/h_size*(100/num_boxes)))+offset)<< " " << seen_i << " " << rose_i << "\n";
+			if(max_seen[i] < seen_i * h_offset){
+				max_seen[i] = (int)(((float)seen_i) * h_offset);
+			}
+			cur_h_size += h_size;
+		}
+		histogram.close();
+	}
+
+
+	for (int i = 0; i <= L.totalSpecies(); i++){
+		Specie * p = Specie::getInstance("??",i);
+		lvl_file << p->getGeneName() << "";
+		std::vector<float> v = L.getLevels(p);
+		
+		//write the level file
+		for (int j = 0; j < (int) v.size(); j++){
+			lvl_file << ", " << v.at(j);
+		}
+		lvl_file << "\n";
+
+		//write to the other histogram files
+		for (int j = 0; j <= L.totalSpecies(); j++){
+			if (j != i){
+				Specie * q = Specie::getInstance("??",j);
+				string t = dir;
+				t.append("/histogram_");
+				t.append(p->getGeneName());
+				t.append("_");
+				t.append(q->getGeneName());
+				t.append(".gnuplot");
+
+				string u = "histogram_";
+				u.append(p->getGeneName());
+				string w = u;
+				w.append("_");
+				w.append(q->getGeneName());
+				w.append(".ps");
+				u.append(".dat");
+	
+				ofstream histogram(t.c_str(),ios::out);
+				histogram << "set out '" << w << "'\n";
+				histogram << "set terminal postscript eps color\n";
+				histogram << "set size 0.4,0.6\n";
+				histogram << "set title \"Expression table for " << p->getGeneName() << "\"\n";
+				histogram << "set xlabel \"Expression level\"\n";
+				histogram << "set ylabel \"Number of times seen\"\n";
+				histogram << "#set autoscale\n";
+				histogram << "set xrange [0:100]\n";
+				histogram << "set yrange [0:" << max_seen[i] << "]\n";
+				histogram << "set xtics 25\n";
+				histogram << "set ytics 200\n";
+				histogram << "set style fill solid border -1\n";
+				histogram << "set boxwidth " << histogram_size-1 << "\n";
+				histogram << "\n#Use the nearest 5th for the line, but also include the real histogram level\n";
+				for (int k = 0; k < (int) v.size(); k++){
+					int a = (int)((float)100*(float)v.at(k)/(float)seen[i].size());
+				    histogram <<  "#set arrow from " << a << ",0 to " << a << "," << max_seen[i] << " nohead lt 1 front\n";
+					float b = (int)a%5;
+					a -= (int)b;
+					if (b > 2.5){
+						a += 5;
+					}
+				    histogram <<  "set arrow from " << a << ",0 to " << a << "," << max_seen[i] << " nohead lt 1 front\n";
+				}
+				histogram << "\nplot ";
+				histogram << " \"" << u << "\" using 1:2 title '' with boxes lt 3\n";
+				histogram.close();
+			}
+		}		
+	}
+
+	lvl_file.close();
 }

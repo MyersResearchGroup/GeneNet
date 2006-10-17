@@ -75,8 +75,8 @@ bool Encodings::useBins(int numBins){
 			}
 			//ramp up the floats that are the same in this round, watching out for the end
 			while (current < ((int)v.size())-2 && v.at(current) == v.at(current+1)){
-				if (DEBUG_LEVEL > 1){
-					cout << "\t\t\t" << current << "<" << ((int)v.size())-2 << "&& " << v.at(current) << "==" << v.at(current+1) << "\n";
+				if (DEBUG_LEVEL > 3){
+					cout << "\t\t\t" << current << " < " << ((int)v.size())-2 << " && " << v.at(current) << "==" << v.at(current+1) << "\n";
 				}
 				seen++;	
 				current++;
@@ -122,6 +122,7 @@ bool Encodings::useBins(int numBins){
 	fillTSD();
 	return true;
 }
+
 
 bool Encodings::useNumbers(int numBins){
 	if(numBins > 9){

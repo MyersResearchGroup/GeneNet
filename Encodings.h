@@ -1,6 +1,7 @@
 #ifndef ENCODINGS_H_
 #define ENCODINGS_H_
 #include <vector>
+#include <fstream>
 #include "Species.h"
 #include "Experiments.h"
 #include "Set.h"

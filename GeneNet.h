@@ -16,7 +16,7 @@ bool fillFromTSD(const char dir[], Species * S, Experiments * E, NetCon * C, Thr
 void writeDot(const char dir[], NetCon * C);
 bool yaccParse(FILE * f, Species * S, Experiments * E, int experimentNum);
 void callGeneNet(const char * dir, Thresholds & T);
-
+void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & T);
 
 
 bool incrementBaseSet(int * c, int arraySize, int numberOfBases);
