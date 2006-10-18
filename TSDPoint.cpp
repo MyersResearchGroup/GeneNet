@@ -8,6 +8,8 @@
 
 extern int DEBUG_LEVEL;
 
+bool InvertSortOrder = false;
+
 std::map<std::string,TSDPoint*> * TSDPoint::thePoints = NULL;
 std::vector<TSDPoint*> * TSDPoint::initialValues = NULL;
 Set * TSDPoint::G = NULL;
@@ -368,7 +370,11 @@ bool TSDPoint::cannotCompareLevels(TSDPoint* i){
 int TSDPoint::sortTSDPointsHelper(const TSDPoint * a, const TSDPoint * b, const Set * c){
 	for (int i = 0; i < c->size(); i++){
 		int w = c->get(i)->getGeneUID();
-		if (c->sortsLowToHigh(w)){
+		bool lowHighSort = c->sortsLowToHigh(w);
+		if (InvertSortOrder){
+			lowHighSort = !lowHighSort;	
+		}
+		if (lowHighSort){
 			if (a->rowValues[w] < b->rowValues[w]){
 				//std::cout << "\tA is smaller because " << a->rowValues[w] << " < " << b->rowValues[w] << "\n";
 				return 1;	

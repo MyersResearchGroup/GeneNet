@@ -26,6 +26,8 @@ using namespace std;
 
 const int SPECIES_NAME_SIZE = 100;
 
+extern bool InvertSortOrder;
+
 int DEBUG_LEVEL = 0;
 
 string * globDir = NULL;
@@ -146,7 +148,7 @@ void callGeneNet(const char * dir, Thresholds & T){
 	if (DEBUG_LEVEL > 1){
 		writeLevels(dir, L,E,T);
 	}
-	writeDot(dir, &C);
+	writeDot(dir, &C, E, T, L);
 	delete globDir;
 }
 
@@ -896,7 +898,7 @@ float Prob(const Specie s, const std::vector<int> * l1, const std::vector<int> *
 	return 1.0;
 }
 */
-void writeDot(const char dir[], NetCon * C){
+void writeDot(const char dir[], NetCon * C, const Experiments& E, const Thresholds& T, const Encodings& L){
 	string s = dir;
 	s.append("/method.dot");
 	cout << "Opening " << s << " for write\n";
@@ -913,6 +915,12 @@ void writeDot(const char dir[], NetCon * C){
 		DoubleSet * d = C->getParentsFor(*s);
 		for (int j = 0; j < d->size(); j++){
 			Set * p = d->get(j);
+			float pScore = fabs(p->getScore());
+			if (p->size() > 1){
+				InvertSortOrder = true;
+	  			pScore = ScoreBetter(*s,*p,*s->toSet(),E,T,L);
+			}
+			InvertSortOrder = false;
 			for (int k = 0; k < p->size(); k++){
 				Specie * parent = p->get(k);
 				ofile << "s" << parent->getGeneUID() << " -> s" << i << " ";
@@ -931,7 +939,7 @@ void writeDot(const char dir[], NetCon * C){
 					color = "blue4";
 					arrowhead = "vee";
 				}
-				ofile << "[color=\"" << color << "\",label=\"" << fabs(p->getScore());
+				ofile << "[color=\"" << color << "\",label=\"" << pScore;
 				if (p->size() > 1){
 					ofile << "_m_" << p->size();
 				}

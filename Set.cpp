@@ -78,24 +78,26 @@ bool Set::sortsLowToHigh(int specieUID) const{
 			}
 		}
 	}
+	bool returnValue;
 	if (isActivator == -1){
 		std::cout << "Specie uid " << specieUID << " not found, but is should have been found, or this was a bad call for isActivator\n";
 		assert(false);
-		return false;
+		returnValue = false;
 	}
 	else if (activators == 0 || repressors == 0){
-		return true;	
+		returnValue = true;	
 	}	
 	//tie goes to activators, so activators must be >=
 	else if (isActivator == 1 && activators >= repressors){
-		return true;
+		returnValue = true;
 	}
 	else if (isActivator == 0 && repressors > activators){
-		return true;
+		returnValue = true;
 	}
 	else{
-		return false;
+		returnValue = false;
 	}
+	return returnValue;
 }
 
 const Set & Set::operator=(const Set & s){
