@@ -27,7 +27,7 @@ public:
 	}
 	
 	void testThresholds(void){
-		Thresholds t(1,2,3,4,5,-1, 0.01,0.025,2);
+		Thresholds t(1,2,3,4,5,-1, 0.01,0.025,2,false);
 		TS_ASSERT_DELTA(t.getA(),1,0.0001);
 		TS_ASSERT_DELTA(t.getR(),2,0.0001);
 		TS_ASSERT_DELTA(t.getV(),3,0.0001);
@@ -509,7 +509,7 @@ public:
     void testEncodings(void){
     	//test the bins
    		Experiments exp1;
-		Thresholds T(1.15,0.75,0.00,1,1,-1,0.01,0.025,2);
+		Thresholds T(1.15,0.75,0.00,1,1,-1,0.01,0.025,2,false);
    		TS_ASSERT(exp1.addTimePoint(0,0,0,1));
    		TS_ASSERT(exp1.addTimePoint(0,0,1,1)); //different species at 1 and 2
    		TS_ASSERT(exp1.addTimePoint(0,0,2,4.4));
@@ -716,7 +716,7 @@ public:
 		tmp = tmp;
     }
     void testLevelAssignments(void){
-		Thresholds T(1.15,0.75,0.00,1,1,-1,0.01,0.025,2);
+		Thresholds T(1.15,0.75,0.00,1,1,-1,0.01,0.025,2,false);
     	Specie * s[10];
     	Set sets[10];
     	for (int i = 0; i < 10; i++){
@@ -921,7 +921,7 @@ public:
 		}
     }
     void testGeneNet(void){
-		Thresholds T(1.15,0.75,0.5,1,1,3, 0.01, 0.025,9);
+		Thresholds T(1.15,0.75,0.5,1,1,3, 0.01, 0.025,9,false);
     	char * c = "../examples/IEA06/Ext_Guet/work/ext_guet_1_4_20_100_20000";
 	    callGeneNet(c, T);
     }

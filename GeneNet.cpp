@@ -151,7 +151,7 @@ void callGeneNet(const char * dir, Thresholds & T){
 }
 
 int main(int argc, char* argv[]){
-	Thresholds T(1.15,0.75,0.5,1,1,3, 0.01, 0.025,2);
+	Thresholds T(1.15,0.75,0.5,1,1,3, 0.01, 0.025,2, false);
 	cout << "GeneNet Arugments:\n";
 	for (int i = 0; i < argc; i++){
 		cout << "\t" << argv[i] << "\n";	
@@ -860,7 +860,6 @@ bool setScoreSort(const Set* a, const Set* b){
 vector<DoubleSet> assignMatchups(const Specie& s, const Species& S, const Experiments& E,const NetCon& C, const Thresholds& T, const Encodings& L){
 	vector<DoubleSet> myDS;
 	DoubleSet * a = C.myConnections.at(s.getGeneUID());
-	//order the sets by scores
 	vector<Set*> b;
 	for (int i = 0; i < a->size(); i++){
 		b.push_back(a->get(i));
@@ -870,22 +869,25 @@ vector<DoubleSet> assignMatchups(const Specie& s, const Species& S, const Experi
 	if (a->size() % 2 == 1){ // the highest gets a by if there is an odd number
 		odd++;
 	}
-	//Pick the lowest and highest scores to compete
-	for (int i = 0; i < a->size()/2; i++){
-		DoubleSet c;
-		c.unionIt(*b[i+odd]);
-		c.unionIt(*b[b.size()-i-1]);
-		myDS.push_back(c);
+	if (T.competeMultipleHighLow()){
+		//order the sets by scores
+		//Pick the lowest and highest scores to compete
+		for (int i = 0; i < a->size()/2; i++){
+			DoubleSet c;
+			c.unionIt(*b[i+odd]);
+			c.unionIt(*b[b.size()-i-1]);
+			myDS.push_back(c);
+		}
 	}
-	//pick score close to each other
-	/*
-	for (int i = odd; i < a->size(); i = i+2){
-		DoubleSet c;
-		c.unionIt(*b[i]);
-		c.unionIt(*b[i+1]);
-		myDS.push_back(c);
+	else{
+		//pick score close to each other
+		for (int i = odd; i < a->size(); i = i+2){
+			DoubleSet c;
+			c.unionIt(*b[i]);
+			c.unionIt(*b[i+1]);
+			myDS.push_back(c);
+		}
 	}
-	*/
 	return myDS;
 }
 

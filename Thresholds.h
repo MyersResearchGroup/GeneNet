@@ -4,7 +4,7 @@
 class Thresholds
 {
 public:
-	Thresholds(float A, float R, float V, int RisingAmount, int WindowSize, int NumBins, float InfluenceLevelDelta, float RelaxInitialParentsDelta, int MaxParentSetSize);
+	Thresholds(float A, float R, float V, int RisingAmount, int WindowSize, int NumBins, float InfluenceLevelDelta, float RelaxInitialParentsDelta, int MaxParentSetSize, bool CompeteMultipleHighLowBool);
 	float getA() const {return a;}
 	float getR() const {return r;}
 	float getV() const {return v;}
@@ -16,6 +16,7 @@ public:
 	void relaxInitialParentsThresholds();
 	void harshenInitialParentsThresholds();
 	int getMaxParentSetSize() const {return maxParentSetSize;}
+	bool competeMultipleHighLow() const {return competeMultipleHighLowBool;}
 
 	void setA(float F) {a = F;}
 	void setR(float F) {r = F;}
@@ -38,6 +39,7 @@ private:
 	float influenceLevelDelta;
 	float relaxInitialParentsDelta;
 	int maxParentSetSize;
+	bool competeMultipleHighLowBool;
 	//float postFilter
 };
 
