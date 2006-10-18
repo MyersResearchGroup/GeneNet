@@ -144,12 +144,14 @@ void callGeneNet(const char * dir, Thresholds & T){
 	}
 		
 	GeneNet(S,E,C,T,L);
-	cout << "Exiting and destroying Species, Experiments, NetCon, Thresholds, Encodings\n";
 	if (DEBUG_LEVEL > 1){
 		writeLevels(dir, L,E,T);
 	}
+	scoreCache = new map<Specie*, map<Set, map<Set, vector<float> > > >();
 	writeDot(dir, &C, E, T, L);
 	delete globDir;
+	delete scoreCache;
+	cout << "Exiting and destroying Species, Experiments, NetCon, Thresholds, Encodings\n";
 }
 
 int main(int argc, char* argv[]){
@@ -309,7 +311,7 @@ void GeneNet(Species &S, Experiments &E, NetCon &C, Thresholds &T, Encodings &L)
   EncodeExpts(S,E,T,L);
   cout << "Finished encoding\n";
 
-  int ParentSetsRemoved = 0;
+  //int ParentSetsRemoved = 0;
 
   for (int i = 0; i < S.size(); i++){
 	scoreCache = new map<Specie*, map<Set, map<Set, vector<float> > > >();
@@ -336,8 +338,8 @@ void GeneNet(Species &S, Experiments &E, NetCon &C, Thresholds &T, Encodings &L)
 	delete scoreCache;
   }
   
-  cout << "All Network Connections are\n" << C << "\n";
-  cout << "Parent Sets Removed By Post Filter: " << ParentSetsRemoved << "\n";
+  cout << "All Network Connections are\n" << C << ", but score may be changed using an and sort for multiple parents\n";
+  //cout << "Parent Sets Removed By Post Filter: " << ParentSetsRemoved << "\n";
   cout << "Exiting the GeneNet algorithm\n";
 }
 
@@ -908,7 +910,8 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
 	for (int i = 1; i < Specie::getNumSpecie(); i++){
 		Specie * s = Specie::getInstance("tmp",i);
 		ofile << "s" << i << " [shape=ellipse,color=black,label=\"" << s->getGeneName() << "\"];\n";
-	}	
+	}
+	cout << "Finished writing the species list\n";
 	//write out the connections
 	for (int i = 1; i < Specie::getNumSpecie(); i++){
 		Specie * s = Specie::getInstance("tmp",i);
@@ -918,7 +921,9 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
 			float pScore = fabs(p->getScore());
 			if (p->size() > 1){
 				InvertSortOrder = true;
+				cout << "Tring to get a different score with " << *s << " " << *p << "\n";
 	  			pScore = ScoreBetter(*s,*p,*s->toSet(),E,T,L);
+	  			cout << "After the score\n";
 			}
 			InvertSortOrder = false;
 			for (int k = 0; k < p->size(); k++){
