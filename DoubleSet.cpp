@@ -192,11 +192,11 @@ std::ostream& operator << (std::ostream& cout, const DoubleSet & source){
 		cout << ">";
 	}
 	else{
-		cout << "<";
+		cout << "\n<\n";
 		for (int i = 0; i < source.size(); i++){
 			cout << *source.get(i) << "\n";	
 		}	
-		cout << ">";
+		cout << ">\n";
 	}
 	return cout;
 }

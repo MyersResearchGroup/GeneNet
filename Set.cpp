@@ -263,11 +263,11 @@ std::ostream & operator << (std::ostream& cout, const Set & source){
 		cout << "}";
 	}
 	else{
-		cout << "\t{ " << source.getScore() << ", ";
+		cout << "{ " << source.getScore() << ", ";
 		for ( int i = 0; i < source.size(); i++){
-			cout << "\t\t" << source.getIndividualScore(source.get(i)->getGeneUID()) << " " << *source.get(i) << "\n";
+			cout << "\t" << source.getIndividualScore(source.get(i)->getGeneUID()) << " " << *source.get(i) << "\n";
 		}
-		cout << "\t}";
+		cout << "}";
 	}
 	return cout;
 }
