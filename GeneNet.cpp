@@ -843,10 +843,10 @@ void CreateMultipleParents_Too_Costly(Specie& s, const Species& S, const Experim
 
 void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, NetCon& C, const Thresholds& T_old, const Encodings& L){
   cout << "Competing parents for child " << s << "\n";
-//  bool progress = C.totalParents(s) > 1;
+  bool progress = C.totalParents(s) > 1;
   Thresholds T(T_old);
-//  while (progress){
-  while(C.totalParents(s) > 1){
+  while (progress){
+//  while(C.totalParents(s) > 1){
   	int currentNumParents = C.totalParents(s);
   	vector<DoubleSet> matchups = assignMatchups(s,S,E,C,T,L);
   	for (int i = 0; i < (int)matchups.size(); i++){
@@ -868,11 +868,11 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
     	C.removeLosers(s,Q,Scores);
    		delete [] Scores;
   	}
-//  	progress = currentNumParents != C.totalParents(s);
-	if (currentNumParents == C.totalParents(s)){
-		T.harshenInitialParentsThresholds();
-		cout << "\tUsing harsher numbers, as " << currentNumParents << " == " << C.totalParents(s) << ", to " << T.getA() << " " << T.getR() << "\n";
-	}
+  	progress = currentNumParents != C.totalParents(s);
+//	if (currentNumParents == C.totalParents(s)){
+//		T.harshenInitialParentsThresholds();
+//		cout << "\tUsing harsher numbers, as " << currentNumParents << " == " << C.totalParents(s) << ", to " << T.getA() << " " << T.getR() << "\n";
+//	}
   }
   cout << "After Competion " << *C.getParentsFor(s) << " is the winner set for child " << s << "\n";
 }
@@ -939,11 +939,16 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
 		for (int j = 0; j < d->size(); j++){
 			Set * p = d->get(j);
 			float pScore = fabs(p->getScore());
+			//rescoring to match perls
 			if (p->size() > 1){
-				InvertSortOrder = true;
-				cout << "Tring to get a different score than " << pScore << " with " << *s << " " << *p << "\n";
-	  			pScore = ScoreBetter(*s,*p,*s->toSet(),E,T,L);
-	  			cout << "After the score, with new score " << pScore << "\n";
+				float a = p->getIndividualScore(p->get(0)->getGeneUID());
+				float b = p->getIndividualScore(p->get(1)->getGeneUID());
+				if((a < 0 && b > 0 ) || (a > 0 && b < 0 )){
+					InvertSortOrder = true;
+					cout << "Tring to get a different score than " << pScore << " with " << *s << " " << *p << "\n";
+	  				pScore = ScoreBetter(*s,*p,*s->toSet(),E,T,L);
+			  		cout << "After the score, with new score " << pScore << "\n";
+				}
 			}
 			//format pScore
 			pScore = ((float)((int)(pScore * 1000.0)))/ 1000.0;
