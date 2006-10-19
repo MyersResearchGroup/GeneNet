@@ -945,6 +945,8 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
 	  			pScore = ScoreBetter(*s,*p,*s->toSet(),E,T,L);
 	  			cout << "After the score, with new score " << pScore << "\n";
 			}
+			//format pScore
+			pScore = ((float)((int)(pScore * 1000.0)))/ 1000.0;
 			InvertSortOrder = false;
 			for (int k = 0; k < p->size(); k++){
 				Specie * parent = p->get(k);
