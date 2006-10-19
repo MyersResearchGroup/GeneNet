@@ -338,7 +338,7 @@ void GeneNet(Species &S, Experiments &E, NetCon &C, Thresholds &T, Encodings &L)
 	delete scoreCache;
   }
   
-  cout << "All Network Connections are\n" << C << ", but score may be changed using an and sort for multiple parents\n";
+  cout << "All Network Connections are\n" << C << "\tbut score may be changed using an and sort for multiple parents\n";
   //cout << "Parent Sets Removed By Post Filter: " << ParentSetsRemoved << "\n";
   cout << "Exiting the GeneNet algorithm\n";
 }
@@ -376,11 +376,23 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
 			votesu++;
 		}
   	}
+  	if (DEBUG_LEVEL > 0){
+  		cout << "\t\tFound score in score cache" << votesa << " " << votesr << " " << votesu << "\n";
+  	}
 	if (votesa+votesr+votesu < 0.001){
 	  return 0;
 	}
 	return (votesa - votesr)/(votesa+votesr+votesu);
   }
+
+  //Bug introduction to match perls - opposite setting at bottom of function
+  if(P.size()>1){
+  	if(P.getIndividualScore(P.get(0)->getGeneUID()) > 0 && P.getIndividualScore(P.get(1)->getGeneUID()) < 0){
+	  InvertSortOrder = true;
+  	}
+  }
+
+
   vector<float> * fillProbVector = &(*scoreCache)[&s][P][G];
   
   Set tmpG(G);
@@ -589,6 +601,14 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
   if (DEBUG_LEVEL > 1){
  	fout.close();
   }
+
+  //Bug introduction to match perls
+  if(P.size()>1){
+  	if(P.getIndividualScore(P.get(0)->getGeneUID()) > 0 && P.getIndividualScore(P.get(1)->getGeneUID()) < 0){
+	  InvertSortOrder = false;
+  	}
+  }
+
 
   TSDPoint::G = NULL;
   TSDPoint::P = NULL;
@@ -921,9 +941,9 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
 			float pScore = fabs(p->getScore());
 			if (p->size() > 1){
 				InvertSortOrder = true;
-				cout << "Tring to get a different score with " << *s << " " << *p << "\n";
+				cout << "Tring to get a different score than " << pScore << " with " << *s << " " << *p << "\n";
 	  			pScore = ScoreBetter(*s,*p,*s->toSet(),E,T,L);
-	  			cout << "After the score\n";
+	  			cout << "After the score, with new score " << pScore << "\n";
 			}
 			InvertSortOrder = false;
 			for (int k = 0; k < p->size(); k++){
