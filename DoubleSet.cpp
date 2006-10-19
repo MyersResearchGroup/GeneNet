@@ -184,11 +184,20 @@ DoubleSet unionIt(const DoubleSet& s1, Set& s2){
 }
 
 std::ostream& operator << (std::ostream& cout, const DoubleSet & source){
-	cout << "<";
-	for (int i = 0; i < source.size(); i++){
-		cout << " " << *source.get(i) << " ";	
-	}	
-	cout << ">";
+	if (source.size() < 2){
+		cout << "<";
+		for (int i = 0; i < source.size(); i++){
+			cout << " " << *source.get(i) << " ";	
+		}	
+		cout << ">";
+	}
+	else{
+		cout << "<";
+		for (int i = 0; i < source.size(); i++){
+			cout << *source.get(i) << "\n";	
+		}	
+		cout << ">";
+	}
 	return cout;
 }
 

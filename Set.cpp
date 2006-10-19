@@ -255,11 +255,20 @@ bool operator >  (const Set& s1, const Set& s2){
 }
 
 std::ostream & operator << (std::ostream& cout, const Set & source){
-	cout << "{ " << source.getScore() << ", ";
-	for ( int i = 0; i < source.size(); i++){
-		cout << " " << source.getIndividualScore(source.get(i)->getGeneUID()) << " " << *source.get(i) << ", ";
+	if (source.size() < 2){
+		cout << "{ " << source.getScore() << ", ";
+		for ( int i = 0; i < source.size(); i++){
+			cout << " " << source.getIndividualScore(source.get(i)->getGeneUID()) << " " << *source.get(i) << ", ";
+		}
+		cout << "}";
 	}
-	cout << "}";
+	else{
+		cout << "\t{ " << source.getScore() << ", ";
+		for ( int i = 0; i < source.size(); i++){
+			cout << "\t\t" << source.getIndividualScore(source.get(i)->getGeneUID()) << " " << *source.get(i) << "\n";
+		}
+		cout << "\t}";
+	}
 	return cout;
 }
 
