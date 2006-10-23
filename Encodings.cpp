@@ -61,8 +61,8 @@ bool Encodings::useBins(int numBins){
 	for (int i = 0; i <= s->size(); i++){
 		std::vector<float> v = e->getSortedValues(i);
 		int current = 0;
-		int left = v.size();
-		int binSize = (int)left/numBins;
+		float left = v.size();
+		float binSize = left/numBins;
 		int seen = 0;
 		int levelsAssigned = 0;
 		if (DEBUG_LEVEL > 0){
@@ -70,9 +70,6 @@ bool Encodings::useBins(int numBins){
 		}
 		while(levelsAssigned < numBins-1 && current < (int)v.size()){
 			seen++; //seen is one more than current, as [0] is 1 'seen'
-			if (DEBUG_LEVEL > 1){
-				cout << "\t\tAmount Seen " << seen << ", bin Size:" << binSize << ", current value: " << v.at(current) << "\n";
-			}
 			//ramp up the floats that are the same in this round, watching out for the end
 			while (current < ((int)v.size())-2 && v.at(current) == v.at(current+1)){
 				if (DEBUG_LEVEL > 3){
@@ -81,7 +78,10 @@ bool Encodings::useBins(int numBins){
 				seen++;	
 				current++;
 			}
-			if (seen >= binSize){
+			if (DEBUG_LEVEL > 1){
+				cout << "\t\tAmount Seen " << seen << ", bin Size:" << binSize << ", current value: " << v.at(current) << "\n";
+			}
+			if (seen > binSize){
 				if (DEBUG_LEVEL > 0){
 					cout << "\t\t\tFound a bin at v[" << current << "], value: " << v.at(current) <<"\n";
 				}
@@ -98,8 +98,11 @@ bool Encodings::useBins(int numBins){
 				levelsAssigned++;
 				seen = 0;
 				//base the new bin size on how many results are left
-				left = v.size() - current;
-				binSize = (int)left / (numBins - levelsAssigned);
+				left = v.size() - (current+1);
+				binSize = left / (float)(numBins - levelsAssigned);
+				if (DEBUG_LEVEL > 0){
+					cout << "\t\tNew bin Size:" << binSize << " = " << left << " / (" << numBins << " - " << levelsAssigned << ")\n";
+				}
 			}
 			current++;
 		}		
