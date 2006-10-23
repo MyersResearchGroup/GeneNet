@@ -888,7 +888,8 @@ vector<DoubleSet> assignMatchups(const Specie& s, const Species& S, const Experi
 	for (int i = 0; i < a->size(); i++){
 		b.push_back(a->get(i));
 	}
-	std::sort(b.begin(), b.end(), &setScoreSort);
+	//seeding by score?
+	//std::sort(b.begin(), b.end(), &setScoreSort);
 	int odd = 0;
 	if (a->size() % 2 == 1){ // the highest gets a by if there is an odd number
 		odd++;
