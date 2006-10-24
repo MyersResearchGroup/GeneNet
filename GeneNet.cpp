@@ -385,18 +385,13 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
 	return (votesa - votesr)/(votesa+votesr+votesu);
   }
 
-  //Bug introduction to match perls - opposite setting at bottom of function
-  if(P.size()>1){
-  	if(P.getIndividualScore(P.get(0)->getGeneUID()) > 0 && P.getIndividualScore(P.get(1)->getGeneUID()) < 0){
-	  InvertSortOrder = true;
-  	}
-  }
-
-
   vector<float> * fillProbVector = &(*scoreCache)[&s][P][G];
   
   Set tmpG(G);
   Set tmpP(P);
+  if (DEBUG_LEVEL>0){
+	cout << "\t\tWe are sorting with inverted " << InvertSortOrder << " P set:" << tmpP << " and G set " << tmpG << "\n";
+  }
 
   TSDPoint::G = &tmpG;
   TSDPoint::P = &tmpP;
@@ -456,10 +451,18 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
 		next = NULL;
 		nextR = 0;
 		nextS = 0;
+		if (DEBUG_LEVEL > 1){
+			cout << "\t\t\t\t\tAt " << base->rowValues << " there are " << rising << " / " << seen << "\n";	
+		}
   	}
 	else if (i < end && base->sameLevels((*TSDPoint::initialValues)[i])){
-  		rising += (*TSDPoint::initialValues)[i]->risings[s.getGeneUID()];	
-  		seen   += (*TSDPoint::initialValues)[i]->seen[s.getGeneUID()];
+		float r = (*TSDPoint::initialValues)[i]->risings[s.getGeneUID()];
+		float t = (*TSDPoint::initialValues)[i]->seen[s.getGeneUID()];
+  		rising += r;
+  		seen   += t;
+		if (DEBUG_LEVEL > 1){
+			cout << "\t\t\t\t\tAt " << (*TSDPoint::initialValues)[i]->rowValues << " there are " << r << " / " << t << "\n";	
+		}
 	}
 	else if (i < end && next == NULL && base->cannotCompareLevels((*TSDPoint::initialValues)[i])){
 		//cout << "\t\t\t\t\tUnable to compare " << base->rowValues << " with " << (*TSDPoint::initialValues)[i]->rowValues << "\n";
@@ -471,10 +474,18 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
   		next = (*TSDPoint::initialValues)[i];
   		nextR = next->risings[s.getGeneUID()];	
   		nextS = next->seen[s.getGeneUID()];
+		if (DEBUG_LEVEL > 1){
+			cout << "\t\t\t\t\tAt " << next->rowValues << " there are " << nextR << " / " << nextS << "\n";	
+		}
 	}
 	else if (i < end && next->sameLevels((*TSDPoint::initialValues)[i])){
-  		nextR += (*TSDPoint::initialValues)[i]->risings[s.getGeneUID()];	
-  		nextS += (*TSDPoint::initialValues)[i]->seen[s.getGeneUID()];
+		float r = (*TSDPoint::initialValues)[i]->risings[s.getGeneUID()];
+		float t = (*TSDPoint::initialValues)[i]->seen[s.getGeneUID()];
+  		nextR += r;
+  		nextS += t;
+		if (DEBUG_LEVEL > 1){
+			cout << "\t\t\t\t\tAt " << (*TSDPoint::initialValues)[i]->rowValues << " there are " << r << " / " << t << "\n";	
+		}
 	}
 	else{
 		//we have valid values, but we have to either start base at this i, or next at this i
@@ -534,7 +545,7 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
 					}
 				}
 			}
-			if (nextR == 0 || nextS == 0){
+			if (nextS == 0){
 				//cannot compute this difference
 				if (DEBUG_LEVEL>0){
 				  	cout << "\t\t\t\t\t\tNot A Valid Ratio Because the Next = " << nextR << " / " << nextS << "\n";
@@ -601,14 +612,6 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
   if (DEBUG_LEVEL > 1){
  	fout.close();
   }
-
-  //Bug introduction to match perls
-  if(P.size()>1){
-  	if(P.getIndividualScore(P.get(0)->getGeneUID()) > 0 && P.getIndividualScore(P.get(1)->getGeneUID()) < 0){
-	  InvertSortOrder = false;
-  	}
-  }
-
 
   TSDPoint::G = NULL;
   TSDPoint::P = NULL;
@@ -775,7 +778,14 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
 			if (DEBUG_LEVEL>0){
 				cout << "Checking if set " << currentWorking << " is better than the subsets\n";
 			}
+			//Bug introduction to match perls
+			if(currentWorking.size()>1){
+			  	if(currentWorking.getIndividualScore(currentWorking.get(0)->getGeneUID()) > 0 && currentWorking.getIndividualScore(currentWorking.get(1)->getGeneUID()) < 0){
+				  InvertSortOrder = true;
+			  	}
+			}
 	    	float score = ScoreBetter(s,currentWorking,*s.toSet(),E,T,L);
+	    	InvertSortOrder = false;
     		currentWorking.setScore(-1,score);
     		if (C.addIfScoreBetterThanSubsets(s,currentWorking)){
     			addedASetAtLevel = true;
@@ -858,7 +868,14 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
       		Set tmp = Q.colapseToSet();
       		tmp = tmp - *q;
       		tmp = unionIt(tmp,*s.toSet());
+			//Bug introduction to match perls
+			if(q->size()>1){
+			  	if(q->getIndividualScore(q->get(0)->getGeneUID()) > 0 && q->getIndividualScore(q->get(1)->getGeneUID()) < 0){
+				  InvertSortOrder = true;
+			  	}
+			}
       		Scores[i] = ScoreBetter(s,*q,tmp,E,T,L);
+			InvertSortOrder = false;
     	}
     	cout << "\tScores: ";
     	for (int i = 0; i < Q.size(); i++){
@@ -937,6 +954,7 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
 	for (int i = 1; i < Specie::getNumSpecie(); i++){
 		Specie * s = Specie::getInstance("tmp",i);
 		DoubleSet * d = C->getParentsFor(*s);
+		Set printed;
 		for (int j = 0; j < d->size(); j++){
 			Set * p = d->get(j);
 			float pScore = fabs(p->getScore());
@@ -944,7 +962,7 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
 			if (p->size() > 1){
 				float a = p->getIndividualScore(p->get(0)->getGeneUID());
 				float b = p->getIndividualScore(p->get(1)->getGeneUID());
-				if((a < 0 && b > 0 ) || (a > 0 && b < 0 )){
+				if(a > 0 && b < 0 ){
 					InvertSortOrder = true;
 					cout << "Tring to get a different score than " << pScore << " with " << *s << " " << *p << "\n";
 	  				pScore = ScoreBetter(*s,*p,*s->toSet(),E,T,L);
@@ -956,27 +974,30 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
 			InvertSortOrder = false;
 			for (int k = 0; k < p->size(); k++){
 				Specie * parent = p->get(k);
-				ofile << "s" << parent->getGeneUID() << " -> s" << i << " ";
-				string color;
-				string arrowhead;
-				bool isActivator = true;
-				//the direction of the arc is based on the individual score
-				if (p->getIndividualScore(p->get(k)->getGeneUID()) < 0){
-					isActivator = false;
+				if (!printed.containsSpecieID(parent->getGeneUID())){
+					printed.insert(parent,pScore);
+					ofile << "s" << parent->getGeneUID() << " -> s" << i << " ";
+					string color;
+					string arrowhead;
+					bool isActivator = true;
+					//the direction of the arc is based on the individual score
+					if (p->getIndividualScore(p->get(k)->getGeneUID()) < 0){
+						isActivator = false;
+					}
+					if (isActivator == false){
+						color = "firebrick4";
+						arrowhead = "tee";
+					}
+					else{
+						color = "blue4";
+						arrowhead = "vee";
+					}
+					ofile << "[color=\"" << color << "\",label=\"" << pScore;
+					if (p->size() > 1){
+						ofile << "_m_" << p->size();
+					}
+					ofile << "\",arrowhead=" << arrowhead << "]\n";
 				}
-				if (isActivator == false){
-					color = "firebrick4";
-					arrowhead = "tee";
-				}
-				else{
-					color = "blue4";
-					arrowhead = "vee";
-				}
-				ofile << "[color=\"" << color << "\",label=\"" << pScore;
-				if (p->size() > 1){
-					ofile << "_m_" << p->size();
-				}
-				ofile << "\",arrowhead=" << arrowhead << "]\n";
 			}
 		}
 	}

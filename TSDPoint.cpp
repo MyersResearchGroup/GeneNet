@@ -368,29 +368,40 @@ bool TSDPoint::cannotCompareLevels(TSDPoint* i){
 }
 
 int TSDPoint::sortTSDPointsHelper(const TSDPoint * a, const TSDPoint * b, const Set * c){
+	std::vector<int> lowHigh;
+	std::vector<int> highLow;
 	for (int i = 0; i < c->size(); i++){
 		int w = c->get(i)->getGeneUID();
 		bool lowHighSort = c->sortsLowToHigh(w);
 		if (InvertSortOrder){
 			lowHighSort = !lowHighSort;	
 		}
-		if (lowHighSort){
-			if (a->rowValues[w] < b->rowValues[w]){
-				//std::cout << "\tA is smaller because " << a->rowValues[w] << " < " << b->rowValues[w] << "\n";
-				return 1;	
-			}
-			else if (a->rowValues[w] > b->rowValues[w]){
-				//std::cout << "\tA is larger because " << a->rowValues[w] << " > " << b->rowValues[w] << "\n";
-				return -1;
-			}
+		if(lowHighSort){
+			lowHigh.push_back(w);	
 		}
 		else{
-			if (a->rowValues[w] < b->rowValues[w]){
-				return -1;	
-			}
-			else if (a->rowValues[w] > b->rowValues[w]){
-				return 1;
-			}
+			highLow.push_back(w);	
+		}
+
+	}
+	for (int i = 0; i < (int)lowHigh.size(); i++){
+		int w = lowHigh[i];
+		if (a->rowValues[w] < b->rowValues[w]){
+			//std::cout << "\tA is smaller because " << a->rowValues[w] << " < " << b->rowValues[w] << "\n";
+			return 1;	
+		}
+		else if (a->rowValues[w] > b->rowValues[w]){
+			//std::cout << "\tA is larger because " << a->rowValues[w] << " > " << b->rowValues[w] << "\n";
+			return -1;
+		}
+	}
+	for (int i = 0; i < (int)highLow.size(); i++){
+		int w = highLow[i];
+		if (a->rowValues[w] < b->rowValues[w]){
+			return -1;	
+		}
+		else if (a->rowValues[w] > b->rowValues[w]){
+			return 1;
 		}
 	}
 	return 0;
@@ -398,13 +409,18 @@ int TSDPoint::sortTSDPointsHelper(const TSDPoint * a, const TSDPoint * b, const 
 
 bool TSDPoint::sortTSDPoints(const TSDPoint * a, const TSDPoint * b){
 	//first we sort by the member of the G set, then the P set.  All others don't matter
+	//do not invert the globals to match perls order
+	bool tmp = InvertSortOrder;
+	InvertSortOrder = false;
 	int x = sortTSDPointsHelper(a,b,G);
+	InvertSortOrder = tmp;
 	if (x == 1){
 		return true;	
 	}
 	else if (x == -1){
 		return false;	
 	}
+
 	x = sortTSDPointsHelper(a,b,P);
 	if (x == 1){
 		return true;	
