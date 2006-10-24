@@ -890,6 +890,12 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
 			  	}
 			}
       		Scores[i] = ScoreBetter(s,*q,tmp,E,T,L);
+      		for (int j = 0; j < C.getParentsFor(s)->size(); j++){
+      			Set * a = C.getParentsFor(s)->get(i);
+      			if (*a == *q){
+		      		a->setCompetitionScore(Scores[i]);
+      			}
+      		}
 			InvertSortOrder = false;
     	}
     	cout << "\tScores: ";
@@ -972,7 +978,9 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
 		Set printed;
 		for (int j = 0; j < d->size(); j++){
 			Set * p = d->get(j);
-			float pScore = fabs(p->getScore());
+			float initialScore = p->getScore();
+			float competitionScore = p->getCompetitionScore();
+			float pScore = fabs(initialScore);
 			//rescoring to match perls
 			if (p->size() > 1){
 				float a = p->getIndividualScore(p->get(0)->getGeneUID());
@@ -996,22 +1004,27 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
 					string arrowhead;
 					bool isActivator = true;
 					//the direction of the arc is based on the individual score
-					if (p->getIndividualScore(p->get(k)->getGeneUID()) < 0){
-						isActivator = false;
-					}
-					if (isActivator == false){
-						color = "firebrick4";
-						arrowhead = "tee";
+					if((initialScore < 0 && competitionScore > 0)  || (initialScore > 0 && competitionScore < 0)){
+						ofile << "[color=\"gray\",label=\"" << initialScore << " & " << competitionScore << "\"]\n";
 					}
 					else{
-						color = "blue4";
-						arrowhead = "vee";
+						if (p->getIndividualScore(p->get(k)->getGeneUID()) < 0){
+							isActivator = false;
+						}
+						if (isActivator == false){
+							color = "firebrick4";
+							arrowhead = "tee";
+						}
+						else{
+							color = "blue4";
+							arrowhead = "vee";
+						}
+						ofile << "[color=\"" << color << "\",label=\"" << initialScore << " & " << competitionScore;
+						if (p->size() > 1){
+							ofile << "_m_" << p->size();
+						}
+						ofile << "\",arrowhead=" << arrowhead << "]\n";
 					}
-					ofile << "[color=\"" << color << "\",label=\"" << pScore;
-					if (p->size() > 1){
-						ofile << "_m_" << p->size();
-					}
-					ofile << "\",arrowhead=" << arrowhead << "]\n";
 				}
 			}
 		}

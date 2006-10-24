@@ -7,6 +7,7 @@
 Set::Set()
 {
 	myScore = 0;
+	competitionScore = 0;
 }
 
 Set::~Set()
@@ -16,11 +17,19 @@ Set::~Set()
 Set::Set(const Set & s){
 	mySet = s.mySet;
 	myScore = s.myScore;
+	competitionScore = s.competitionScore;
 	individualScores = s.individualScores;
 }
 
 float Set::getScore() const{
 	return myScore;
+}
+
+float Set::getCompetitionScore() const{
+	return competitionScore;	
+}
+void Set::setCompetitionScore(float x){
+	competitionScore = x;	
 }
 
 float Set::getIndividualScore(int specieUID) const{

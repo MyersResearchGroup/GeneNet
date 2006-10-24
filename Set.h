@@ -29,6 +29,8 @@ public:
 	void setScore(int specieUID, float x);
 	float getIndividualScore(int specieUID) const;
 	
+	float getCompetitionScore() const;
+	void setCompetitionScore( float x);
 	
 	friend bool operator == (const Set& s1, const Set& s2);
 	friend bool operator != (const Set& s1, const Set& s2);
@@ -38,6 +40,7 @@ private:
 	std::vector<Specie*> mySet;
 	std::vector<float> individualScores;
 	float myScore;
+	float competitionScore;
 };
 
 Set unionIt(const Set& s1,const Set& s2);

@@ -27,7 +27,7 @@ public:
 private:
 	void deleteMyDoubleSet();
 	void fillMyDoubleSet(const DoubleSet & d);
-	std::vector<Set*> myDoubleSet;	
+	std::vector<Set*> myDoubleSet;
 };
 
 DoubleSet unionIt(const DoubleSet& s1, Set& s2);
