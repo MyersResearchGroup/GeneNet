@@ -26,6 +26,8 @@ using namespace std;
 
 const int SPECIES_NAME_SIZE = 100;
 
+bool HAS_TO_HAVE_MAJORITY = false;
+
 extern bool InvertSortOrder;
 
 int DEBUG_LEVEL = 0;
@@ -379,9 +381,13 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
   	if (DEBUG_LEVEL > 0){
   		cout << "\t\tFound score in score cache" << votesa << " " << votesr << " " << votesu << "\n";
   	}
-	if (votesa+votesr+votesu < 0.001){
+	if (votesa+votesr+votesu < 1.001){
 	  return 0;
 	}
+ 	//if added to match perl - also below
+ 	if(HAS_TO_HAVE_MAJORITY && ! (votesa > votesr+votesu || votesr > votesa + votesu)){
+ 		return 0;	
+  	}
 	return (votesa - votesr)/(votesa+votesr+votesu);
   }
 
@@ -620,8 +626,12 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
 	  cout << "\t\tvotes (a,r,u) (" << votesa << " " << votesr << " " << votesu << ") or ";
 	  cout << "(" << votesa << " - " << votesr << ")/(" << votesa+votesr+votesu << ")\n";
   }
-  if (votesa+votesr+votesu < 0.001){
+  if (votesa+votesr+votesu < 1.001){
     return 0;
+  }
+  //if added to match perl
+  if(HAS_TO_HAVE_MAJORITY && ! (votesa > votesr+votesu || votesr > votesa + votesu)){
+ 		return 0;	
   }
   return (votesa - votesr)/(votesa+votesr+votesu);
 }
@@ -784,7 +794,10 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
 				  InvertSortOrder = true;
 			  	}
 			}
+			//bug to match perl
+			HAS_TO_HAVE_MAJORITY = true;
 	    	float score = ScoreBetter(s,currentWorking,*s.toSet(),E,T,L);
+			HAS_TO_HAVE_MAJORITY = false;
 	    	InvertSortOrder = false;
     		currentWorking.setScore(-1,score);
     		if (C.addIfScoreBetterThanSubsets(s,currentWorking)){
@@ -870,7 +883,9 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
       		tmp = unionIt(tmp,*s.toSet());
 			//Bug introduction to match perls
 			if(q->size()>1){
-			  	if(q->getIndividualScore(q->get(0)->getGeneUID()) > 0 && q->getIndividualScore(q->get(1)->getGeneUID()) < 0){
+				float a = q->getIndividualScore(q->get(0)->getGeneUID());
+				float b = q->getIndividualScore(q->get(1)->getGeneUID());
+			  	if( (a > 0 && b < 0) || (a < 0 && b > 0)){
 				  InvertSortOrder = true;
 			  	}
 			}
@@ -962,7 +977,7 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
 			if (p->size() > 1){
 				float a = p->getIndividualScore(p->get(0)->getGeneUID());
 				float b = p->getIndividualScore(p->get(1)->getGeneUID());
-				if(a > 0 && b < 0 ){
+				if((a > 0 && b < 0) || (a < 0 && b > 0) ){
 					InvertSortOrder = true;
 					cout << "Tring to get a different score than " << pScore << " with " << *s << " " << *p << "\n";
 	  				pScore = ScoreBetter(*s,*p,*s->toSet(),E,T,L);
