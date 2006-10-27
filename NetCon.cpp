@@ -128,7 +128,7 @@ void NetCon::removeLosers(const Specie & s, const DoubleSet& s1, float * scores)
 		}
 	}
 	for (int i = 0; i < s1.size(); i++){
-		if (fabs(fabs(scores[i])-max) > 0.001 || max < 0.001){
+		if (fabs(fabs(scores[i])-max) > 0.00001 || max < 0.00001){
 			myConnections.at(s.getGeneUID())->remove(*s1.get(i));
 		}
 	}	

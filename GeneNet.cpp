@@ -379,7 +379,7 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
 		}
   	}
   	if (DEBUG_LEVEL > 0){
-  		cout << "\t\tFound score in score cache" << votesa << " " << votesr << " " << votesu << "\n";
+  		cout << "\t\tFound score in score cache (" << votesa << ", " << votesr << ", " << votesu << ")\n";
   	}
 	if (votesa+votesr+votesu < 1.001){
 	  return 0;
@@ -714,7 +714,7 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
 		  assert(rescoreSet->size() == 1);
 	  	  Specie * p = rescoreSet->get(0);
 		  float alpha = ScoreBetter(s,*p->toSet(),*s.toSet(),E,T,L);
-		  cout << "\tScore of " << alpha << " and threshold +-" << T.getV() << "for " << *p << "\n";
+		  cout << "\tScore of " << alpha << " and threshold +- " << T.getV() << " for " << *p << "\n";
 		  rescoreSet->setScore(-1, alpha);
 	  }
   }
@@ -800,17 +800,40 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
 			HAS_TO_HAVE_MAJORITY = false;
 	    	InvertSortOrder = false;
     		currentWorking.setScore(-1,score);
-    		if (C.addIfScoreBetterThanSubsets(s,currentWorking)){
-    			addedASetAtLevel = true;
-				if (DEBUG_LEVEL>0){
-					cout << "\tIt Was Better than the subsets!\n";
-				}
-	    	}
-    		else{
-				if (DEBUG_LEVEL>0){
-	    			cout << "\tNot Better\n";	
-				}
+    		//To match perl we disallow parents to flip votes
+    		//However, this does not seem to be it
+    		/*
+    		bool allR = true;
+    		bool allA = true;
+    		for (int i = 0; i < currentWorking.size(); i++){
+    			float tmp = currentWorking.getIndividualScore(currentWorking.get(i)->getGeneUID());
+    			if (tmp < 0){
+    				allA = false;	
+    			}
+    			else if (tmp > 0){
+    				allR = false;	
+    			}
     		}
+			if (allR && score > 0){
+				cout << "\tNot tring as the score flipped\n";
+			}
+			else if (allA && score < 0){
+				cout << "\tNot tring as the score flipped\n";
+			}
+			else{
+			*/
+	    		if (C.addIfScoreBetterThanSubsets(s,currentWorking)){
+    				addedASetAtLevel = true;
+					if (DEBUG_LEVEL>0){
+						cout << "\tIt Was Better than the subsets!\n";
+					}
+		    	}
+    			else{
+					if (DEBUG_LEVEL>0){
+	    				cout << "\tNot Better\n";	
+					}
+				}
+    		//}
 		}
 		else{
 			if (DEBUG_LEVEL>0){
@@ -1028,8 +1051,8 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
 						if (p->size() > 1){
 							ofile << "_m_" << p->size();
 						}
-						ofile << "\",competionScore=\'" << competitionScore << "\"";
-						ofile << "\",arrowhead=" << arrowhead << "]\n";
+						ofile << "\",competionScore=\"" << competitionScore << "\"";
+						ofile << ",arrowhead=" << arrowhead << "]\n";
 					}
 				}
 			}

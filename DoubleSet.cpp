@@ -79,6 +79,13 @@ bool DoubleSet::addIfScoreBetterThanSubsets(const Set & s){
 			better = false;
 			i = (int)myDoubleSet.size();
 		}
+		else{
+			if (DEBUG_LEVEL>0){
+				if(s.contains(*s2)){
+					std::cout << "\tSpecie " << *s2 << " with score " << fabs(s2->getScore()) << " > " << fabs(s.getScore()) << "\n";
+				}
+			}	
+		}
 	}
 	if (better){
 		unionIt(s);
