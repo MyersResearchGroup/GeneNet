@@ -38,12 +38,13 @@ void Thresholds::relaxInitialParentsThresholds(){
 	}
 }
 
-void Thresholds::harshenInitialParentsThresholds(){
+bool Thresholds::harshenInitialParentsThresholds(){
 	a += relaxInitialParentsDelta;
 	r -= relaxInitialParentsDelta;
 	if (a > 5 || r < 0){
 		std::cout << "ERROR:  Activation or Represison thresholds harshened too much: " << a << " " << r << "\n";
-		exit(0);
+		return false;
 	}
+	return true;
 }
 

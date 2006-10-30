@@ -27,6 +27,7 @@ using namespace std;
 const int SPECIES_NAME_SIZE = 100;
 
 bool HAS_TO_HAVE_MAJORITY = false;
+bool CPP_USE_HARSHER_BOUNDS = false;
 
 extern bool InvertSortOrder;
 
@@ -60,11 +61,10 @@ static void ShowUsage()
         _T("-wr [num] --windowRisingAmount [num]	Sets how much larger a number must be to be considered as a rise.  Default 1\n")
         _T("-ws [num] --windowSize [num]		Sets how far the TSD points are when compared.  Default 1\n")
         _T("-nb [num] --numBins [num]   		Sets how many bins are used in the evaluation.  Default 3\n")
-        _T("-id [num] --influenceLevelDelta [num]	Sets how close parents must be in score to be considered for combination.  Default 0.01\n")
+        _T("-id [num] --influenceLevelDelta [num]	Sets how close CMP parents must be in score to be considered for combination.  Default 0.01\n")
         _T("-rd [num] --relaxIPDelta [num]		Sets how fast the bound is relaxed for a and r if no parents are found in InitialParents, Default 0.025\n")
-
 		_T("--sip_letNThrough [num]			Sets minimum number of parents to allow through in SelectInitialParents. Default 1\n")
-		_T("--cmp_OnlyCombineIfCloseN [num]	Sets how close parent scores must be to be considered for combination in CMP.  Default 0.00001\n")
+
 		_T("--cpp_harshenBoundsOnTie		Determins if harsher bounds are used when parents tie in CPP.\n")
 		_T("--output_donotRescoreARParents	Determins if AR parents should not be rescored.\n")
 		_T("--cpp_seedParents				Determins if parents should be ranked by score, not tsd order in CPP.\n")
@@ -102,19 +102,16 @@ CSimpleOpt::SOption g_rgOptions[] =
     {  9,        _T("--windowSize"),			SO_REQ_SEP },
     { 10,        _T("-nb"),						SO_REQ_SEP },
     { 11,        _T("--numBins"),				SO_REQ_SEP },
-    { 12,        _T("-id"),						SO_REQ_SEP },
-    { 13,        _T("--influenceLevelDelta"),	SO_REQ_SEP },
     { 14,        _T("-rd"),						SO_REQ_SEP },
     { 15,        _T("--relaxIPDelta"),			SO_REQ_SEP },
-
     { 16,        _T("--sip_letNThrough"),		SO_REQ_SEP },
-    { 17,        _T("--cmp_OnlyCombineIfCloseN"),	SO_REQ_SEP },
-    { 18,        _T("--cpp_harshenBoundsOnTie"),	SO_NONE },
-    { 19,        _T("--output_donotRescoreARParents"),	SO_NONE },
-    { 20,        _T("--cpp_seedParents"),		SO_NONE },
-    { 21,        _T("--score_donotTossSingleRatioParents"),	SO_NONE },
-    { 22,        _T("--cpp_score_mustNotWinMajority"),	SO_NONE },
-    { 23,        _T("--output_donotTossChangedInfluenceSingleParents"),	SO_NONE },
+
+    { 17,        _T("--cpp_harshenBoundsOnTie"),	SO_NONE },
+    { 18,        _T("--output_donotRescoreARParents"),	SO_NONE },
+    { 19,        _T("--cpp_seedParents"),		SO_NONE },
+    { 20,        _T("--score_donotTossSingleRatioParents"),	SO_NONE },
+    { 21,        _T("--cpp_score_mustNotWinMajority"),	SO_NONE },
+    { 22,        _T("--output_donotTossChangedInfluenceSingleParents"),	SO_NONE },
     SO_END_OF_OPTIONS
 };
 
@@ -273,11 +270,25 @@ int main(int argc, char* argv[]){
             	T.setsip_letNThrough(atoi(args.OptionArg()));
             	cout << "\tSetting sip_letNThrough to '" << T.getsip_letNThrough() << "'\n";
             	break;
+            default:
+            	cout << "ERROR: unhandled argument\n";
+            	exit(1);
+            	break;
             }
         }
         else {
             _tprintf(_T("option: %2d, text: '%s'\n"),
                 args.OptionId(), args.OptionText());
+            switch (args.OptionId()) {
+            case 17:
+            	CPP_USE_HARSHER_BOUNDS = true;
+            	cout << "\tSetting CPP to use harsher bounds\n";
+            	break;
+            default:
+            	cout << "ERROR: unhandled argument\n";
+            	exit(1);
+            	break;
+            }
         }
     }
 
@@ -915,7 +926,6 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
   bool progress = C.totalParents(s) > 1;
   Thresholds T(T_old);
   while (progress){
-//  while(C.totalParents(s) > 1){
   	int currentNumParents = C.totalParents(s);
   	vector<DoubleSet> matchups = assignMatchups(s,S,E,C,T,L);
   	for (int i = 0; i < (int)matchups.size(); i++){
@@ -952,11 +962,23 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
     	C.removeLosers(s,Q,Scores);
    		delete [] Scores;
   	}
-  	progress = currentNumParents != C.totalParents(s);
-//	if (currentNumParents == C.totalParents(s)){
-//		T.harshenInitialParentsThresholds();
-//		cout << "\tUsing harsher numbers, as " << currentNumParents << " == " << C.totalParents(s) << ", to " << T.getA() << " " << T.getR() << "\n";
-//	}
+  	if (CPP_USE_HARSHER_BOUNDS){
+		if (currentNumParents == C.totalParents(s)){
+			bool f = T.harshenInitialParentsThresholds();
+			cout << "\tUsing harsher numbers, as " << currentNumParents << " == " << C.totalParents(s) << ", to " << T.getA() << " " << T.getR() << "\n";
+			if (f == false){
+				//exit, as we cannot shrink any more
+				progress = false;	
+			}
+		}
+		if (C.totalParents(s) == 1){
+			//exit while loop
+			progress = false;	
+		}
+  	}
+  	else{
+	  	progress = currentNumParents != C.totalParents(s);
+  	}
   }
   cout << "After Competion " << *C.getParentsFor(s) << " is the winner set for child " << s << "\n";
 }

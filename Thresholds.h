@@ -14,7 +14,7 @@ public:
 	float getInfluenceLevelDelta() const {return influenceLevelDelta;}
 	float getRelaxInitialParentsDelta() const {return relaxInitialParentsDelta;}
 	void relaxInitialParentsThresholds();
-	void harshenInitialParentsThresholds();
+	bool harshenInitialParentsThresholds();
 	int getMaxParentSetSize() const {return maxParentSetSize;}
 	bool competeMultipleHighLow() const {return competeMultipleHighLowBool;}
 
