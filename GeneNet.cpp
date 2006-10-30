@@ -28,6 +28,7 @@ const int SPECIES_NAME_SIZE = 100;
 
 bool HAS_TO_HAVE_MAJORITY = false;
 bool CPP_USE_HARSHER_BOUNDS = false;
+bool KEEP_SORT_ORDER_INVERTED = true;
 
 extern bool InvertSortOrder;
 
@@ -64,12 +65,13 @@ static void ShowUsage()
         _T("-id [num] --influenceLevelDelta [num]	Sets how close CMP parents must be in score to be considered for combination.  Default 0.01\n")
         _T("-rd [num] --relaxIPDelta [num]		Sets how fast the bound is relaxed for a and r if no parents are found in InitialParents, Default 0.025\n")
 		_T("--sip_letNThrough [num]			Sets minimum number of parents to allow through in SelectInitialParents. Default 1\n")
-
 		_T("--cpp_harshenBoundsOnTie		Determins if harsher bounds are used when parents tie in CPP.\n")
-		_T("--output_donotRescoreARParents	Determins if AR parents should not be rescored.\n")
+
+		_T("--cpp_cmp_output_donotInvertSortOrder	Sets the inverted sort order in the 3 places back to normal")
 		_T("--cpp_seedParents				Determins if parents should be ranked by score, not tsd order in CPP.\n")
-		_T("--score_donotTossSingleRatioParents		Determins if single ratio parents should be kept\n")
 		_T("--cpp_score_mustNotWinMajority	Determins if score should be used when following conditions are not met a > r+n || r > a + n\n")
+		_T("--score_donotTossSingleRatioParents		Determins if single ratio parents should be kept\n")
+		_T("--output_donotRescoreARParents	Determins if AR parents should not be rescored.\n")
 		_T("--output_donotTossChangedInfluenceSingleParents	Determins if parents that change influence should not be tossed\n")
         );
 }
@@ -105,13 +107,14 @@ CSimpleOpt::SOption g_rgOptions[] =
     { 14,        _T("-rd"),						SO_REQ_SEP },
     { 15,        _T("--relaxIPDelta"),			SO_REQ_SEP },
     { 16,        _T("--sip_letNThrough"),		SO_REQ_SEP },
-
     { 17,        _T("--cpp_harshenBoundsOnTie"),	SO_NONE },
-    { 18,        _T("--output_donotRescoreARParents"),	SO_NONE },
+
+    { 18,        _T("--cpp_cmp_output_donotInvertSortOrder"),		SO_NONE },
     { 19,        _T("--cpp_seedParents"),		SO_NONE },
-    { 20,        _T("--score_donotTossSingleRatioParents"),	SO_NONE },
-    { 21,        _T("--cpp_score_mustNotWinMajority"),	SO_NONE },
-    { 22,        _T("--output_donotTossChangedInfluenceSingleParents"),	SO_NONE },
+    { 20,        _T("--cpp_score_mustNotWinMajority"),	SO_NONE },
+    { 21,        _T("--score_donotTossSingleRatioParents"),	SO_NONE },
+    { 22,        _T("--output_donotRescoreARParents"),	SO_NONE },
+    { 23,        _T("--output_donotTossChangedInfluenceSingleParents"),	SO_NONE },
     SO_END_OF_OPTIONS
 };
 
@@ -283,6 +286,10 @@ int main(int argc, char* argv[]){
             case 17:
             	CPP_USE_HARSHER_BOUNDS = true;
             	cout << "\tSetting CPP to use harsher bounds\n";
+            	break;
+            case 18:
+            	KEEP_SORT_ORDER_INVERTED = false;
+            	cout << "\tSetting sort order to not be inverted for AR\n";
             	break;
             default:
             	cout << "ERROR: unhandled argument\n";
@@ -823,7 +830,7 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
 				cout << "Checking if set " << currentWorking << " is better than the subsets\n";
 			}
 			//Bug introduction to match perls
-			if(currentWorking.size()>1){
+			if(currentWorking.size() == 2 && KEEP_SORT_ORDER_INVERTED){
 			  	if(currentWorking.getIndividualScore(currentWorking.get(0)->getGeneUID()) > 0 && currentWorking.getIndividualScore(currentWorking.get(1)->getGeneUID()) < 0){
 				  InvertSortOrder = true;
 			  	}
@@ -941,7 +948,7 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
 			if(q->size()>1){
 				float a = q->getIndividualScore(q->get(0)->getGeneUID());
 				float b = q->getIndividualScore(q->get(1)->getGeneUID());
-			  	if( (a > 0 && b < 0) || (a < 0 && b > 0)){
+			  	if( (a > 0 && b < 0) || (a < 0 && b > 0) && KEEP_SORT_ORDER_INVERTED){
 				  InvertSortOrder = true;
 			  	}
 			}
@@ -1055,7 +1062,7 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
 			if (p->size() > 1){
 				mpa = p->getIndividualScore(p->get(0)->getGeneUID());
 				mpb = p->getIndividualScore(p->get(1)->getGeneUID());
-				if((mpa > 0 && mpb < 0) || (mpa < 0 && mpb > 0) ){
+				if((mpa > 0 && mpb < 0) || (mpa < 0 && mpb > 0) && KEEP_SORT_ORDER_INVERTED){
 					InvertSortOrder = true;
 					cout << "Tring to get a different score than " << pScore << " with " << *s << " " << *p << "\n";
 	  				pScore = ScoreBetter(*s,*p,*s->toSet(),E,T,L);
