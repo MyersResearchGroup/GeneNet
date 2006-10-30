@@ -31,6 +31,7 @@ bool CPP_USE_HARSHER_BOUNDS = false;
 bool KEEP_SORT_ORDER_INVERTED = true;
 bool CMP_NO_MAJORITY = false;
 float TOSS_VOTES_NUMBER = 1.0001;
+bool TOSS_CHANGED_SINGLE_INFLUENCE = true;
 
 extern bool InvertSortOrder;
 
@@ -71,9 +72,7 @@ static void ShowUsage()
 		_T("--cpp_cmp_output_donotInvertSortOrder	Sets the inverted sort order in the 3 places back to normal")
 		_T("--cpp_seedParents				Determins if parents should be ranked by score, not tsd order in CPP.\n")
 		_T("--cmp_score_mustNotWinMajority	Determins if score should be used when following conditions are not met a > r+n || r > a + n\n")
-
 		_T("--score_donotTossSingleRatioParents		Determins if single ratio parents should be kept\n")
-		_T("--output_donotRescoreARParents	Determins if AR parents should not be rescored.\n")
 		_T("--output_donotTossChangedInfluenceSingleParents	Determins if parents that change influence should not be tossed\n")
         );
 }
@@ -113,10 +112,8 @@ CSimpleOpt::SOption g_rgOptions[] =
     { 18,        _T("--cpp_cmp_output_donotInvertSortOrder"),		SO_NONE },
     { 19,        _T("--cpp_seedParents"),		SO_NONE },
     { 20,        _T("--cmp_score_mustNotWinMajority"),	SO_NONE },
-
     { 21,        _T("--score_donotTossSingleRatioParents"),	SO_NONE },
-    { 22,        _T("--output_donotRescoreARParents"),	SO_NONE },
-    { 23,        _T("--output_donotTossChangedInfluenceSingleParents"),	SO_NONE },
+    { 22,        _T("--output_donotTossChangedInfluenceSingleParents"),	SO_NONE },
     SO_END_OF_OPTIONS
 };
 
@@ -304,6 +301,10 @@ int main(int argc, char* argv[]){
             case 21:
             	TOSS_VOTES_NUMBER = 0.0001;
             	cout << "\tSetting score to assign a score of 0 to only scores < 0.0001 and not score that have only a single vote\n";
+            	break;
+            case 22:
+            	TOSS_CHANGED_SINGLE_INFLUENCE = false;
+            	cout << "\tNo longer tossing single parents that changed influence durring competition\n";
             	break;
             default:
             	cout << "ERROR: unhandled argument\n";
@@ -1098,7 +1099,7 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
 					string arrowhead;
 					bool isActivator = true;
 					//the direction of the arc is based on the individual score
-					if(p->size() == 1 && ((initialScore < 0 && competitionScore > 0)  || (initialScore > 0 && competitionScore < 0))){
+					if(p->size() == 1 && TOSS_CHANGED_SINGLE_INFLUENCE && ((initialScore < 0 && competitionScore > 0)  || (initialScore > 0 && competitionScore < 0))){
 						ofile << "[color=\"gray\",label=\"" << pScore << "\",competitionScore=\"" << competitionScore << "\"]\n";
 					}
 //					else if(p->size() == 2 && ((mpa > 0 && mpb > 0) || (mpa < 0 && mpb < 0)) && ((initialScore < 0 && competitionScore > 0)  || (initialScore > 0 && competitionScore < 0))){
