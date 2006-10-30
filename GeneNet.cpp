@@ -30,6 +30,7 @@ bool HAS_TO_HAVE_MAJORITY = false;
 bool CPP_USE_HARSHER_BOUNDS = false;
 bool KEEP_SORT_ORDER_INVERTED = true;
 bool CMP_NO_MAJORITY = false;
+float TOSS_VOTES_NUMBER = 1.0001;
 
 extern bool InvertSortOrder;
 
@@ -69,8 +70,8 @@ static void ShowUsage()
 		_T("--cpp_harshenBoundsOnTie		Determins if harsher bounds are used when parents tie in CPP.\n")
 		_T("--cpp_cmp_output_donotInvertSortOrder	Sets the inverted sort order in the 3 places back to normal")
 		_T("--cpp_seedParents				Determins if parents should be ranked by score, not tsd order in CPP.\n")
-
 		_T("--cmp_score_mustNotWinMajority	Determins if score should be used when following conditions are not met a > r+n || r > a + n\n")
+
 		_T("--score_donotTossSingleRatioParents		Determins if single ratio parents should be kept\n")
 		_T("--output_donotRescoreARParents	Determins if AR parents should not be rescored.\n")
 		_T("--output_donotTossChangedInfluenceSingleParents	Determins if parents that change influence should not be tossed\n")
@@ -111,8 +112,8 @@ CSimpleOpt::SOption g_rgOptions[] =
     { 17,        _T("--cpp_harshenBoundsOnTie"),	SO_NONE },
     { 18,        _T("--cpp_cmp_output_donotInvertSortOrder"),		SO_NONE },
     { 19,        _T("--cpp_seedParents"),		SO_NONE },
-
     { 20,        _T("--cmp_score_mustNotWinMajority"),	SO_NONE },
+
     { 21,        _T("--score_donotTossSingleRatioParents"),	SO_NONE },
     { 22,        _T("--output_donotRescoreARParents"),	SO_NONE },
     { 23,        _T("--output_donotTossChangedInfluenceSingleParents"),	SO_NONE },
@@ -300,6 +301,10 @@ int main(int argc, char* argv[]){
             	CMP_NO_MAJORITY = true;
             	cout << "\tSetting CMP and score to use the actual score, and not disallow a > r+n or r > a+n\n";
             	break;
+            case 21:
+            	TOSS_VOTES_NUMBER = 0.0001;
+            	cout << "\tSetting score to assign a score of 0 to only scores < 0.0001 and not score that have only a single vote\n";
+            	break;
             default:
             	cout << "ERROR: unhandled argument\n";
             	exit(1);
@@ -430,7 +435,7 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
   	if (DEBUG_LEVEL > 0){
   		cout << "\t\tFound score in score cache (" << votesa << ", " << votesr << ", " << votesu << ")\n";
   	}
-	if (votesa+votesr+votesu < 1.001){
+	if (votesa+votesr+votesu < TOSS_VOTES_NUMBER){
 	  return 0;
 	}
  	//if added to match perl - also below
@@ -675,7 +680,7 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
 	  cout << "\t\tvotes (a,r,u) (" << votesa << " " << votesr << " " << votesu << ") or ";
 	  cout << "(" << votesa << " - " << votesr << ")/(" << votesa+votesr+votesu << ")\n";
   }
-  if (votesa+votesr+votesu < 1.001){
+  if (votesa+votesr+votesu < TOSS_VOTES_NUMBER){
     return 0;
   }
   //if added to match perl
