@@ -20,7 +20,7 @@ public:
 	const DoubleSet & operator=(const DoubleSet & s);
 	bool contains(const Set & s);
 	bool addIfScoreBetterThanSubsets(const Set & s);
-	
+	void clearAllSets();
 	Set colapseToSet() const;
 	
 	friend DoubleSet unionIt(const DoubleSet& s1, Set & s2);

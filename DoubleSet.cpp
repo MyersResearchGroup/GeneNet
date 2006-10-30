@@ -15,6 +15,10 @@ DoubleSet::~DoubleSet()
 	deleteMyDoubleSet();
 }
 
+void DoubleSet::clearAllSets(){
+	deleteMyDoubleSet();
+}
+
 void DoubleSet::deleteMyDoubleSet(){
 	while((int)myDoubleSet.size() > 0){
 		Set * d = myDoubleSet.back();

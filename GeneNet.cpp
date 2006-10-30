@@ -62,6 +62,15 @@ static void ShowUsage()
         _T("-nb [num] --numBins [num]   		Sets how many bins are used in the evaluation.  Default 3\n")
         _T("-id [num] --influenceLevelDelta [num]	Sets how close parents must be in score to be considered for combination.  Default 0.01\n")
         _T("-rd [num] --relaxIPDelta [num]		Sets how fast the bound is relaxed for a and r if no parents are found in InitialParents, Default 0.025\n")
+
+		_T("--sip_letNThrough [num]			Sets minimum number of parents to allow through in SelectInitialParents. Default 1\n")
+		_T("--cmp_OnlyCombineIfCloseN [num]	Sets how close parent scores must be to be considered for combination in CMP.  Default 0.00001\n")
+		_T("--cpp_harshenBoundsOnTie		Determins if harsher bounds are used when parents tie in CPP.\n")
+		_T("--output_donotRescoreARParents	Determins if AR parents should not be rescored.\n")
+		_T("--cpp_seedParents				Determins if parents should be ranked by score, not tsd order in CPP.\n")
+		_T("--score_donotTossSingleRatioParents		Determins if single ratio parents should be kept\n")
+		_T("--cpp_score_mustNotWinMajority	Determins if score should be used when following conditions are not met a > r+n || r > a + n\n")
+		_T("--output_donotTossChangedInfluenceSingleParents	Determins if parents that change influence should not be tossed\n")
         );
 }
 
@@ -78,25 +87,34 @@ CSimpleOpt::SOption g_rgFlags[] =
 enum { OPT_HELP = 1000 };
 CSimpleOpt::SOption g_rgOptions[] =
 {
-    { OPT_HELP,  _T("-?"),           		SO_NONE    },
-    { OPT_HELP,  _T("-h"),           		SO_NONE    },
-    { OPT_HELP,  _T("-help"),        		SO_NONE    },
-    { OPT_HELP,  _T("--help"),       		SO_NONE    },
-    {  1,        _T("-d"),           		SO_REQ_SEP },
-    {  2,        _T("--debug"),      		SO_REQ_SEP },
-    {  3,        _T("-a"),           		SO_REQ_SEP },
-    {  4,        _T("-r"),           		SO_REQ_SEP },
-    {  5,        _T("-v"),           		SO_REQ_SEP },
-    {  6,        _T("-wr"),           		SO_REQ_SEP },
+    { OPT_HELP,  _T("-?"),           			SO_NONE    },
+    { OPT_HELP,  _T("-h"),           			SO_NONE    },
+    { OPT_HELP,  _T("-help"),        			SO_NONE    },
+    { OPT_HELP,  _T("--help"),       			SO_NONE    },
+    {  1,        _T("-d"),           			SO_REQ_SEP },
+    {  2,        _T("--debug"),      			SO_REQ_SEP },
+    {  3,        _T("-a"),           			SO_REQ_SEP },
+    {  4,        _T("-r"),           			SO_REQ_SEP },
+    {  5,        _T("-v"),           			SO_REQ_SEP },
+    {  6,        _T("-wr"),           			SO_REQ_SEP },
     {  7,        _T("--windowRisingAmount"),	SO_REQ_SEP },
-    {  8,        _T("-ws"),           		SO_REQ_SEP },
-    {  9,        _T("--windowSize"),		SO_REQ_SEP },
-    { 10,        _T("-nb"),			SO_REQ_SEP },
-    { 11,        _T("--numBins"),		SO_REQ_SEP },
-    { 12,        _T("-id"),			SO_REQ_SEP },
+    {  8,        _T("-ws"),           			SO_REQ_SEP },
+    {  9,        _T("--windowSize"),			SO_REQ_SEP },
+    { 10,        _T("-nb"),						SO_REQ_SEP },
+    { 11,        _T("--numBins"),				SO_REQ_SEP },
+    { 12,        _T("-id"),						SO_REQ_SEP },
     { 13,        _T("--influenceLevelDelta"),	SO_REQ_SEP },
-    { 14,        _T("-rd"),			SO_REQ_SEP },
-    { 15,        _T("--relaxIPDelta"),		SO_REQ_SEP },
+    { 14,        _T("-rd"),						SO_REQ_SEP },
+    { 15,        _T("--relaxIPDelta"),			SO_REQ_SEP },
+
+    { 16,        _T("--sip_letNThrough"),		SO_REQ_SEP },
+    { 17,        _T("--cmp_OnlyCombineIfCloseN"),	SO_REQ_SEP },
+    { 18,        _T("--cpp_harshenBoundsOnTie"),	SO_NONE },
+    { 19,        _T("--output_donotRescoreARParents"),	SO_NONE },
+    { 20,        _T("--cpp_seedParents"),		SO_NONE },
+    { 21,        _T("--score_donotTossSingleRatioParents"),	SO_NONE },
+    { 22,        _T("--cpp_score_mustNotWinMajority"),	SO_NONE },
+    { 23,        _T("--output_donotTossChangedInfluenceSingleParents"),	SO_NONE },
     SO_END_OF_OPTIONS
 };
 
@@ -250,6 +268,10 @@ int main(int argc, char* argv[]){
             case 15:
             	T.setRelaxInitialParentsDelta(atof(args.OptionArg()));
             	cout << "\tSetting relaxIPDelta to '" << T.getRelaxInitialParentsDelta() << "'\n";
+            	break;
+            case 16:
+            	T.setsip_letNThrough(atoi(args.OptionArg()));
+            	cout << "\tSetting sip_letNThrough to '" << T.getsip_letNThrough() << "'\n";
             	break;
             }
         }
@@ -682,7 +704,8 @@ float Score(const Specie& s, const Set& P, const Set& G, const Experiments& E, c
 void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, NetCon& C, const Thresholds& T, const Encodings& L){
   Thresholds newT(T);
   bool relaxedTheBounds = false;
-  while (C.getParentsFor(s)->size() == 0){
+  while (C.getParentsFor(s)->size() < T.getsip_letNThrough()){
+  	C.getParentsFor(s)->clearAllSets();
   	for (int i = 0; i < S.size(); i++){
   		Specie * p = S.get(i);
   		if (*p != s){
@@ -700,7 +723,7 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
   			}
   		}
   	}
-  	if (C.getParentsFor(s)->size() == 0){
+  	if (C.getParentsFor(s)->size() < T.getsip_letNThrough()){
   		relaxedTheBounds = true;
 		newT.relaxInitialParentsThresholds();
   		cout << "There are no parents for " << s << ", relaxing the thresholds to [" << newT.getR() << ", " << newT.getA() << "]\n";

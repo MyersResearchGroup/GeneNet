@@ -14,6 +14,7 @@ Thresholds::Thresholds(float A, float R, float V, int RisingAmount, int WindowSi
 	maxParentSetSize = MaxParentSetSize;
 	competeMultipleHighLowBool = CompeteMultipleHighLowBool;
 	//postFilter = PostFilter;
+	sip_letNThrough = 1;
 }
 
 Thresholds::~Thresholds()

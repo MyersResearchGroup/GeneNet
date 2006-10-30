@@ -26,6 +26,9 @@ public:
 	void setWindowSize(int F) {windowSize = F;}
 	void setInfluenceLevelDelta(float F) {influenceLevelDelta = F;}
 	void setRelaxInitialParentsDelta(float F) {relaxInitialParentsDelta = F;}
+	
+	void setsip_letNThrough(int i){sip_letNThrough = i;}
+	int getsip_letNThrough() const {return sip_letNThrough;}
 
 	//float getPostFilter(){return postFilter;}
 	virtual ~Thresholds();
@@ -41,6 +44,7 @@ private:
 	int maxParentSetSize;
 	bool competeMultipleHighLowBool;
 	//float postFilter
+	int sip_letNThrough;
 };
 
 #endif /*THRESHOLDS_H_*/
