@@ -66,8 +66,8 @@ static void ShowUsage()
         _T("-rd [num] --relaxIPDelta [num]		Sets how fast the bound is relaxed for a and r if no parents are found in InitialParents, Default 0.025\n")
 		_T("--sip_letNThrough [num]			Sets minimum number of parents to allow through in SelectInitialParents. Default 1\n")
 		_T("--cpp_harshenBoundsOnTie		Determins if harsher bounds are used when parents tie in CPP.\n")
-
 		_T("--cpp_cmp_output_donotInvertSortOrder	Sets the inverted sort order in the 3 places back to normal")
+
 		_T("--cpp_seedParents				Determins if parents should be ranked by score, not tsd order in CPP.\n")
 		_T("--cpp_score_mustNotWinMajority	Determins if score should be used when following conditions are not met a > r+n || r > a + n\n")
 		_T("--score_donotTossSingleRatioParents		Determins if single ratio parents should be kept\n")
@@ -108,8 +108,8 @@ CSimpleOpt::SOption g_rgOptions[] =
     { 15,        _T("--relaxIPDelta"),			SO_REQ_SEP },
     { 16,        _T("--sip_letNThrough"),		SO_REQ_SEP },
     { 17,        _T("--cpp_harshenBoundsOnTie"),	SO_NONE },
-
     { 18,        _T("--cpp_cmp_output_donotInvertSortOrder"),		SO_NONE },
+
     { 19,        _T("--cpp_seedParents"),		SO_NONE },
     { 20,        _T("--cpp_score_mustNotWinMajority"),	SO_NONE },
     { 21,        _T("--score_donotTossSingleRatioParents"),	SO_NONE },
@@ -290,6 +290,10 @@ int main(int argc, char* argv[]){
             case 18:
             	KEEP_SORT_ORDER_INVERTED = false;
             	cout << "\tSetting sort order to not be inverted for AR\n";
+            	break;
+            case 19:
+            	T.setCompeteMultipleHighLow(true);
+            	cout << "\tSetting CMP competitions to be seeded\n";
             	break;
             default:
             	cout << "ERROR: unhandled argument\n";

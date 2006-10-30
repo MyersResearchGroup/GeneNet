@@ -17,6 +17,7 @@ public:
 	bool harshenInitialParentsThresholds();
 	int getMaxParentSetSize() const {return maxParentSetSize;}
 	bool competeMultipleHighLow() const {return competeMultipleHighLowBool;}
+	void setCompeteMultipleHighLow(bool a) {competeMultipleHighLowBool = a;}
 
 	void setA(float F) {a = F;}
 	void setR(float F) {r = F;}
