@@ -174,7 +174,19 @@ void callGeneNet(const char * dir, Thresholds & T){
 }
 
 int main(int argc, char* argv[]){
-	Thresholds T(1.15,0.75,0.5,1,1,3, 0.01, 0.025,2, false);
+	float A = 1.15;
+	float R = 0.75;
+	float V = 0.5;
+	int RisingAmount = 1;
+	int WindowSize = 1;
+	int NumBins = 3;
+	float InfluenceLevelDelta = 0.01; //to allow parents to combine
+	//float InfluenceLevelDelta = 1.0; //to allow parents to combine
+	float RelaxInitialParentsDelta = 0.025;
+	int MaxParentSetSize = 2;
+	//int MaxParentSetSize = 3;
+	bool CompeteMultipleHighLowBool = false;
+	Thresholds T(A,R,V,RisingAmount,WindowSize,NumBins,InfluenceLevelDelta,RelaxInitialParentsDelta,MaxParentSetSize, CompeteMultipleHighLowBool);
 	cout << "GeneNet Arugments:\n";
 	for (int i = 0; i < argc; i++){
 		cout << "\t" << argv[i] << "\n";	
@@ -1197,8 +1209,8 @@ void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & 
 		histogram << "#amount seen rose\n";
 		const int num_boxes = 20;
 		const float offset = 2.5;
-		float h_size = ((float)(seen[i].size())/(float)num_boxes);
-		int addInNum = (int)(((int)seen[i].size()) - h_size/2);
+		float h_size = ((float)(seen[i].size())/(float)num_boxes); //The size of boxes in normal values
+		int addInNum = (int)(((int)seen[i].size()) - h_size/2); //Add in the last few if things don't set exactly right
 		float cur_h_size = h_size;
 		for (int j = 0; j < (int)seen[i].size(); ){
 			int seen_i = 0;
@@ -1207,7 +1219,7 @@ void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & 
 				seen_i += seen[i][j];
 				rose_i += rose[i][j];
 			}
-			histogram << ((float)((int)((cur_h_size-h_size)/h_size*(100/num_boxes)))+offset)<< " " << seen_i << " " << rose_i << "\n";
+			histogram << ((float)((((cur_h_size-h_size)/h_size)*((float)(100/num_boxes))))+offset)<< " " << seen_i << " " << rose_i << "\n";
 			if(max_seen[i] < seen_i * h_offset){
 				max_seen[i] = (int)(((float)seen_i) * h_offset);
 			}
