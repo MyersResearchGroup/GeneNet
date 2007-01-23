@@ -1,6 +1,9 @@
 #ifndef NETCON_H_
 #define NETCON_H_
 #include <vector>
+#include <sstream>
+#include <stdio.h>
+#include <iostream>
 
 class Specie;
 class Set;
@@ -10,6 +13,9 @@ class Experiments;
 class NetCon;
 class Thresholds;
 class Encodings;
+
+extern const int COMPETITION_LOG;
+extern int DEBUG_LEVEL;
 
 class NetCon
 {
@@ -29,7 +35,7 @@ public:
 	Set getSingleParentsFor(const Specie & s);
 	void removeSubsets(const Specie & s);
 	int totalParents(const Specie& s);
-	void removeLosers(const Specie& s, const DoubleSet& s1, float * scores);
+	std::string removeLosers(const Specie& s, const DoubleSet& s1, float * scores);
 
 	bool addIfScoreBetterThanSubsets(const Specie & s, const Set & set);
 

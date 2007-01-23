@@ -116,9 +116,10 @@ int NetCon::totalParents(const Specie& s){
 	return myConnections.at(s.getGeneUID())->size();
 }
 
-void NetCon::removeLosers(const Specie & s, const DoubleSet& s1, float * scores){
+std::string NetCon::removeLosers(const Specie & s, const DoubleSet& s1, float * scores){
+	std::ostringstream cs;
 	if (s.getGeneUID() < 0 || s.getGeneUID() >= (int)myConnections.size()){
-		return;
+		return cs.str();
 	}
 	//find the winner
 	float max = 0;
@@ -127,12 +128,23 @@ void NetCon::removeLosers(const Specie & s, const DoubleSet& s1, float * scores)
 			max = fabs(scores[i]);
 		}
 	}
+    if (DEBUG_LEVEL > COMPETITION_LOG){
+	  cs << "One Competition\n";
+    }
 	for (int i = 0; i < s1.size(); i++){
 		if (fabs(fabs(scores[i])-max) > 0.00001 || max < 0.00001){
+		    if (DEBUG_LEVEL > COMPETITION_LOG){
+			  cs << "Parents " << (*s1.get(i)) << " failed with " << scores[i] << "\n";
+		    }
 			myConnections.at(s.getGeneUID())->remove(*s1.get(i));
 		}
+		else{
+		    if (DEBUG_LEVEL > COMPETITION_LOG){
+			  cs << "Parents " << (*s1.get(i)) << " beat with " << scores[i] << "\n";
+		    }			
+		}
 	}	
-	return;
+	return cs.str();
 }
 std::ostream& operator << (std::ostream& cout, const NetCon & source){
 	cout << "Net Con\n";

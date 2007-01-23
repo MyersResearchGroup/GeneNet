@@ -26,6 +26,8 @@ using namespace std;
 
 const int SPECIES_NAME_SIZE = 100;
 
+const int COMPETITION_LOG = 2;
+
 bool HAS_TO_HAVE_MAJORITY = false;
 bool CPP_USE_HARSHER_BOUNDS = false;
 bool KEEP_SORT_ORDER_INVERTED = true;
@@ -40,6 +42,9 @@ int DEBUG_LEVEL = 0;
 string * globDir = NULL;
 
 map<Specie*, map<Set, map<Set, vector<float> > > > * scoreCache = NULL;
+
+ofstream competitionLog;
+
 
 #if defined(_MSC_VER)
 # include <windows.h>
@@ -161,7 +166,12 @@ void callGeneNet(const char * dir, Thresholds & T){
 		cout << "ERROR!, unable to find time specie\n";
 		return;	
 	}
-		
+	if (DEBUG_LEVEL > COMPETITION_LOG){
+		string s = dir;
+		s.append("/GeneNet_competitionLog.txt");
+		cout << "Opening " << s << " for write\n";
+		competitionLog.open(s.c_str(),ios::out);
+	}
 	GeneNet(S,E,C,T,L);
 	if (DEBUG_LEVEL > 1){
 		writeLevels(dir, L,E,T);
@@ -747,9 +757,14 @@ float Score(const Specie& s, const Set& P, const Set& G, const Experiments& E, c
 }
 
 void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, NetCon& C, const Thresholds& T, const Encodings& L){
+  if (DEBUG_LEVEL > COMPETITION_LOG){
+	competitionLog << "Child " << s << "\n";
+  }
+  ostringstream competitionString;
   Thresholds newT(T);
   bool relaxedTheBounds = false;
   while (C.getParentsFor(s)->size() < T.getsip_letNThrough()){
+  	competitionString.str(""); // clear the string if we need to relax the bounds
   	C.getParentsFor(s)->clearAllSets();
   	for (int i = 0; i < S.size(); i++){
   		Specie * p = S.get(i);
@@ -761,10 +776,21 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
   			if (alpha >= newT.getV()){
   				cout << "\t\tMeans an activation parent\n";
   				C.unionIt(*p->toSet(),C.ACTIVATION,s,alpha);
+				if (DEBUG_LEVEL > COMPETITION_LOG){
+					competitionString << "\t" << *p << " passes as activation with " << alpha << "\n";
+				}
   			}
   			else if (alpha <= -newT.getV()){
   				cout << "\t\tMeans a represion parent\n";
   				C.unionIt(*p->toSet(),C.REPRESSION,s,alpha);
+				if (DEBUG_LEVEL > COMPETITION_LOG){
+					competitionString << "\t" << *p << " passes as repression with " << alpha << "\n";
+				}
+  			}
+  			else{
+				if (DEBUG_LEVEL > COMPETITION_LOG){
+					competitionString << "\t" << *p << " fails with " << alpha <<"\n";
+				}	
   			}
   		}
   	}
@@ -775,6 +801,9 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
   	}
   }
   if (relaxedTheBounds){
+	  if (DEBUG_LEVEL > COMPETITION_LOG){
+		competitionLog << "The bounds were relaxed\n";
+	  }
 	  cout << "Rescoring parents with harsher numbers, as we relaxed the bounds\n";
 	  DoubleSet * rescore = C.getParentsFor(s);
 	  for (int i = 0; i < rescore->size(); i++){
@@ -785,6 +814,9 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
 		  cout << "\tScore of " << alpha << " and threshold +- " << T.getV() << " for " << *p << "\n";
 		  rescoreSet->setScore(-1, alpha);
 	  }
+  }
+  if (DEBUG_LEVEL > COMPETITION_LOG){
+	competitionLog << competitionString.str() <<"\n";
   }
   //now print out the parents
   cout << "Initial parents for " << s << " are: " <<  *C.getParentsFor(s) << "\n";  	
@@ -827,6 +859,9 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
   Set baseSet = C.getParentsFor(s)->colapseToSet();
   cout << "In Create Multiple Parents for " << s << " with " << *C.getParentsFor(s) << "\n";
   cout << "\tWhich colapses to " << baseSet << "\n";
+  if (DEBUG_LEVEL > COMPETITION_LOG){
+	competitionLog << "Multiple Parents for " << s << "\n";
+  }
   bool addedASetAtLevel = baseSet.size() > 1;
   int currentNumOfBasesUsed = 2;
   while(addedASetAtLevel && currentNumOfBasesUsed <= T.getMaxParentSetSize()){
@@ -897,11 +932,17 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
     				addedASetAtLevel = true;
 					if (DEBUG_LEVEL>0){
 						cout << "\tIt Was Better than the subsets!\n";
+						if (DEBUG_LEVEL > COMPETITION_LOG){
+							competitionLog << currentWorking << " passes with " << score << "\n";
+						}
 					}
 		    	}
     			else{
 					if (DEBUG_LEVEL>0){
 	    				cout << "\tNot Better\n";	
+						if (DEBUG_LEVEL > COMPETITION_LOG){
+							competitionLog << currentWorking << " fails with " << score << "\n";
+						}
 					}
 				}
     		//}
@@ -909,6 +950,9 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
 		else{
 			if (DEBUG_LEVEL>0){
 				cout << "NOT Checking if set " << currentWorking << " is better than the subsets, as the influences are not similar enough. (within " << T.getInfluenceLevelDelta() << ")\n";
+				if (DEBUG_LEVEL > COMPETITION_LOG){
+					competitionLog << currentWorking << " fails because of similar threshold within " << T.getInfluenceLevelDelta() << "\n";
+				}
 			}
 		}
 	}
@@ -962,6 +1006,9 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
   cout << "Competing parents for child " << s << "\n";
   bool progress = C.totalParents(s) > 1;
   Thresholds T(T_old);
+  if (DEBUG_LEVEL > COMPETITION_LOG){
+	competitionLog << "Competition for " << s << "\n";
+  }
   while (progress){
   	int currentNumParents = C.totalParents(s);
   	vector<DoubleSet> matchups = assignMatchups(s,S,E,C,T,L);
@@ -996,7 +1043,11 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
     		cout << Scores[i] << " ";
     	}
     	cout << "\n";
-    	C.removeLosers(s,Q,Scores);
+    	ostringstream cS;
+    	cS.str(C.removeLosers(s,Q,Scores));
+		if (DEBUG_LEVEL > COMPETITION_LOG){
+			competitionLog << cS.str();
+		}
    		delete [] Scores;
   	}
   	if (CPP_USE_HARSHER_BOUNDS){
@@ -1016,6 +1067,9 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
   	else{
 	  	progress = currentNumParents != C.totalParents(s);
   	}
+  }
+  if (DEBUG_LEVEL > COMPETITION_LOG){
+	competitionLog << "Winner " << *C.getParentsFor(s) <<  "\n\n\n\n";
   }
   cout << "After Competion " << *C.getParentsFor(s) << " is the winner set for child " << s << "\n";
 }
