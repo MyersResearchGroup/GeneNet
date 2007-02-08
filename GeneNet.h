@@ -3,7 +3,7 @@
 
 
 
-void GeneNet(Species& S, Experiments& E, NetCon& C, Thresholds& T, Encodings& L);
+void GeneNet(Species& S, Experiments& E, NetCon& C, Thresholds& T, Encodings& L, const char * dir);
 void EncodeExpts(Species& S, Experiments& E, Thresholds& T, Encodings& L);
 float Score(const Specie& S, const Set& P, const Set& G, const Experiments& E, const Thresholds& T, const Encodings& L);
 float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, const Thresholds& T, const Encodings& L);

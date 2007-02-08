@@ -34,6 +34,8 @@ bool KEEP_SORT_ORDER_INVERTED = true;
 bool CMP_NO_MAJORITY = false;
 float TOSS_VOTES_NUMBER = 1.0001;
 bool TOSS_CHANGED_SINGLE_INFLUENCE = true;
+bool WRITE_LEVELS = false;
+bool READ_LEVELS = false;
 
 extern bool InvertSortOrder;
 
@@ -72,6 +74,8 @@ static void ShowUsage()
         _T("-nb [num] --numBins [num]   		Sets how many bins are used in the evaluation.  Default 3\n")
         _T("-id [num] --influenceLevelDelta [num]	Sets how close CMP parents must be in score to be considered for combination.  Default 0.01\n")
         _T("-rd [num] --relaxIPDelta [num]		Sets how fast the bound is relaxed for a and r if no parents are found in InitialParents, Default 0.025\n")
+        _T("--lvl 							Writes out the suggested levels for every specie\n")
+        _T("--readLevels 					Reads the levels from level.lvl file for every specie\n")
 		_T("--sip_letNThrough [num]			Sets minimum number of parents to allow through in SelectInitialParents. Default 1\n")
 		_T("--cpp_harshenBoundsOnTie		Determins if harsher bounds are used when parents tie in CPP.\n")
 		_T("--cpp_cmp_output_donotInvertSortOrder	Sets the inverted sort order in the 3 places back to normal")
@@ -119,6 +123,9 @@ CSimpleOpt::SOption g_rgOptions[] =
     { 20,        _T("--cmp_score_mustNotWinMajority"),	SO_NONE },
     { 21,        _T("--score_donotTossSingleRatioParents"),	SO_NONE },
     { 22,        _T("--output_donotTossChangedInfluenceSingleParents"),	SO_NONE },
+    { 23,        _T("--lvl"),	SO_NONE },
+    { 24,        _T("--readLevels"),	SO_NONE },
+
     SO_END_OF_OPTIONS
 };
 
@@ -172,10 +179,8 @@ void callGeneNet(const char * dir, Thresholds & T){
 		cout << "Opening " << s << " for write\n";
 		competitionLog.open(s.c_str(),ios::out);
 	}
-	GeneNet(S,E,C,T,L);
-	if (DEBUG_LEVEL > 1){
-		writeLevels(dir, L,E,T);
-	}
+	GeneNet(S,E,C,T,L,dir);
+
 	scoreCache = new map<Specie*, map<Set, map<Set, vector<float> > > >();
 	writeDot(dir, &C, E, T, L);
 	delete globDir;
@@ -328,6 +333,14 @@ int main(int argc, char* argv[]){
             	TOSS_CHANGED_SINGLE_INFLUENCE = false;
             	cout << "\tNo longer tossing single parents that changed influence durring competition\n";
             	break;
+            case 23:
+            	WRITE_LEVELS = true;
+            	cout << "\tWriting out the levels\n";
+            	break;
+            case 24:
+            	READ_LEVELS = true;
+            	cout << "\tReading the levels\n";
+            	break;
             default:
             	cout << "ERROR: unhandled argument\n";
             	exit(1);
@@ -384,11 +397,17 @@ bool fillFromTSD(const char dir[], Species * S, Experiments * E, NetCon * C, Thr
 	return true;
 }
 
-void GeneNet(Species &S, Experiments &E, NetCon &C, Thresholds &T, Encodings &L){
+void GeneNet(Species &S, Experiments &E, NetCon &C, Thresholds &T, Encodings &L, const char * dir){
 
   cout << "Encoding the experiments\n";
   EncodeExpts(S,E,T,L);
   cout << "Finished encoding\n";
+
+  if (WRITE_LEVELS){
+	writeLevels(dir, L,E,T);
+	exit(0);
+  }
+
 
   //int ParentSetsRemoved = 0;
 
@@ -424,6 +443,10 @@ void GeneNet(Species &S, Experiments &E, NetCon &C, Thresholds &T, Encodings &L)
 
 
 void EncodeExpts(Species& S, Experiments& E, Thresholds & T, Encodings& L){
+	if (READ_LEVELS){
+		cout << "READING LEVELS NOT YET IMPLEMENTED\n";
+		exit(0);	
+	}
 	L.initialize(&S,&E,&T);
 	cout << "Filling hashes now\n";
 	if (!L.useBins(T.getBins())){
