@@ -105,6 +105,9 @@ void DoubleSet::removeSubsets(){
 			if (myDoubleSet.at(i)->contains(*myDoubleSet.at(j))){
 				//v.push_back(myDoubleSet.at(i));
 				Set * s = *(myDoubleSet.begin()+j);
+				if (DEBUG_LEVEL > 0){
+					std::cout << "\t\tRemoving " << *s << " because it is a subset\n";
+				}			
 				myDoubleSet.erase(myDoubleSet.begin()+j);
 				delete s;
 				i--;
@@ -118,6 +121,9 @@ void DoubleSet::filterByScore(float f){
 	for (int i = 0; i < (int)myDoubleSet.size(); i++){
 		if (fabs(myDoubleSet.at(i)->getScore()) < f){
 			Set * s = *(myDoubleSet.begin()+i);
+			if (DEBUG_LEVEL > 0){
+				std::cout << "\t\tRemoving " << *s << " because of score fabs(" << s->getScore() << ") < " << f << "\n";
+			}			
 			myDoubleSet.erase(myDoubleSet.begin()+i);
 			delete s;
 			i--;
