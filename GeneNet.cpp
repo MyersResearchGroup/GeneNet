@@ -115,6 +115,8 @@ CSimpleOpt::SOption g_rgOptions[] =
     {  9,        _T("--windowSize"),			SO_REQ_SEP },
     { 10,        _T("-nb"),						SO_REQ_SEP },
     { 11,        _T("--numBins"),				SO_REQ_SEP },
+    { 12,        _T("-id"),						SO_REQ_SEP },
+    { 13,        _T("--influenceLevelDelta"),	SO_REQ_SEP },
     { 14,        _T("-rd"),						SO_REQ_SEP },
     { 15,        _T("--relaxIPDelta"),			SO_REQ_SEP },
     { 16,        _T("--sip_letNThrough"),		SO_REQ_SEP },
