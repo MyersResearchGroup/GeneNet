@@ -244,6 +244,7 @@ int main(int argc, char* argv[]){
             _tprintf(
                 _T("%s: '%s' (use --help to get command line help)\n"),
                 pszError, args.OptionText());
+                exit(0);
             continue;
         }
 
@@ -410,7 +411,9 @@ void GeneNet(Species &S, Experiments &E, NetCon &C, Thresholds &T, Encodings &L,
   cout << "Encoding the experiments\n";
   EncodeExpts(S,E,T,L);
   cout << "Finished encoding\n";
-
+  if (READ_LEVELS){
+	readLevels(dir, L,E,T);
+  }
   if (WRITE_LEVELS){
 	writeLevels(dir, L,E,T);
 	exit(0);
@@ -451,18 +454,16 @@ void GeneNet(Species &S, Experiments &E, NetCon &C, Thresholds &T, Encodings &L,
 
 
 void EncodeExpts(Species& S, Experiments& E, Thresholds & T, Encodings& L){
-	if (READ_LEVELS){
-		cout << "READING LEVELS NOT YET IMPLEMENTED\n";
-		exit(0);	
-	}
 	L.initialize(&S,&E,&T);
 	cout << "Filling hashes now\n";
-	if (!L.useBins(T.getBins())){
+	if (READ_LEVELS){
+	}
+	else if (!L.useBins(T.getBins())){
 		cout << "ERROR! Bins didn't work\n";
 		exit(0);
 	}
+	cout << "Finished initializing\n";
 	//L.useNumbers(3);
-	cout << "Finished setting up the hashes\n";
 	return;
 }
 
@@ -1320,6 +1321,8 @@ void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & 
 		lvl_file << p->getGeneName() << "";
 		std::vector<float> v = L.getLevels(p);
 		
+		//write the number of levels
+		lvl_file << ", " << ((int) v.size()+1);
 		//write the level file
 		for (int j = 0; j < (int) v.size(); j++){
 			lvl_file << ", " << v.at(j);
@@ -1377,5 +1380,19 @@ void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & 
 		}		
 	}
 
+	lvl_file.close();
+}
+
+
+void readLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & T){
+	string s = dir;
+	s.append("/levels.lvl");
+	cout << "Opening " << s << " for read\n";
+	cout << "Reading file for levels\n";
+	ifstream lvl_file(s.c_str(),ios::in);
+	if(! L.useFile(lvl_file)){
+		cout << "ERROR: Unable to read levels file\n";
+		exit(0);
+	}
 	lvl_file.close();
 }

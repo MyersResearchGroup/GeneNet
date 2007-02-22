@@ -6,6 +6,8 @@
 
 extern int DEBUG_LEVEL;
 
+using namespace std;
+
 Encodings::Encodings()
 {
 	s = NULL;
@@ -112,6 +114,12 @@ bool Encodings::useBins(int numBins){
 			return false;
 		}
 	}
+	printLevels();
+	fillTSD();
+	return true;
+}
+
+void Encodings::printLevels(){
 	//Print the levels
 	for (int i = 0; i < (int)levels.size(); i++){
 		Specie * p = Specie::getInstance("??",i);
@@ -122,10 +130,59 @@ bool Encodings::useBins(int numBins){
 		}
 		std::cout << "\n";
 	}
+}
+bool Encodings::useFile(ifstream & lvl_file){
+	clearLevels();
+	for (int i = 0; i <= totalSpecies(); i++){
+		levels.push_back(new std::vector<float>());
+		std::vector<float> * f = levels.at(i);
+		string name;
+		int num_levels;
+		float tmp;
+		char c;
+		lvl_file >> name;
+		name = name.substr(0,name.size()-1); // remove the , at the end
+		if (name != Specie::getInstance("??",i)->getGeneName()){
+			cout << "ERROR: reading file names do not match in lvl file\n";
+			cout << "'" << name << "' != '" << Specie::getInstance("??",i)->getGeneName() << "'\n";
+			exit(0);
+		}
+		else{
+			//cout << "Names match " << name << "\n";	
+		}
+		lvl_file >> num_levels;
+		if(num_levels > 9){
+			cout << "TOO Many BINS!\n";
+			return false;	
+		}
+		else if (num_levels > 1){
+			for (int i = 1; i < num_levels; i++){
+				lvl_file >> c;
+				lvl_file >> tmp;
+				//cout << "\tread " << tmp << "\n";
+				if (i > 1){
+					if (f->at(((int)f->size())-1) < tmp){
+						f->push_back(tmp);
+					}
+					else{
+						cout << "ERROR: levels are not ordered for " << name << " " << f->at(((int)f->size())-1) << " !< " << tmp << "\n";
+						return false;
+					}
+				}
+				else{
+					f->push_back(tmp);
+				}
+			}
+			if ((int)f->size() + 1 != num_levels){ //1 less level barier than levels
+				cout << "ERROR:, read in an incorect number of levels " << (int)f->size() << " not " << num_levels << "\n";
+				return false;
+			}
+		}
+	}
+	printLevels();
 	fillTSD();
 	return true;
 }
-
 
 bool Encodings::useNumbers(int numBins){
 	if(numBins > 9){

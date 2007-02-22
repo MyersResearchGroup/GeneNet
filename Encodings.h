@@ -2,6 +2,7 @@
 #define ENCODINGS_H_
 #include <vector>
 #include <fstream>
+#include <iostream>
 #include "Species.h"
 #include "Experiments.h"
 #include "Set.h"
@@ -17,8 +18,10 @@ public:
 	int totalSpecies() const;
 	bool useBins(int numBins);
 	bool useNumbers(int numBins);
+	bool useFile(ifstream & lvl_file);
 	std::vector<float> getLevels(const Specie * s) const;
 	float getProb(const Specie * child, const std::vector<int> * l1, const std::vector<int> * l2) const;
+	void printLevels();
 private:
 	void clearLevels();
 	std::vector<std::vector<float>*> levels;
