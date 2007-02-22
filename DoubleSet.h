@@ -15,6 +15,7 @@ public:
 	Set remove(int i);
 	Set remove(const Set & s1);
 	void removeSubsets();
+	void filterByScore(float f);
 	Set * get(int i) const;
 	void unionIt(const Set & s2);
 	const DoubleSet & operator=(const DoubleSet & s);
@@ -22,6 +23,7 @@ public:
 	bool addIfScoreBetterThanSubsets(const Set & s);
 	void clearAllSets();
 	Set colapseToSet() const;
+
 	
 	friend DoubleSet unionIt(const DoubleSet& s1, Set & s2);
 private:

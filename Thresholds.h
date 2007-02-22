@@ -18,6 +18,8 @@ public:
 	int getMaxParentSetSize() const {return maxParentSetSize;}
 	bool competeMultipleHighLow() const {return competeMultipleHighLowBool;}
 	void setCompeteMultipleHighLow(bool a) {competeMultipleHighLowBool = a;}
+	float getBackgroundKnowledgeFilter() const {return backgroundKnowledgeFilter;}
+
 
 	void setA(float F) {a = F;}
 	void setR(float F) {r = F;}
@@ -27,6 +29,7 @@ public:
 	void setWindowSize(int F) {windowSize = F;}
 	void setInfluenceLevelDelta(float F) {influenceLevelDelta = F;}
 	void setRelaxInitialParentsDelta(float F) {relaxInitialParentsDelta = F;}
+	void setBackgroundKnowledgeFilter(float F) {backgroundKnowledgeFilter = F;}
 	
 	void setsip_letNThrough(int i){sip_letNThrough = i;}
 	int getsip_letNThrough() const {return sip_letNThrough;}
@@ -46,6 +49,7 @@ private:
 	bool competeMultipleHighLowBool;
 	//float postFilter
 	int sip_letNThrough;
+	float backgroundKnowledgeFilter;
 };
 
 #endif /*THRESHOLDS_H_*/

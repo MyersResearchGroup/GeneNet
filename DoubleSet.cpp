@@ -114,6 +114,17 @@ void DoubleSet::removeSubsets(){
 	//return v;
 }
 
+void DoubleSet::filterByScore(float f){
+	for (int i = 0; i < (int)myDoubleSet.size(); i++){
+		if (myDoubleSet.at(i)->getScore() < f){
+			Set * s = *(myDoubleSet.begin()+i);
+			myDoubleSet.erase(myDoubleSet.begin()+i);
+			delete s;
+			i--;
+		}	
+	}
+}
+
 bool DoubleSet::contains(const Set & s){
 	for (int i = 0; i < (int) myDoubleSet.size(); i++){
 		if (*myDoubleSet.at(i) == s){

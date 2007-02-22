@@ -109,6 +109,15 @@ void NetCon::removeSubsets(const Specie & s){
 	return;
 }
 
+void NetCon::filterByScore(const Specie & s,float f){
+	if (s.getGeneUID() < 0 || s.getGeneUID() >= (int)myConnections.size()){
+		std::cout << "ERROR: Removing subsets for an invalid set\n";
+		return;
+	}
+	myConnections.at(s.getGeneUID())->filterByScore(f);
+	return;
+}
+
 int NetCon::totalParents(const Specie& s){
 	if (s.getGeneUID() < 0 || s.getGeneUID() >= (int)myConnections.size()){
 		return 0;

@@ -74,6 +74,7 @@ static void ShowUsage()
         _T("-nb [num] --numBins [num]   		Sets how many bins are used in the evaluation.  Default 3\n")
         _T("-id [num] --influenceLevelDelta [num]	Sets how close CMP parents must be in score to be considered for combination.  Default 0.01\n")
         _T("-rd [num] --relaxIPDelta [num]		Sets how fast the bound is relaxed for a and r if no parents are found in InitialParents, Default 0.025\n")
+        _T("-bkf [num] --BackgroundKnowledgeFilter [num]		Sets the score for which parents are filtered, Default 0.0\n")
         _T("--lvl 							Writes out the suggested levels for every specie\n")
         _T("--readLevels 					Reads the levels from level.lvl file for every specie\n")
 		_T("--sip_letNThrough [num]			Sets minimum number of parents to allow through in SelectInitialParents. Default 1\n")
@@ -125,6 +126,8 @@ CSimpleOpt::SOption g_rgOptions[] =
     { 22,        _T("--output_donotTossChangedInfluenceSingleParents"),	SO_NONE },
     { 23,        _T("--lvl"),	SO_NONE },
     { 24,        _T("--readLevels"),	SO_NONE },
+    { 25,        _T("-bkf"),						SO_REQ_SEP },
+    { 26,        _T("--BackgroundKnowledgeFilter"),			SO_REQ_SEP },
 
     SO_END_OF_OPTIONS
 };
@@ -298,6 +301,11 @@ int main(int argc, char* argv[]){
             case 16:
             	T.setsip_letNThrough(atoi(args.OptionArg()));
             	cout << "\tSetting sip_letNThrough to '" << T.getsip_letNThrough() << "'\n";
+            	break;
+            case 25:
+            case 26:
+            	T.setBackgroundKnowledgeFilter(atoi(args.OptionArg()));
+            	cout << "\tSetting BackgroundKnowledgeFilter to '" << T.getBackgroundKnowledgeFilter() << "'\n";
             	break;
             default:
             	cout << "ERROR: unhandled argument\n";
@@ -980,6 +988,7 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
 		}
 	}
 	C.removeSubsets(s);
+	C.filterByScore(s,T.getBackgroundKnowledgeFilter());
 	delete [] currentBases;
    	currentNumOfBasesUsed++;
   }
