@@ -116,7 +116,7 @@ void DoubleSet::removeSubsets(){
 
 void DoubleSet::filterByScore(float f){
 	for (int i = 0; i < (int)myDoubleSet.size(); i++){
-		if (myDoubleSet.at(i)->getScore() < f){
+		if (fabs(myDoubleSet.at(i)->getScore()) < f){
 			Set * s = *(myDoubleSet.begin()+i);
 			myDoubleSet.erase(myDoubleSet.begin()+i);
 			delete s;

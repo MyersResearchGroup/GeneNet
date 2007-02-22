@@ -304,7 +304,7 @@ int main(int argc, char* argv[]){
             	break;
             case 25:
             case 26:
-            	T.setBackgroundKnowledgeFilter(atoi(args.OptionArg()));
+            	T.setBackgroundKnowledgeFilter(atof(args.OptionArg()));
             	cout << "\tSetting BackgroundKnowledgeFilter to '" << T.getBackgroundKnowledgeFilter() << "'\n";
             	break;
             default:
@@ -988,10 +988,10 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
 		}
 	}
 	C.removeSubsets(s);
-	C.filterByScore(s,T.getBackgroundKnowledgeFilter());
 	delete [] currentBases;
    	currentNumOfBasesUsed++;
   }
+  C.filterByScore(s,T.getBackgroundKnowledgeFilter());
   cout << "Multiple parents for " << s << " are: " << *C.getParentsFor(s) << "\n";
 }
 
