@@ -1,6 +1,8 @@
 #include "Thresholds.h"
 #include <iostream>
 
+extern float floatCompareValue;
+
 Thresholds::Thresholds(float A, float R, float V, int RisingAmount, int WindowSize, int NumBins, float InfluenceLevelDelta, float RelaxInitialParentsDelta, int MaxParentSetSize, bool CompeteMultipleHighLowBool)
 {
 	a = A;
@@ -15,7 +17,7 @@ Thresholds::Thresholds(float A, float R, float V, int RisingAmount, int WindowSi
 	competeMultipleHighLowBool = CompeteMultipleHighLowBool;
 	//postFilter = PostFilter;
 	sip_letNThrough = 1;
-	backgroundKnowledgeFilter = 0.0;
+	default_IV_filter = 0.0;
 }
 
 Thresholds::~Thresholds()
@@ -33,9 +35,9 @@ void Thresholds::relaxInitialParentsThresholds(){
 		r = 1;	
 	}
 	
-	if (a == 1 && r == 1){
+	if (a <= 1+floatCompareValue && r <= 1+floatCompareValue){
 		std::cout << "ERROR:  Activation or Represison thresholds reduced too much: " << a << " " << r << "\n";
-		exit(0);
+		//exit(0);
 	}
 }
 

@@ -40,6 +40,7 @@ bool READ_LEVELS = false;
 extern bool InvertSortOrder;
 
 int DEBUG_LEVEL = 0;
+float floatCompareValue = 0.000001;
 
 string * globDir = NULL;
 
@@ -74,7 +75,7 @@ static void ShowUsage()
         _T("-nb [num] --numBins [num]   		Sets how many bins are used in the evaluation.  Default 3\n")
         _T("-id [num] --influenceLevelDelta [num]	Sets how close CMP parents must be in score to be considered for combination.  Default 0.01\n")
         _T("-rd [num] --relaxIPDelta [num]		Sets how fast the bound is relaxed for a and r if no parents are found in InitialParents, Default 0.025\n")
-        _T("-bkf [num] --BackgroundKnowledgeFilter [num]		Sets the score for which parents are filtered, Default 0.0\n")
+        _T("-bkf [num] --default_IV_filter [num]		Sets the score for which parents are filtered, Default 0.0\n")
         _T("--lvl 							Writes out the suggested levels for every specie\n")
         _T("--readLevels 					Reads the levels from level.lvl file for every specie\n")
 		_T("--sip_letNThrough [num]			Sets minimum number of parents to allow through in SelectInitialParents. Default 1\n")
@@ -129,7 +130,7 @@ CSimpleOpt::SOption g_rgOptions[] =
     { 23,        _T("--lvl"),	SO_NONE },
     { 24,        _T("--readLevels"),	SO_NONE },
     { 25,        _T("-bkf"),						SO_REQ_SEP },
-    { 26,        _T("--BackgroundKnowledgeFilter"),			SO_REQ_SEP },
+    { 26,        _T("--default_IV_filter"),			SO_REQ_SEP },
 
     SO_END_OF_OPTIONS
 };
@@ -307,8 +308,8 @@ int main(int argc, char* argv[]){
             	break;
             case 25:
             case 26:
-            	T.setBackgroundKnowledgeFilter(atof(args.OptionArg()));
-            	cout << "\tSetting BackgroundKnowledgeFilter to '" << T.getBackgroundKnowledgeFilter() << "'\n";
+            	T.setdefault_IV_filter(atof(args.OptionArg()));
+            	cout << "\tSetting default_IV_filter to '" << T.getdefault_IV_filter() << "'\n";
             	break;
             default:
             	cout << "ERROR: unhandled argument\n";
@@ -797,7 +798,8 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
   ostringstream competitionString;
   Thresholds newT(T);
   bool relaxedTheBounds = false;
-  while (C.getParentsFor(s)->size() < T.getsip_letNThrough()){
+  bool canRelaxMore = true;
+  while (C.getParentsFor(s)->size() < T.getsip_letNThrough() && canRelaxMore){
   	competitionString.str(""); // clear the string if we need to relax the bounds
   	C.getParentsFor(s)->clearAllSets();
   	for (int i = 0; i < S.size(); i++){
@@ -832,7 +834,11 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
   		relaxedTheBounds = true;
 		newT.relaxInitialParentsThresholds();
   		cout << "There are no parents for " << s << ", relaxing the thresholds to [" << newT.getR() << ", " << newT.getA() << "]\n";
-  	}
+	 	if (newT.getA() <= 1+floatCompareValue && newT.getR() <= 1+floatCompareValue){
+	 		cout << "CANNOT RELAX BOUNDS MORE TO LET " << T.getsip_letNThrough() << " parent through\n";
+	 		canRelaxMore = false;
+		}
+	 }
   }
   if (relaxedTheBounds){
 	  if (DEBUG_LEVEL > COMPETITION_LOG){
@@ -994,7 +1000,7 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
 	delete [] currentBases;
    	currentNumOfBasesUsed++;
   }
-  C.filterByScore(s,T.getBackgroundKnowledgeFilter());
+  C.filterByScore(s,T.getdefault_IV_filter());
   cout << "Multiple parents for " << s << " are: " << *C.getParentsFor(s) << "\n";
 }
 

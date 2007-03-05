@@ -1,6 +1,7 @@
 #ifndef THRESHOLDS_H_
 #define THRESHOLDS_H_
 
+
 class Thresholds
 {
 public:
@@ -18,7 +19,7 @@ public:
 	int getMaxParentSetSize() const {return maxParentSetSize;}
 	bool competeMultipleHighLow() const {return competeMultipleHighLowBool;}
 	void setCompeteMultipleHighLow(bool a) {competeMultipleHighLowBool = a;}
-	float getBackgroundKnowledgeFilter() const {return backgroundKnowledgeFilter;}
+	float getdefault_IV_filter() const {return default_IV_filter;}
 
 
 	void setA(float F) {a = F;}
@@ -29,7 +30,7 @@ public:
 	void setWindowSize(int F) {windowSize = F;}
 	void setInfluenceLevelDelta(float F) {influenceLevelDelta = F;}
 	void setRelaxInitialParentsDelta(float F) {relaxInitialParentsDelta = F;}
-	void setBackgroundKnowledgeFilter(float F) {backgroundKnowledgeFilter = F;}
+	void setdefault_IV_filter(float F) {default_IV_filter = F;}
 	
 	void setsip_letNThrough(int i){sip_letNThrough = i;}
 	int getsip_letNThrough() const {return sip_letNThrough;}
@@ -49,7 +50,7 @@ private:
 	bool competeMultipleHighLowBool;
 	//float postFilter
 	int sip_letNThrough;
-	float backgroundKnowledgeFilter;
+	float default_IV_filter;
 };
 
 #endif /*THRESHOLDS_H_*/
