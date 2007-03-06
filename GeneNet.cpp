@@ -1291,7 +1291,7 @@ void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & 
 			}
 		}	
 	}
-	for (int i = 0; i < L.totalSpecies(); i++){
+	for (int i = 1; i <= L.totalSpecies(); i++){
 		Specie * p = Specie::getInstance("??",i);
 		string t = dir;
 		t.append("/histogram_");
@@ -1324,7 +1324,7 @@ void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & 
 	}
 
 
-	for (int i = 0; i <= L.totalSpecies(); i++){
+	for (int i = 1; i <= L.totalSpecies(); i++){
 		Specie * p = Specie::getInstance("??",i);
 		lvl_file << p->getGeneName() << "";
 		std::vector<float> v = L.getLevels(p);
@@ -1338,54 +1338,45 @@ void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & 
 		lvl_file << "\n";
 
 		//write to the other histogram files
-		for (int j = 0; j <= L.totalSpecies(); j++){
-			if (j != i){
-				Specie * q = Specie::getInstance("??",j);
-				string t = dir;
-				t.append("/histogram_");
-				t.append(p->getGeneName());
-				t.append("_");
-				t.append(q->getGeneName());
-				t.append(".gnuplot");
+		string t = dir;
+		t.append("/histogram_");
+		t.append(p->getGeneName());
+		t.append(".gnuplot");
 
-				string u = "histogram_";
-				u.append(p->getGeneName());
-				string w = u;
-				w.append("_");
-				w.append(q->getGeneName());
-				w.append(".ps");
-				u.append(".dat");
-	
-				ofstream histogram(t.c_str(),ios::out);
-				histogram << "set out '" << w << "'\n";
-				histogram << "set terminal postscript eps color\n";
-				histogram << "set size 0.4,0.6\n";
-				histogram << "set title \"Expression table for " << p->getGeneName() << "\"\n";
-				histogram << "set xlabel \"Expression level\"\n";
-				histogram << "set ylabel \"Number of times seen\"\n";
-				histogram << "#set autoscale\n";
-				histogram << "set xrange [0:100]\n";
-				histogram << "set yrange [0:" << max_seen[i] << "]\n";
-				histogram << "set xtics 25\n";
-				histogram << "set ytics 200\n";
-				histogram << "set style fill solid border -1\n";
-				histogram << "set boxwidth " << histogram_size-1 << "\n";
-				histogram << "\n#Use the nearest 5th for the line, but also include the real histogram level\n";
-				for (int k = 0; k < (int) v.size(); k++){
-					int a = (int)((float)100*(float)v.at(k)/(float)seen[i].size());
-				    histogram <<  "#set arrow from " << a << ",0 to " << a << "," << max_seen[i] << " nohead lt 1 front\n";
-					float b = (int)a%5;
-					a -= (int)b;
-					if (b > 2.5){
-						a += 5;
-					}
-				    histogram <<  "set arrow from " << a << ",0 to " << a << "," << max_seen[i] << " nohead lt 1 front\n";
-				}
-				histogram << "\nplot ";
-				histogram << " \"" << u << "\" using 1:2 title '' with boxes lt 3\n";
-				histogram.close();
+		string u = "histogram_";
+		u.append(p->getGeneName());
+		string w = u;
+		w.append(".ps");
+		u.append(".dat");
+
+		ofstream histogram(t.c_str(),ios::out);
+		histogram << "set out '" << w << "'\n";
+		histogram << "set terminal postscript eps color\n";
+		histogram << "set size 0.4,0.6\n";
+		histogram << "set title \"Expression table for " << p->getGeneName() << "\"\n";
+		histogram << "set xlabel \"Expression level\"\n";
+		histogram << "set ylabel \"Number of times seen\"\n";
+		histogram << "#set autoscale\n";
+		histogram << "set xrange [0:100]\n";
+		histogram << "set yrange [0:" << max_seen[i] << "]\n";
+		histogram << "set xtics 25\n";
+		histogram << "set ytics 200\n";
+		histogram << "set style fill solid border -1\n";
+		histogram << "set boxwidth " << histogram_size-1 << "\n";
+		histogram << "\n#Use the nearest 5th for the line, but also include the real histogram level\n";
+		for (int k = 0; k < (int) v.size(); k++){
+			int a = (int)((float)100*(float)v.at(k)/(float)seen[i].size());
+		    histogram <<  "#set arrow from " << a << ",0 to " << a << "," << max_seen[i] << " nohead lt 1 front\n";
+			float b = (int)a%5;
+			a -= (int)b;
+			if (b > 2.5){
+				a += 5;
 			}
-		}		
+		    histogram <<  "set arrow from " << a << ",0 to " << a << "," << max_seen[i] << " nohead lt 1 front\n";
+		}
+		histogram << "\nplot ";
+		histogram << " \"" << u << "\" using 1:2 title '' with boxes lt 3\n";
+		histogram.close();
 	}
 
 	lvl_file.close();
