@@ -1360,7 +1360,7 @@ void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & 
 		histogram << "set xrange [0:100]\n";
 		histogram << "set yrange [0:" << max_seen[i] << "]\n";
 		histogram << "set xtics 25\n";
-		histogram << "set ytics 200\n";
+		histogram << "set ytics " << ((int)max_seen[i]/4) << "\n";
 		histogram << "set style fill solid border -1\n";
 		histogram << "set boxwidth " << histogram_size-1 << "\n";
 		histogram << "\n#Use the nearest 5th for the line, but also include the real histogram level\n";
@@ -1374,6 +1374,8 @@ void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & 
 			}
 		    histogram <<  "set arrow from " << a << ",0 to " << a << "," << max_seen[i] << " nohead lt 1 front\n";
 		}
+	    histogram <<  "#set arrow from 33.3333333333333,0 to 33.3333333333333," << max_seen[i] << " nohead lt 2 front\n";
+	    histogram <<  "#set arrow from 66.6666666666666,0 to 66.6666666666666," << max_seen[i] << " nohead lt 2 front\n";
 		histogram << "\nplot ";
 		histogram << " \"" << u << "\" using 1:2 title '' with boxes lt 3\n";
 		histogram.close();
