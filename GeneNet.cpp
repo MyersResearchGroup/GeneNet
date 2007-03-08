@@ -1302,8 +1302,10 @@ void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & 
 		}
 		ofstream histogram(t.c_str(),ios::out);
 		histogram << "#amount seen rose\n";
-		const int num_boxes = 20;
+		//const int num_boxes = 20;
+		const int num_boxes = 15;
 		const float offset = 2.5;
+		//const float offset = 0;
 		float h_size = ((float)(seen[i].size())/(float)num_boxes); //The size of boxes in normal values
 		int addInNum = (int)(((int)seen[i].size()) - h_size/2); //Add in the last few if things don't set exactly right
 		float cur_h_size = h_size;
@@ -1314,7 +1316,7 @@ void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & 
 				seen_i += seen[i][j];
 				rose_i += rose[i][j];
 			}
-			histogram << ((float)((((cur_h_size-h_size)/h_size)*((float)(100/num_boxes))))+offset)<< " " << seen_i << " " << rose_i << "\n";
+			histogram << ((float)((((cur_h_size-h_size)/h_size)*((float)(100.0f/(float)num_boxes))))+offset)<< " " << seen_i << " " << rose_i << "\n";
 			if(max_seen[i] < seen_i * h_offset){
 				max_seen[i] = (int)(((float)seen_i) * h_offset);
 			}
@@ -1374,8 +1376,8 @@ void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & 
 			}
 		    histogram <<  "set arrow from " << a << ",0 to " << a << "," << max_seen[i] << " nohead lt 1 front\n";
 		}
-	    histogram <<  "#set arrow from 33.3333333333333,0 to 33.3333333333333," << max_seen[i] << " nohead lt 2 front\n";
-	    histogram <<  "#set arrow from 66.6666666666666,0 to 66.6666666666666," << max_seen[i] << " nohead lt 2 front\n";
+	    histogram <<  "set arrow from 33.3333333333333,0 to 33.3333333333333," << max_seen[i] << " nohead lt 2 front\n";
+	    histogram <<  "set arrow from 66.6666666666666,0 to 66.6666666666666," << max_seen[i] << " nohead lt 2 front\n";
 		histogram << "\nplot ";
 		histogram << " \"" << u << "\" using 1:2 title '' with boxes lt 3\n";
 		histogram.close();
