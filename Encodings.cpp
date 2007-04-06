@@ -131,7 +131,7 @@ void Encodings::printLevels(){
 		std::cout << "\n";
 	}
 }
-bool Encodings::useFile(ifstream & lvl_file){
+bool Encodings::useFile(ifstream & lvl_file, bool checkOrdering){
 	clearLevels();
 	for (int i = 0; i <= totalSpecies(); i++){
 		levels.push_back(new std::vector<float>());
@@ -161,7 +161,7 @@ bool Encodings::useFile(ifstream & lvl_file){
 				lvl_file >> tmp;
 				//cout << "\tread " << tmp << "\n";
 				if (i > 1){
-					if (f->at(((int)f->size())-1) < tmp){
+					if (f->at(((int)f->size())-1) < tmp || !checkOrdering){
 						f->push_back(tmp);
 					}
 					else{

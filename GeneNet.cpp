@@ -1393,7 +1393,7 @@ void readLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & T
 	cout << "Opening " << s << " for read\n";
 	cout << "Reading file for levels\n";
 	ifstream lvl_file(s.c_str(),ios::in);
-	if(! L.useFile(lvl_file)){
+	if(! L.useFile(lvl_file, !WRITE_LEVELS)){
 		cout << "ERROR: Unable to read levels file\n";
 		exit(0);
 	}
