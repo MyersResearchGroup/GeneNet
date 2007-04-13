@@ -418,6 +418,8 @@ void GeneNet(Species &S, Experiments &E, NetCon &C, Thresholds &T, Encodings &L,
 	readLevels(dir, L,E,T);
   }
   if (WRITE_LEVELS){
+  	READ_LEVELS = false;
+	EncodeExpts(S,E,T,L);
 	writeLevels(dir, L,E,T);
 	exit(0);
   }
@@ -1326,7 +1328,7 @@ void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & 
 	}
 
 
-	for (int i = 1; i <= L.totalSpecies(); i++){
+	for (int i = 0; i <= L.totalSpecies(); i++){
 		Specie * p = Specie::getInstance("??",i);
 		lvl_file << p->getGeneName() << "";
 		std::vector<float> v = L.getLevels(p);
