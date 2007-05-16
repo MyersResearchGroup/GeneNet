@@ -76,6 +76,7 @@ static void ShowUsage()
         _T("-id [num] --influenceLevelDelta [num]	Sets how close CMP parents must be in score to be considered for combination.  Default 0.01\n")
         _T("-rd [num] --relaxIPDelta [num]		Sets how fast the bound is relaxed for a and r if no parents are found in InitialParents, Default 0.025\n")
         _T("-bkf [num] --default_IV_filter [num]		Sets the score for which parents are filtered, Default 0.0\n")
+        _T("-tj [num] 						Sets the max size of merged influence vectors, Default 2\n")
         _T("--lvl 							Writes out the suggested levels for every specie\n")
         _T("--readLevels 					Reads the levels from level.lvl file for every specie\n")
 		_T("--sip_letNThrough [num]			Sets minimum number of parents to allow through in SelectInitialParents. Default 1\n")
@@ -131,6 +132,7 @@ CSimpleOpt::SOption g_rgOptions[] =
     { 24,        _T("--readLevels"),	SO_NONE },
     { 25,        _T("-bkf"),						SO_REQ_SEP },
     { 26,        _T("--default_IV_filter"),			SO_REQ_SEP },
+    { 27,        _T("-tj"),							SO_REQ_SEP },
 
     SO_END_OF_OPTIONS
 };
@@ -310,6 +312,10 @@ int main(int argc, char* argv[]){
             case 26:
             	T.setdefault_IV_filter(atof(args.OptionArg()));
             	cout << "\tSetting default_IV_filter to '" << T.getdefault_IV_filter() << "'\n";
+            	break;
+            case 27:
+            	T.setMaxParentSetSize(atoi(args.OptionArg()));
+            	cout << "\tSetting tj to '" << T.getMaxParentSetSize() << "'\n";
             	break;
             default:
             	cout << "ERROR: unhandled argument\n";

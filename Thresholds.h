@@ -31,6 +31,7 @@ public:
 	void setInfluenceLevelDelta(float F) {influenceLevelDelta = F;}
 	void setRelaxInitialParentsDelta(float F) {relaxInitialParentsDelta = F;}
 	void setdefault_IV_filter(float F) {default_IV_filter = F;}
+	void setMaxParentSetSize(int F ) {maxParentSetSize = F;}
 	
 	void setsip_letNThrough(int i){sip_letNThrough = i;}
 	int getsip_letNThrough() const {return sip_letNThrough;}
