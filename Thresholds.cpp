@@ -5,19 +5,19 @@ extern float floatCompareValue;
 
 Thresholds::Thresholds(float A, float R, float V, int RisingAmount, int WindowSize, int NumBins, float InfluenceLevelDelta, float RelaxInitialParentsDelta, int MaxParentSetSize, bool CompeteMultipleHighLowBool)
 {
-	a = A;
-	r = R;
-	v = V;
+	tf = A;
+	ta = R;
+	ti = V;
 	risingAmount = RisingAmount;
 	windowSize = WindowSize;
 	numBins = NumBins;
-	influenceLevelDelta = InfluenceLevelDelta;
+	tm = InfluenceLevelDelta;
 	relaxInitialParentsDelta = RelaxInitialParentsDelta;
 	maxParentSetSize = MaxParentSetSize;
 	competeMultipleHighLowBool = CompeteMultipleHighLowBool;
 	//postFilter = PostFilter;
 	sip_letNThrough = 1;
-	default_IV_filter = 0.0;
+	tp = 0.51;
 }
 
 Thresholds::~Thresholds()
@@ -25,27 +25,27 @@ Thresholds::~Thresholds()
 }
 
 void Thresholds::relaxInitialParentsThresholds(){
-	a -= relaxInitialParentsDelta;
-	r += relaxInitialParentsDelta;
+	tf -= relaxInitialParentsDelta;
+	ta += relaxInitialParentsDelta;
 	
-	if (a < 1){
-		a = 1;	
+	if (tf < 1){
+		tf = 1;	
 	}
-	if (r > 1){
-		r = 1;	
+	if (ta > 1){
+		ta = 1;	
 	}
 	
-	if (a <= 1+floatCompareValue && r <= 1+floatCompareValue){
-		std::cout << "ERROR:  Activation or Represison thresholds reduced too much: " << a << " " << r << "\n";
+	if (tf <= 1+floatCompareValue && ta <= 1+floatCompareValue){
+		std::cout << "ERROR:  Activation or Represison thresholds reduced too much: " << tf << " " << ta << "\n";
 		//exit(0);
 	}
 }
 
 bool Thresholds::harshenInitialParentsThresholds(){
-	a += relaxInitialParentsDelta;
-	r -= relaxInitialParentsDelta;
-	if (a > 5 || r < 0){
-		std::cout << "ERROR:  Activation or Represison thresholds harshened too much: " << a << " " << r << "\n";
+	tf += relaxInitialParentsDelta;
+	ta -= relaxInitialParentsDelta;
+	if (tf > 5 || ta < 0){
+		std::cout << "ERROR:  Activation or Represison thresholds harshened too much: " << tf << " " << ta << "\n";
 		return false;
 	}
 	return true;

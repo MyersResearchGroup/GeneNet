@@ -28,9 +28,9 @@ public:
 	
 	void testThresholds(void){
 		Thresholds t(1,2,3,4,5,-1, 0.01,0.025,2,false);
-		TS_ASSERT_DELTA(t.getA(),1,0.0001);
-		TS_ASSERT_DELTA(t.getR(),2,0.0001);
-		TS_ASSERT_DELTA(t.getV(),3,0.0001);
+		TS_ASSERT_DELTA(t.getTF(),1,0.0001);
+		TS_ASSERT_DELTA(t.getTA(),2,0.0001);
+		TS_ASSERT_DELTA(t.getTI(),3,0.0001);
 		TS_ASSERT_EQUALS(t.getRisingAmount(),4);
 		TS_ASSERT_EQUALS(t.getWindowSize(),5);
 	}
