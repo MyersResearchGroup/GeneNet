@@ -73,12 +73,12 @@ static void ShowUsage()
         _T("-tm [num] Sets how close IVs must be in score to be considered for combination.  Default 0.01\n")
 		_T("-tn [num] Sets minimum number of parents to allow through in SelectInitialParents. Default 1\n")
         _T("-tj [num] Sets the max parents of merged influence vectors, Default 2\n")
+        _T("-tr [num] Sets how fast the bound is relaxed for tf and ta, Default 0.025\n")
 
         _T("-d [num]  Sets the debug or output level.  Default 0\n")
         _T("-wr [num] Sets how much larger a number must be to be considered as a rise.  Default 1\n")
         _T("-ws [num] Sets how far the TSD points are when compared.  Default 1\n")
         _T("-nb [num] Sets how many bins are used in the evaluation.  Default 3\n")
-        _T("-rd [num] Sets how fast the bound is relaxed for a and r if no parents are found in InitialParents, Default 0.025\n")
         _T("--lvl 	  Writes out the suggested levels for every specie\n")
         _T("--readLevels Reads the levels from level.lvl file for every specie\n")
 		_T("--cpp_harshenBoundsOnTie	Determins if harsher bounds are used when parents tie in CPP.\n")
@@ -120,7 +120,7 @@ CSimpleOpt::SOption g_rgOptions[] =
     { 11,        _T("--numBins"),				SO_REQ_SEP },
     { 12,        _T("-tm"),						SO_REQ_SEP },
     { 13,        _T("--influenceLevelDelta"),	SO_REQ_SEP },
-    { 14,        _T("-rd"),						SO_REQ_SEP },
+    { 14,        _T("-tr"),						SO_REQ_SEP },
     { 15,        _T("--relaxIPDelta"),			SO_REQ_SEP },
     { 16,        _T("-tn"),						SO_REQ_SEP },
     { 17,        _T("--cpp_harshenBoundsOnTie"),	SO_NONE },
