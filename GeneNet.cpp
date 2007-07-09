@@ -36,6 +36,7 @@ float TOSS_VOTES_NUMBER = 1.0001;
 bool TOSS_CHANGED_SINGLE_INFLUENCE = true;
 bool WRITE_LEVELS = false;
 bool READ_LEVELS = false;
+bool EQUAL_SPACING_PER_BIN = false;
 
 extern bool InvertSortOrder;
 
@@ -87,6 +88,8 @@ static void ShowUsage()
 		_T("--cmp_score_mustNotWinMajority	Determins if score should be used when following conditions are not met a > r+n || r > a + n\n")
 		_T("--score_donotTossSingleRatioParents		Determins if single ratio parents should be kept\n")
 		_T("--output_donotTossChangedInfluenceSingleParents	Determins if parents that change influence should not be tossed\n")
+		_T("-binNumbers	Equal spacing per bin\n")
+
         );
 }
 
@@ -133,6 +136,7 @@ CSimpleOpt::SOption g_rgOptions[] =
     { 24,        _T("--readLevels"),	SO_NONE },
     { 25,        _T("-tp"),						SO_REQ_SEP },
     { 26,        _T("-tj"),							SO_REQ_SEP },
+    { 27,        _T("-binNumbers"),	SO_NONE },
 
     SO_END_OF_OPTIONS
 };
@@ -358,6 +362,10 @@ int main(int argc, char* argv[]){
             	READ_LEVELS = true;
             	cout << "\tReading the levels\n";
             	break;
+            case 27:
+	        EQUAL_SPACING_PER_BIN = true;
+            	cout << "\tUsing Equal spacing per bin'\n";
+            	break;
             default:
             	cout << "ERROR: unhandled argument\n";
             	exit(1);
@@ -468,12 +476,17 @@ void EncodeExpts(Species& S, Experiments& E, Thresholds & T, Encodings& L){
 	cout << "Filling hashes now\n";
 	if (READ_LEVELS){
 	}
+	else if(EQUAL_SPACING_PER_BIN){
+	  if (!L.useNumbers(T.getBins())){
+	    cout << "ERROR! Equal Spacing per bin didn't work\n";
+	    exit(0);
+	  }
+	}
 	else if (!L.useBins(T.getBins())){
-		cout << "ERROR! Bins didn't work\n";
+		cout << "ERROR! Equal Data Per Bin didn't work\n";
 		exit(0);
 	}
 	cout << "Finished initializing\n";
-	//L.useNumbers(3);
 	return;
 }
 
