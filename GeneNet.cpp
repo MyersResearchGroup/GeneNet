@@ -37,6 +37,8 @@ bool TOSS_CHANGED_SINGLE_INFLUENCE = true;
 bool WRITE_LEVELS = false;
 bool READ_LEVELS = false;
 bool EQUAL_SPACING_PER_BIN = false;
+bool SUCC = true;
+bool PRED = true;
 
 extern bool InvertSortOrder;
 
@@ -137,6 +139,8 @@ CSimpleOpt::SOption g_rgOptions[] =
     { 25,        _T("-tp"),						SO_REQ_SEP },
     { 26,        _T("-tj"),							SO_REQ_SEP },
     { 27,        _T("-binNumbers"),	SO_NONE },
+    { 28,        _T("-noSUCC"),	        SO_NONE },
+    { 29,        _T("-noPRED"),	        SO_NONE },
 
     SO_END_OF_OPTIONS
 };
@@ -366,6 +370,14 @@ int main(int argc, char* argv[]){
 	        EQUAL_SPACING_PER_BIN = true;
             	cout << "\tUsing Equal spacing per bin'\n";
             	break;
+            case 28:
+                SUCC = false;
+            	cout << "\tNot using successors\n";
+            	break;
+            case 29:
+                PRED = false;
+            	cout << "\tNot using predecessors\n";
+            	break;
             default:
             	cout << "ERROR: unhandled argument\n";
             	exit(1);
@@ -476,12 +488,12 @@ void EncodeExpts(Species& S, Experiments& E, Thresholds & T, Encodings& L, bool 
 	cout << "Filling hashes now\n";
 
 	if(EQUAL_SPACING_PER_BIN){
-	  if (!L.useNumbers(T.getBins(), read_levels)){
+	  if (!L.useNumbers(T.getBins(), read_levels,SUCC,PRED)){
 	    cout << "ERROR! Equal Spacing per bin didn't work\n";
 	    exit(0);
 	  }
 	}
-	else if (!L.useBins(T.getBins(), read_levels)){
+	else if (!L.useBins(T.getBins(), read_levels,SUCC,PRED)){
 		cout << "ERROR! Equal Data Per Bin didn't work\n";
 		exit(0);
 	}
@@ -1412,7 +1424,7 @@ void readLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & T
 	cout << "Opening " << s << " for read\n";
 	cout << "Reading file for levels\n";
 	ifstream lvl_file(s.c_str(),ios::in);
-	if(! L.useFile(lvl_file, !WRITE_LEVELS)){
+	if(! L.useFile(lvl_file, !WRITE_LEVELS, SUCC,PRED)){
 		cout << "ERROR: Unable to read levels file\n";
 		exit(0);
 	}

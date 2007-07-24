@@ -16,9 +16,9 @@ public:
 	void initialize(Species * species, Experiments * experiments, Thresholds * t);
 	virtual ~Encodings();
 	int totalSpecies() const;
-	bool useBins(int numBins, bool useSpeciesLevels);
-	bool useNumbers(int numBins, bool useSpeciesLevels);
-	bool useFile(ifstream & lvl_file, bool checkOrdering);
+	bool useBins(int numBins, bool useSpeciesLevels, bool succ, bool pred);
+	bool useNumbers(int numBins, bool useSpeciesLevels, bool succ, bool pred);
+	bool useFile(ifstream & lvl_file, bool checkOrdering, bool succ, bool pred);
 	std::vector<float> getLevels(const Specie * s) const;
 	float getProb(const Specie * child, const std::vector<int> * l1, const std::vector<int> * l2) const;
 	void printLevels();
@@ -28,7 +28,7 @@ private:
 	Species * s;
 	Experiments * e;
 	Thresholds * t;
-	void fillTSD();
+	void fillTSD(bool succ, bool pred);
 };
 
 #endif /*ENCODINGS_H_*/

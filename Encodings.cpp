@@ -50,7 +50,7 @@ std::vector<float> Encodings::getLevels(const Specie * s) const{
 }
 
 
-bool Encodings::useBins(int oldNumBins, bool useSpeciesLevels){
+bool Encodings::useBins(int oldNumBins, bool useSpeciesLevels, bool succ, bool pred){
         int numBins = oldNumBins;
 	if(numBins > 9){
 		cout << "TOO Many BINS!  We need to use 2 string slots in key for more bins and this is not implemented\n";
@@ -144,7 +144,7 @@ bool Encodings::useBins(int oldNumBins, bool useSpeciesLevels){
 		}
 	}
 	printLevels();
-	fillTSD();
+	fillTSD(succ, pred);
         delete [] oldLevels;
 	return true;
 }
@@ -161,7 +161,7 @@ void Encodings::printLevels(){
 		std::cout << "\n";
 	}
 }
-bool Encodings::useFile(ifstream & lvl_file, bool checkOrdering){
+bool Encodings::useFile(ifstream & lvl_file, bool checkOrdering, bool succ, bool pred){
 	clearLevels();
 	for (int i = 0; i <= totalSpecies(); i++){
 		levels.push_back(new std::vector<float>());
@@ -210,11 +210,11 @@ bool Encodings::useFile(ifstream & lvl_file, bool checkOrdering){
 		}
 	}
 	printLevels();
-	fillTSD();
+	fillTSD(succ, pred);
 	return true;
 }
 
-bool Encodings::useNumbers(int oldNumBins, bool useSpeciesLevels){
+bool Encodings::useNumbers(int oldNumBins, bool useSpeciesLevels, bool succ, bool pred){
         int numBins = oldNumBins;
 	if(numBins > 9){
 		cout << "TOO Many BINS!\n";
@@ -252,56 +252,83 @@ bool Encodings::useNumbers(int oldNumBins, bool useSpeciesLevels){
 			}
 		}
 	}
-	fillTSD();
+	fillTSD(succ, pred);
         delete [] oldLevels;
 	return true;
 	
 }
 
 
-void Encodings::fillTSD(){
+void Encodings::fillTSD(bool succ, bool pred){
+  if (succ == false && pred == false){
+    cout << "ERROR: unable to calculate probabilities as both SUCC and PRED sets are empty\n";
+    exit(0);
+  }
 	TSDPoint::clearAll();
 	TSDPoint::InitializePoints();
 	for (int i = 0; i < e->totalExperiments(); i++){
 		for (int j = 0; j < e->totalRows(i) - t->getWindowSize(); j++){
 			std::vector<float> * current = e->getRow(i, j);
 			std::vector<float> * next = e->getRow(i, j+t->getWindowSize());
-			std::vector<string> encoded;
+			//std::vector<string> encoded;
 
 			//Remember, that species doesn't include the first 'time' column
 			int numColumns = s->size()+1;
 			int * seen = new int[numColumns];
 			int * rose = new int[numColumns];
+                        
+                        //calculate if things rose
+                        //cout << "At state " << state.str() << "\n";
+                        for (int k = 0; k < numColumns; k++){
+                          seen[k] = 1;
+                          rose[k] = 0;
+                          if (current->at(k)+t->getRisingAmount() <= next->at(k)){
+                            rose[k] = 1;
+                          }
+                        }
+                        if (succ){
+                          //get the current state of the system
+                          ostringstream state;
+                          state << "-";
+                          for (int k = 1; k < numColumns; k++){
+                            bool found = false;
+                            for (int l = 0; l < (int)levels.at(k)->size() && found == false; l++){
+                              //match the value to the level
+                              if (current->at(k) <= levels.at(k)->at(l)){
+                                found = true;
+                                state << l;
+                              }
+                            }
+                            if (!found){
+                              state << (int)levels.at(k)->size();
+                            }
+                          }
+                          TSDPoint * p = TSDPoint::getTSDPoint(state.str());
+                          p->updateValue(seen,rose,numColumns);
+                        }
+                        if (pred){
+                          //get the previous state of the system
+                          ostringstream state;
+                          state << "-";
+                          for (int k = 1; k < numColumns; k++){
+                            bool found = false;
+                            for (int l = 0; l < (int)levels.at(k)->size() && found == false; l++){
+                              //match the value to the level
+                              if (next->at(k) <= levels.at(k)->at(l)){
+                                found = true;
+                                state << l;
+                              }
+                            }
+                            if (!found){
+                              state << (int)levels.at(k)->size();
+                            }
+                          }
+                          TSDPoint * p = TSDPoint::getTSDPoint(state.str());
+                          p->updateValue(seen,rose,numColumns);
+                        }
 
-			//get the current state of the system
-			ostringstream state;
-			state << "-";
-			for (int k = 1; k < numColumns; k++){
-				bool found = false;
-				for (int l = 0; l < (int)levels.at(k)->size() && found == false; l++){
-					//match the value to the level
-					if (current->at(k) <= levels.at(k)->at(l)){
-						found = true;
-						state << l;
-					}
-				}
-				if (!found){
-					state << (int)levels.at(k)->size();
-				}
-			}
-			//calculate if things rose
-			//cout << "At state " << state.str() << "\n";
-			for (int k = 0; k < numColumns; k++){
-				seen[k] = 1;
-				rose[k] = 0;
-				if (current->at(k)+t->getRisingAmount() <= next->at(k)){
-					rose[k] = 1;
-				}
-			}
-			TSDPoint * p = TSDPoint::getTSDPoint(state.str());
-			p->updateValue(seen,rose,numColumns);
-			delete [] seen;
-			delete [] rose;
+                        delete [] seen;
+                        delete [] rose;
 		}	
 	}
 }
