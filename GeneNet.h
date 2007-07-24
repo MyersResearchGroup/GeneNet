@@ -4,7 +4,7 @@
 
 
 void GeneNet(Species& S, Experiments& E, NetCon& C, Thresholds& T, Encodings& L, const char * dir);
-void EncodeExpts(Species& S, Experiments& E, Thresholds& T, Encodings& L);
+void EncodeExpts(Species& S, Experiments& E, Thresholds& T, Encodings& L, bool read_levels);
 float Score(const Specie& S, const Set& P, const Set& G, const Experiments& E, const Thresholds& T, const Encodings& L);
 float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, const Thresholds& T, const Encodings& L);
 void SelectInitialParents (Specie& s,const Species& S,const Experiments& E, NetCon& C,const Thresholds& T, const Encodings& L);

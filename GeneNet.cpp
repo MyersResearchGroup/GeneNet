@@ -425,14 +425,14 @@ bool fillFromTSD(const char dir[], Species * S, Experiments * E, NetCon * C, Thr
 void GeneNet(Species &S, Experiments &E, NetCon &C, Thresholds &T, Encodings &L, const char * dir){
 
   cout << "Encoding the experiments\n";
-  EncodeExpts(S,E,T,L);
+  EncodeExpts(S,E,T,L, false);
   cout << "Finished encoding\n";
+
   if (READ_LEVELS){
 	readLevels(dir, L,E,T);
   }
   if (WRITE_LEVELS){
-  	READ_LEVELS = false;
-	EncodeExpts(S,E,T,L);
+	EncodeExpts(S,E,T,L, READ_LEVELS);
 	writeLevels(dir, L,E,T);
 	exit(0);
   }
@@ -471,18 +471,17 @@ void GeneNet(Species &S, Experiments &E, NetCon &C, Thresholds &T, Encodings &L,
 }
 
 
-void EncodeExpts(Species& S, Experiments& E, Thresholds & T, Encodings& L){
+void EncodeExpts(Species& S, Experiments& E, Thresholds & T, Encodings& L, bool read_levels){
 	L.initialize(&S,&E,&T);
 	cout << "Filling hashes now\n";
-	if (READ_LEVELS){
-	}
-	else if(EQUAL_SPACING_PER_BIN){
-	  if (!L.useNumbers(T.getBins())){
+
+	if(EQUAL_SPACING_PER_BIN){
+	  if (!L.useNumbers(T.getBins(), read_levels)){
 	    cout << "ERROR! Equal Spacing per bin didn't work\n";
 	    exit(0);
 	  }
 	}
-	else if (!L.useBins(T.getBins())){
+	else if (!L.useBins(T.getBins(), read_levels)){
 		cout << "ERROR! Equal Data Per Bin didn't work\n";
 		exit(0);
 	}

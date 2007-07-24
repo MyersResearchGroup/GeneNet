@@ -16,8 +16,8 @@ public:
 	void initialize(Species * species, Experiments * experiments, Thresholds * t);
 	virtual ~Encodings();
 	int totalSpecies() const;
-	bool useBins(int numBins);
-	bool useNumbers(int numBins);
+	bool useBins(int numBins, bool useSpeciesLevels);
+	bool useNumbers(int numBins, bool useSpeciesLevels);
 	bool useFile(ifstream & lvl_file, bool checkOrdering);
 	std::vector<float> getLevels(const Specie * s) const;
 	float getProb(const Specie * child, const std::vector<int> * l1, const std::vector<int> * l2) const;

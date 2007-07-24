@@ -23,6 +23,7 @@ void Encodings::initialize(Species * species, Experiments * experiments, Thresho
 }
 
 void Encodings::clearLevels(){
+  cout << "Clearning Levels\n";
 	while(levels.size() > 0){
 		std::vector<float> * f = levels.back();
 		levels.pop_back();
@@ -49,7 +50,8 @@ std::vector<float> Encodings::getLevels(const Specie * s) const{
 }
 
 
-bool Encodings::useBins(int numBins){
+bool Encodings::useBins(int oldNumBins, bool useSpeciesLevels){
+        int numBins = oldNumBins;
 	if(numBins > 9){
 		cout << "TOO Many BINS!  We need to use 2 string slots in key for more bins and this is not implemented\n";
 		return false;	
@@ -58,9 +60,20 @@ bool Encodings::useBins(int numBins){
 		cout << "ERROR: We have some NULLS " << s << " " << e << " " << numBins << "\n";
 		return false;	
 	}
+        int * oldLevels = new int[s->size()+1];
+        if (useSpeciesLevels){
+          for (int i = 0; i <= s->size() && i < (int) levels.size(); i++){
+            oldLevels[i] = ((int) (levels.at(i))->size())+1;
+          }
+        }
 	clearLevels();
-	//cout << "there are a total of " << s->size() << "\n";
 	for (int i = 0; i <= s->size(); i++){
+          if (DEBUG_LEVEL > 1){
+            cout << "Assigning values for species " << i << "\n";
+          }
+          if (useSpeciesLevels){
+            numBins = oldLevels[i];
+          }
 		std::vector<float> v = e->getSortedValues(i);
 		int current = 0;
 		float left = v.size();
@@ -88,7 +101,7 @@ bool Encodings::useBins(int numBins){
 					cout << "\t\t\tFound a bin at v[" << current << "], value: " << v.at(current) <<"\n";
 				}
 				//add in a new level vector if there isn't one
-				if ((int)levels.size() == i){
+				while ((int)levels.size() <= i){
 					//cout << "Adding a vector at" << levels.size() << "\n";
 					levels.push_back(new std::vector<float>());
 				}
@@ -132,6 +145,7 @@ bool Encodings::useBins(int numBins){
 	}
 	printLevels();
 	fillTSD();
+        delete [] oldLevels;
 	return true;
 }
 
@@ -200,7 +214,8 @@ bool Encodings::useFile(ifstream & lvl_file, bool checkOrdering){
 	return true;
 }
 
-bool Encodings::useNumbers(int numBins){
+bool Encodings::useNumbers(int oldNumBins, bool useSpeciesLevels){
+        int numBins = oldNumBins;
 	if(numBins > 9){
 		cout << "TOO Many BINS!\n";
 		return false;	
@@ -209,8 +224,17 @@ bool Encodings::useNumbers(int numBins){
 		cout << "ERROR: We have some NULLS " << s << " " << e << " " << numBins << "\n";
 		return false;	
 	}
+        int * oldLevels = new int[s->size()+1];
+        if (useSpeciesLevels){
+          for (int i = 0; i <= s->size() && i < (int) levels.size(); i++){
+            oldLevels[i] = ((int) (levels.at(i))->size())+1;
+          }
+        }
 	clearLevels();
 	for (int i = 0; i <= s->size(); i++){
+          if (useSpeciesLevels){
+            numBins = oldLevels[i];
+          }
 		std::vector<float> v = e->getSortedValues(i);
 		if (v.size() < 2){
 			cout << "UNABLE TO USE EXP " << i << " The size is too small " << v.size() << "\n";
@@ -219,7 +243,9 @@ bool Encodings::useNumbers(int numBins){
 			float top = v.back();
 			float bottom = v.at(0);
 			float binSize = (top-bottom) / numBins;
-			levels.push_back(new std::vector<float>());
+                        while ((int)levels.size() <= i){
+                          levels.push_back(new std::vector<float>());
+                        }
 			std::vector<float> * f = levels.at(i);
 			for (int i = 1; i < numBins; i++){
 				f->push_back(bottom+i*binSize);
@@ -227,9 +253,11 @@ bool Encodings::useNumbers(int numBins){
 		}
 	}
 	fillTSD();
+        delete [] oldLevels;
 	return true;
 	
 }
+
 
 void Encodings::fillTSD(){
 	TSDPoint::clearAll();
