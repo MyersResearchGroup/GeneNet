@@ -111,7 +111,23 @@ bool Encodings::useBins(int numBins){
 		//we ran out of data, too many bins
 		if (current >= (int)v.size()){
 			cout << "ERROR: Too many bins for the data available for specie " << i << "\n";
-			return false;
+                        cout << "\tIt will get some null values but we will try to push on\n";
+			//return false;
+                        int j = 9990;
+                        while (levelsAssigned < numBins-1){
+                          //add in a new level vector if there isn't one
+                          if ((int)levels.size() == i){
+                            //cout << "Adding a vector at" << levels.size() << "\n";
+                            levels.push_back(new std::vector<float>());
+                          }
+                          std::vector<float> * f = levels.at(i);
+                          if (DEBUG_LEVEL > 0){
+                            cout << "\t\tAssigning level " << (int)f->size() << " for specie " << i << " at " << j << "\n";
+                          }
+                          f->push_back(j);
+                          j++;
+                          levelsAssigned++;
+                        }
 		}
 	}
 	printLevels();
