@@ -31,7 +31,9 @@ public:
 	
 	float getCompetitionScore() const;
 	void setCompetitionScore( float x);
-	
+
+        std::string toIV() const;
+        std::string toIndividualIV() const;
 	friend bool operator == (const Set& s1, const Set& s2);
 	friend bool operator != (const Set& s1, const Set& s2);
 	friend bool operator <  (const Set& s1, const Set& s2);
@@ -39,6 +41,7 @@ public:
 private:
 	std::vector<Specie*> mySet;
 	std::vector<float> individualScores;
+
 	float myScore;
 	float competitionScore;
 };

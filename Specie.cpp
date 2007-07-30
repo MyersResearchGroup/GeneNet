@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <cassert>
+#include <sstream>
 
 std::map<int,Specie*> * Specie::allSpecies = NULL;
 
@@ -59,7 +60,8 @@ const Specie & Specie::operator=(const Specie & s){
 		name = s.name;
 		geneUID = s.geneUID;	
 	}
-	return *this;
+	return *this
+;
 }
 
 
@@ -103,4 +105,19 @@ std::ostream& operator << (std::ostream& cout, const Specie & source){
 
 int Specie::getNumSpecie(){
 	return allSpecies->size();	
+}
+
+std::string Specie::toIV(char c) const{
+  std::ostringstream cout;
+  cout << "<";
+  for (int i = 1; i < Specie::getNumSpecie(); i++){
+    if (getGeneUID() == i){
+        cout << c;
+    }
+    else{
+      cout << "n";
+    }
+  }
+  cout << ">";
+  return cout.str();
 }

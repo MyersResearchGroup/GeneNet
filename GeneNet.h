@@ -18,7 +18,8 @@ bool yaccParse(FILE * f, Species * S, Experiments * E, int experimentNum);
 void callGeneNet(const char * dir, Thresholds & T);
 void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & T);
 void readLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & T);
-
+bool areConnected(TSDPoint * bottom, TSDPoint * top, const Set& P, const Encodings& L);
+int LatticeLevel(TSDPoint * bin, const Set& P, const Encodings& L);
 
 bool incrementBaseSet(int * c, int arraySize, int numberOfBases);
 void CreateMultipleParents_Too_Costly(const Specie& s, const Species& S, const Experiments& E, NetCon& C, const Thresholds& T, const Encodings& L);

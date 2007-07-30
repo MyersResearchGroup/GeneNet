@@ -20,6 +20,7 @@ public:
 	bool useNumbers(int numBins, bool useSpeciesLevels, bool succ, bool pred);
 	bool useFile(ifstream & lvl_file, bool checkOrdering, bool succ, bool pred);
 	std::vector<float> getLevels(const Specie * s) const;
+        int getMaxLevel(const Specie * s) const;
 	float getProb(const Specie * child, const std::vector<int> * l1, const std::vector<int> * l2) const;
 	void printLevels();
 private:

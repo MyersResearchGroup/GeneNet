@@ -15,7 +15,7 @@ public:
 	Set remove(int i);
 	Set remove(const Set & s1);
 	void removeSubsets();
-	void filterByScore(float f);
+	std::string filterByScore(float f);
 	Set * get(int i) const;
 	void unionIt(const Set & s2);
 	const DoubleSet & operator=(const DoubleSet & s);

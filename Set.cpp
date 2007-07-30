@@ -2,6 +2,7 @@
 #include "Specie.h"
 #include <cassert>
 #include <cmath>
+#include <sstream>
 
 
 Set::Set()
@@ -144,6 +145,53 @@ void Set::insert(Specie * s, float individualScore){
 		mySet.push_back(s);	
 		individualScores.push_back(individualScore);
 	}
+}
+
+std::string Set::toIV() const{
+  std::ostringstream cout;
+  cout << "<";
+  if (mySet.size() > 0){
+    for (int i = 1; i < Specie::getNumSpecie(); i++){
+      if (containsSpecieID(i)){
+        if (getIndividualScore(i) < 0){
+          cout << "r";
+        }
+        else{
+          cout << "a";
+        }
+      }
+      else{
+        cout << "n";
+      }
+    }
+  }
+  cout << ">";
+  return cout.str();
+}
+
+std::string Set::toIndividualIV() const{
+  std::ostringstream cout;
+  if (mySet.size() > 0){
+    for (int j = 0; j < size(); j++){
+      int c = mySet[j]->getGeneUID();
+      cout << "<";
+      for (int i = 1; i < Specie::getNumSpecie(); i++){
+        if (i == c){
+          if (getIndividualScore(i) < 0){
+            cout << "r";
+          }
+          else{
+            cout << "a";
+          }
+        }
+        else{
+          cout << "n";
+        }
+      }
+      cout << "> " << fabs(getIndividualScore(mySet[j]->getGeneUID())) << " ";
+    }
+  }
+  return cout.str();
 }
 
 bool Set::containsSpecieID(const int s1) const{

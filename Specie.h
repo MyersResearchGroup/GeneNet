@@ -16,6 +16,7 @@ public:
 	std::string getGeneName() const;
 	DoubleSet& toDoubleSet() const;
 	Set * toSet() const;
+        std::string toIV(char c) const;
 protected:
 	Specie(std::string name, int uid);
 	Specie(const Specie & s);

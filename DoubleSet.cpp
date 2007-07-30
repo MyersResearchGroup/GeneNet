@@ -3,6 +3,7 @@
 #include "Specie.h"
 #include <cmath>
 #include <cassert>
+#include <sstream>
 
 extern int DEBUG_LEVEL;
 
@@ -117,18 +118,21 @@ void DoubleSet::removeSubsets(){
 	//return v;
 }
 
-void DoubleSet::filterByScore(float f){
+std::string DoubleSet::filterByScore(float f){
+        std::ostringstream out;
 	for (int i = 0; i < (int)myDoubleSet.size(); i++){
 		if (fabs(myDoubleSet.at(i)->getScore()) < f){
 			Set * s = *(myDoubleSet.begin()+i);
 			if (DEBUG_LEVEL > 0){
 				std::cout << "\t\tRemoving " << *s << " because of score fabs(" << s->getScore() << ") < " << f << "\n";
-			}			
+			}
+                        out << "\t" << s->toIV() << " " << fabs(s->getScore()) << " spot 5 " << f << "\n";
 			myDoubleSet.erase(myDoubleSet.begin()+i);
 			delete s;
 			i--;
 		}	
 	}
+        return out.str();
 }
 
 bool DoubleSet::contains(const Set & s){

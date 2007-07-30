@@ -25,6 +25,8 @@ public:
 	std::vector<int> seen;
 	std::vector<int> risings;
 	friend float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, const Thresholds& T, const Encodings& L);
+	friend bool areConnected(TSDPoint * bottom, TSDPoint * top, const Set& P, const Encodings& L);
+        friend int LatticeLevel(TSDPoint * bin, const Set& P, const Encodings& L);
 protected:
 	TSDPoint(std::string rowValues);
 	virtual ~TSDPoint();
