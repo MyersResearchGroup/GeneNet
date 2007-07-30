@@ -38,7 +38,7 @@ bool WRITE_LEVELS = false;
 bool READ_LEVELS = false;
 bool EQUAL_SPACING_PER_BIN = false;
 bool SUCC = true;
-bool PRED = true;
+bool PRED = false;
 bool BASIC_FINDBASEPROB = false;
 
 extern bool InvertSortOrder;
@@ -75,7 +75,6 @@ static void ShowUsage()
            _T("-tf [num] Sets the activation threshold.  Default 1.33\n")
            _T("-ta [num] Sets the repression threshold.  Default 0.75\n")
            _T("-ti [num] Sets how high a score must be to be considered a parent.  Default 0.5\n")
-           _T("-tp [num] Sets the score for which parents are filtered, Default 0.51\n")
            _T("-tm [num] Sets how close IVs must be in score to be considered for combination.  Default 0.01\n")
            _T("-tn [num] Sets minimum number of parents to allow through in SelectInitialParents. Default 1\n")
            _T("-tj [num] Sets the max parents of merged influence vectors, Default 2\n")
@@ -95,7 +94,7 @@ static void ShowUsage()
            _T("--output_donotTossChangedInfluenceSingleParents	Determins if parents that change influence should not be tossed\n")
            _T("-binNumbers	Equal spacing per bin\n")
            _T("-noSUCC to not use successors in calculating probabilities\n")
-           _T("-noPRED to not use preicessors in calculating probabilities\n")
+           _T("-PRED use preicessors in calculating probabilities\n")
            _T("-basicFBP to use the basic FindBaseProb function\n")
 
            );
@@ -142,11 +141,10 @@ CSimpleOpt::SOption g_rgOptions[] =
     { 22,        _T("--output_donotTossChangedInfluenceSingleParents"),	SO_NONE },
     { 23,        _T("--lvl"),	SO_NONE },
     { 24,        _T("--readLevels"),	SO_NONE },
-    { 25,        _T("-tp"),						SO_REQ_SEP },
     { 26,        _T("-tj"),							SO_REQ_SEP },
     { 27,        _T("-binNumbers"),	SO_NONE },
     { 28,        _T("-noSUCC"),	        SO_NONE },
-    { 29,        _T("-noPRED"),	        SO_NONE },
+    { 29,        _T("-PRED"),	        SO_NONE },
     { 30,        _T("-basicFBP"),	        SO_NONE },
 
     SO_END_OF_OPTIONS
@@ -329,10 +327,6 @@ int main(int argc, char* argv[]){
         T.setsip_letNThrough(atoi(args.OptionArg()));
         cout << "\tSetting TN (allows n IVs though first round) to '" << T.getsip_letNThrough() << "'\n";
         break;
-      case 25:
-        T.setTP(atof(args.OptionArg()));
-        cout << "\tSetting TP to '" << T.getTP() << "'\n";
-        break;
       case 26:
         T.setMaxParentSetSize(atoi(args.OptionArg()));
         cout << "\tSetting TJ to '" << T.getMaxParentSetSize() << "'\n";
@@ -388,7 +382,7 @@ int main(int argc, char* argv[]){
         cout << "\tNot using successors\n";
         break;
       case 29:
-        PRED = false;
+        PRED = true;
         cout << "\tNot using predecessors\n";
         break;
       case 30:
@@ -1274,7 +1268,7 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
     delete [] currentBases;
     currentNumOfBasesUsed++;
   }
-  contenders << C.filterByScore(s,T.getTP());
+  contenders << C.filterByScore(s,T.getTI());
   
   cout << "Multiple parents for " << s << " are: " << *C.getParentsFor(s) << "\n";
 }

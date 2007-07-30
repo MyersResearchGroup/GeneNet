@@ -121,7 +121,7 @@ void DoubleSet::removeSubsets(){
 std::string DoubleSet::filterByScore(float f){
         std::ostringstream out;
 	for (int i = 0; i < (int)myDoubleSet.size(); i++){
-		if (fabs(myDoubleSet.at(i)->getScore()) < f){
+		if (fabs(myDoubleSet.at(i)->getScore()) <= f){
 			Set * s = *(myDoubleSet.begin()+i);
 			if (DEBUG_LEVEL > 0){
 				std::cout << "\t\tRemoving " << *s << " because of score fabs(" << s->getScore() << ") < " << f << "\n";

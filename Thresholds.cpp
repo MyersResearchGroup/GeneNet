@@ -17,7 +17,7 @@ Thresholds::Thresholds(float A, float R, float V, int RisingAmount, int WindowSi
 	competeMultipleHighLowBool = CompeteMultipleHighLowBool;
 	//postFilter = PostFilter;
 	sip_letNThrough = 1;
-	tp = 0.51;
+	//tp = 0.51;
 }
 
 Thresholds::~Thresholds()

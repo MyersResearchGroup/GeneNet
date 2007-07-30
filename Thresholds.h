@@ -19,7 +19,6 @@ public:
 	int getMaxParentSetSize() const {return maxParentSetSize;}
 	bool competeMultipleHighLow() const {return competeMultipleHighLowBool;}
 	void setCompeteMultipleHighLow(bool a) {competeMultipleHighLowBool = a;}
-	float getTP() const {return tp;}
 
 
 	void setTF(float F) {tf = F;}
@@ -30,7 +29,6 @@ public:
 	void setWindowSize(int F) {windowSize = F;}
 	void setTM(float F) {tm = F;}
 	void setRelaxInitialParentsDelta(float F) {relaxInitialParentsDelta = F;}
-	void setTP(float F) {tp = F;}
 	void setMaxParentSetSize(int F ) {maxParentSetSize = F;}
 	
 	void setsip_letNThrough(int i){sip_letNThrough = i;}
