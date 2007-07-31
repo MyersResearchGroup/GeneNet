@@ -33,6 +33,15 @@ void DoubleSet::fillMyDoubleSet(const DoubleSet & d){
 	}	
 }
 
+std::string DoubleSet::toIV() const{
+  std::ostringstream cout;
+  for (int i = 0; i < (int)myDoubleSet.size(); i++){
+    cout << myDoubleSet[i]->toIV();
+    cout << " ";
+  }
+  return cout.str();
+}
+
 DoubleSet::DoubleSet(const DoubleSet &d){
 	fillMyDoubleSet(d);
 }

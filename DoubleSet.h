@@ -23,6 +23,7 @@ public:
 	bool addIfScoreBetterThanSubsets(const Set & s);
 	void clearAllSets();
 	Set colapseToSet() const;
+        std::string toIV() const;
 
 	
 	friend DoubleSet unionIt(const DoubleSet& s1, Set & s2);

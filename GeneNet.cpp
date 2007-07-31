@@ -1072,6 +1072,12 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
 
   ostringstream competitionString;
   ostringstream contendersString;
+  ostringstream backgroundIV;
+  backgroundIV << "<";
+  for (int i = 0; i < Specie::getNumSpecie(); i++){
+    backgroundIV << "n";
+  }
+  backgroundIV << ">";
 
   Thresholds newT(T);
   bool relaxedTheBounds = false;
@@ -1094,7 +1100,7 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
           if (DEBUG_LEVEL > COMPETITION_LOG){
             competitionString << "\t" << *p << " passes as activation with " << alpha << "\n";
           }
-          contendersString << "\t" << p->toIV('r') << " " << -alpha << " spot 1r " << newT.getTI() <<"\n";
+          contendersString << "\t" << p->toIV('r') << " " << -alpha << " spot 1r " << backgroundIV.str() << newT.getTI() <<"\n";
         }
         else if (alpha <= -newT.getTI()){
           cout << "\t\tMeans a represion parent\n";
@@ -1102,14 +1108,14 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
           if (DEBUG_LEVEL > COMPETITION_LOG){
             competitionString << "\t" << *p << " passes as repression with " << alpha << "\n";
           }
-          contendersString << "\t" << p->toIV('a') << " " << alpha << " spot 1a " << newT.getTI() <<"\n";
+          contendersString << "\t" << p->toIV('a') << " " << alpha << " spot 1a "  << backgroundIV.str() << newT.getTI() <<"\n";
         }
         else{
           if (DEBUG_LEVEL > COMPETITION_LOG){
             competitionString << "\t" << *p << " fails with " << alpha <<"\n";
           }	
-          contendersString << "\t" << p->toIV('a') << " " << alpha << " spot 1a " << newT.getTI() <<"\n";
-          contendersString << "\t" << p->toIV('r') << " " << -alpha << " spot 1r " << newT.getTI() <<"\n";
+          contendersString << "\t" << p->toIV('a') << " " << alpha << " spot 1a "  << backgroundIV.str() << newT.getTI() <<"\n";
+          contendersString << "\t" << p->toIV('r') << " " << -alpha << " spot 1r "  << backgroundIV.str() << newT.getTI() <<"\n";
         }
       }
     }
@@ -1384,6 +1390,8 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
     competitionLog << "Winner " << *C.getParentsFor(s) <<  "\n\n\n\n";
   }
   cout << "After Competion " << *C.getParentsFor(s) << " is the winner set for child " << s << "\n";
+  
+  contenders << "\t" << C.getParentsFor(s)->toIV() << " winner ";
 }
 
 bool setScoreSort(const Set* a, const Set* b){
