@@ -100,13 +100,13 @@ DoubleSet * NetCon::getParentsFor(const Specie & s){
 	return myConnections.at(s.getGeneUID());
 }
 
-void NetCon::removeSubsets(const Specie & s){
+std::string NetCon::removeSubsets(const Specie & s){
 	if (s.getGeneUID() < 0 || s.getGeneUID() >= (int)myConnections.size()){
 		std::cout << "ERROR: Removing subsets for an invalid set\n";
-		return;
+		return "";
 	}
-	myConnections.at(s.getGeneUID())->removeSubsets();
-	return;
+	return myConnections.at(s.getGeneUID())->removeSubsets();
+
 }
 
 std::string NetCon::filterByScore(const Specie & s,float f){

@@ -72,7 +72,7 @@ static void ShowUsage()
 {
   _tprintf(
            _T("Usage: GeneNet [OPTIONS] [Dir]\n")
-           _T("-tf [num] Sets the activation threshold.  Default 1.33\n")
+           _T("-tf [num] Sets the activation threshold.  Default 1.15\n")
            _T("-ta [num] Sets the repression threshold.  Default 0.75\n")
            _T("-ti [num] Sets how high a score must be to be considered a parent.  Default 0.5\n")
            _T("-tm [num] Sets how close IVs must be in score to be considered for combination.  Default 0.01\n")
@@ -216,7 +216,7 @@ void callGeneNet(const char * dir, Thresholds & T){
 }
 
 int main(int argc, char* argv[]){
-  float TF = 1.33;
+  float TF = 1.15;
   float TA = 0.75;
   float TI = 0.5;
   int RisingAmount = 1;
@@ -383,7 +383,7 @@ int main(int argc, char* argv[]){
         break;
       case 29:
         PRED = true;
-        cout << "\tNot using predecessors\n";
+        cout << "\tUsing predecessors\n";
         break;
       case 30:
         BASIC_FINDBASEPROB = true;
@@ -1216,6 +1216,7 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
           i = currentNumOfBasesUsed;	
         }
       }
+
       if (allAtSameInfluenceLevel){
         if (DEBUG_LEVEL>0){
           cout << "Checking if set " << currentWorking << " is better than the subsets\n";
@@ -1228,6 +1229,7 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
         float score = ScoreBetter(s,currentWorking,*s.toSet(),E,T,L);
         HAS_TO_HAVE_MAJORITY = false;
         InvertSortOrder = false;
+
         currentWorking.setScore(-1,score);
         if (C.addIfScoreBetterThanSubsets(s,currentWorking)){
           addedASetAtLevel = true;
@@ -1236,16 +1238,6 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
             if (DEBUG_LEVEL > COMPETITION_LOG){
               competitionLog << currentWorking << " passes with " << score << "\n";
             }            
-          }
-          for (int i = 0; i < currentNumOfBasesUsed; i++){
-            float m = baseSet.getIndividualScore(baseSet.get(currentBases[i])->getGeneUID());
-            if (m < 0){
-              contenders << "\t" << baseSet.get(currentBases[i])->toIV('r') << " " << fabs(m) << " spot 4 " ;
-            }
-            else{
-                contenders << "\t" << baseSet.get(currentBases[i])->toIV('a') << " " << fabs(m) << " spot 4 ";
-            }
-            contenders << currentWorking.toIV() << " " << fabs(score) << "\n";
           }
         }
         else{
@@ -1266,11 +1258,25 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
             competitionLog << currentWorking << " fails because of similar threshold within " << T.getTM() << "\n";
           }
         }
-        contenders << "\t" << currentWorking.toIV() << " " << T.getTM() << " spot 2 ";
+
+        /*
+        //Check the merged score always now
+        HAS_TO_HAVE_MAJORITY = true;
+        if (CMP_NO_MAJORITY){
+          HAS_TO_HAVE_MAJORITY = false;
+        }
+        float score = ScoreBetter(s,currentWorking,*s.toSet(),E,T,L);
+        HAS_TO_HAVE_MAJORITY = false;
+        InvertSortOrder = false;
+        //done checking score
+        */
+        float score = T.getTM();
+
+        contenders << "\t" << currentWorking.toIV() << " " << score << " spot 2 ";
         contenders << currentWorking.toIndividualIV() << "\n";
       }
     }
-    C.removeSubsets(s);
+    contenders << C.removeSubsets(s);
     delete [] currentBases;
     currentNumOfBasesUsed++;
   }
@@ -1391,7 +1397,7 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
   }
   cout << "After Competion " << *C.getParentsFor(s) << " is the winner set for child " << s << "\n";
   
-  contenders << "\t" << C.getParentsFor(s)->toIV() << " winner ";
+  contenders << "\t" << C.getParentsFor(s)->toIV() << " winner\n";
 }
 
 bool setScoreSort(const Set* a, const Set* b){

@@ -14,7 +14,7 @@ public:
 	int size() const;
 	Set remove(int i);
 	Set remove(const Set & s1);
-	void removeSubsets();
+	std::string removeSubsets();
 	std::string filterByScore(float f);
 	Set * get(int i) const;
 	void unionIt(const Set & s2);

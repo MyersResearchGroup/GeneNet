@@ -108,8 +108,9 @@ bool DoubleSet::addIfScoreBetterThanSubsets(const Set & s){
 }
 
 
-void DoubleSet::removeSubsets(){
+std::string DoubleSet::removeSubsets(){
 	//std::vector<Set * > v;
+        std::ostringstream out;
 	for (int i = myDoubleSet.size()-1; i > 0; i--){
 		for (int j = i-1; j >= 0; j--){
 			if (myDoubleSet.at(i)->contains(*myDoubleSet.at(j))){
@@ -118,6 +119,16 @@ void DoubleSet::removeSubsets(){
 				if (DEBUG_LEVEL > 0){
 					std::cout << "\t\tRemoving " << *s << " because it is a subset\n";
 				}			
+                                out << "\t" << s->toIV() << " " << fabs(s->getScore()) << " spot 4 " << myDoubleSet.at(i)->toIV() << " " << fabs(myDoubleSet.at(i)->getScore()) << "\n";
+                                /*
+                                  if (m < 0){
+                                  contenders << "\t" << baseSet.get(currentBases[i])->toIV('r') << " " << fabs(m) << " spot 4 " ;
+                                  }
+                                  else{
+                                  contenders << "\t" << baseSet.get(currentBases[i])->toIV('a') << " " << fabs(m) << " spot 4 ";
+                                  }
+                                  contenders << currentWorking.toIV() << " " << fabs(score) << "\n";
+                                */
 				myDoubleSet.erase(myDoubleSet.begin()+j);
 				delete s;
 				i--;
@@ -125,6 +136,7 @@ void DoubleSet::removeSubsets(){
 		}	
 	}
 	//return v;
+        return out.str();
 }
 
 std::string DoubleSet::filterByScore(float f){

@@ -33,7 +33,7 @@ public:
 	void unionIt(const Set & mySet, int TYPE, const Specie& s, float score);
 	bool containsAnyEdges(const Specie& s);
 	Set getSingleParentsFor(const Specie & s);
-	void removeSubsets(const Specie & s);
+	std::string removeSubsets(const Specie & s);
 	std::string filterByScore(const Specie & s,float f);
 	int totalParents(const Specie& s);
 	std::string removeLosers(const Specie& s, const DoubleSet& s1, float * scores, std::ostringstream & contenders);
