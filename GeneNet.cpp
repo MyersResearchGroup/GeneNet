@@ -1100,7 +1100,7 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
           if (DEBUG_LEVEL > COMPETITION_LOG){
             competitionString << "\t" << *p << " passes as activation with " << alpha << "\n";
           }
-          contendersString << "\t" << p->toIV('r') << " " << -alpha << " spot 1r " << backgroundIV.str() << newT.getTI() <<"\n";
+          contendersString << "\t" << p->toIV('r') << " " << -alpha << " spot 1r " << backgroundIV.str() << " " << newT.getTI() <<"\n";
         }
         else if (alpha <= -newT.getTI()){
           cout << "\t\tMeans a represion parent\n";
@@ -1108,14 +1108,14 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
           if (DEBUG_LEVEL > COMPETITION_LOG){
             competitionString << "\t" << *p << " passes as repression with " << alpha << "\n";
           }
-          contendersString << "\t" << p->toIV('a') << " " << alpha << " spot 1a "  << backgroundIV.str() << newT.getTI() <<"\n";
+          contendersString << "\t" << p->toIV('a') << " " << alpha << " spot 1a "  << backgroundIV.str() << " " << newT.getTI() <<"\n";
         }
         else{
           if (DEBUG_LEVEL > COMPETITION_LOG){
             competitionString << "\t" << *p << " fails with " << alpha <<"\n";
           }	
-          contendersString << "\t" << p->toIV('a') << " " << alpha << " spot 1a "  << backgroundIV.str() << newT.getTI() <<"\n";
-          contendersString << "\t" << p->toIV('r') << " " << -alpha << " spot 1r "  << backgroundIV.str() << newT.getTI() <<"\n";
+          contendersString << "\t" << p->toIV('a') << " " << alpha << " spot 1a "  << backgroundIV.str() << " " << newT.getTI() <<"\n";
+          contendersString << "\t" << p->toIV('r') << " " << -alpha << " spot 1r "  << backgroundIV.str() << " " << newT.getTI() <<"\n";
         }
       }
     }
