@@ -1090,7 +1090,10 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
   Thresholds newT(T);
   bool relaxedTheBounds = false;
   bool canRelaxMore = true;
-  while (C.getParentsFor(s)->size() < T.getsip_letNThrough() && canRelaxMore){
+  bool done_once = false;
+  while ((C.getParentsFor(s)->size() < T.getsip_letNThrough() && canRelaxMore) || !done_once){
+    done_once = true;
+
     competitionString.str(""); // clear the string if we need to relax the bounds
     contendersString.str("");
 
@@ -1130,10 +1133,13 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
     if (C.getParentsFor(s)->size() < T.getsip_letNThrough()){
       relaxedTheBounds = true;
       newT.relaxInitialParentsThresholds();
-      cout << "There are not enough parents for " << s << ", relaxing the thresholds to [" << newT.getTA() << ", " << newT.getTF() << "]\n";
+      cout << "There are not enough parents for " << s << ", relaxing the thresholds to [" << newT.getTA() << ", " << newT.getTF() << "] and Ti " << newT.getTI() << "\n";
       if (newT.getTF() <= 1+floatCompareValue && newT.getTA() >= 1 - floatCompareValue){
-        cout << "CANNOT RELAX BOUNDS MORE TO LET " << T.getsip_letNThrough() << " parent through\n";
-        canRelaxMore = false;
+        newT.setTI(newT.getTI() - newT.getRelaxInitialParentsDelta());
+        if (newT.getTI() <= 0){
+          cout << "CANNOT RELAX BOUNDS MORE TO LET " << T.getsip_letNThrough() << " parent through\n";
+          canRelaxMore = false;
+        }
       }
       if (newT.getTF() < 1){
         newT.setTF(1.0);
