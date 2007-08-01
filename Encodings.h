@@ -23,6 +23,7 @@ public:
         int getMaxLevel(const Specie * s) const;
 	float getProb(const Specie * child, const std::vector<int> * l1, const std::vector<int> * l2) const;
 	void printLevels();
+        Specie * getSpecie(int i) const;
 private:
 	void clearLevels();
 	std::vector<std::vector<float>*> levels;

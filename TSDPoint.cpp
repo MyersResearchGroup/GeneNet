@@ -5,13 +5,17 @@
 #include <cassert>
 #include "Set.h"
 #include "Specie.h"
+#include "Encodings.h"
 
 extern int DEBUG_LEVEL;
 
 bool InvertSortOrder = false;
+std::vector<int> TSDPoint::maxEncodings;
 
 std::map<std::string,TSDPoint*> * TSDPoint::thePoints = NULL;
+
 std::vector<TSDPoint*> * TSDPoint::initialValues = NULL;
+
 Set * TSDPoint::G = NULL;
 Set * TSDPoint::P = NULL;
 int TSDPoint::numS = 0;
@@ -420,10 +424,61 @@ bool TSDPoint::sortTSDPoints(const TSDPoint * a, const TSDPoint * b){
 	else if (x == -1){
 		return false;	
 	}
-
+        /*
+        int latticea = LatticeLevel(a,*P,GLOBAL_L);
+        int latticeb = LatticeLevel(a,*P,GLOBAL_L);
+        if (latticea < latticeb){
+          return 1;
+        }
+        else if (latticeb < latticea){
+          return 0;
+        }
+        */
 	x = sortTSDPointsHelper(a,b,P);
 	if (x == 1){
 		return true;	
 	}
 	return false;
+}
+
+
+void TSDPoint::setMaxEncodings(const Encodings & L){
+  for (int i = 0; i < L.totalSpecies(); i++){
+    maxEncodings.push_back(L.getMaxLevel(L.getSpecie(i)));
+  }
+  return;
+}
+
+
+int TSDPoint::LatticeLevel(const Set& P){
+
+  if ((int)maxEncodings.size() == 0){
+    cout << "ERROR: Calling LatticeLevel with a null\n";
+    exit(0);
+  }
+
+  //if (DEBUG_LEVEL > 1){
+  //  cout << "\t\t\t\tCalculating lattice level for " << bin->rowValues << " and " << P << "\n";
+  //}
+
+  int ll = 0;
+  for(int j = 0; j < P.size(); j++){
+    Specie * st = P.get(j);
+    char valc [2];
+    valc[0]= rowValues[st->getGeneUID()];
+    valc[1] = 0;
+    int val = atoi(valc);
+    int max = maxEncodings[st->getGeneUID()];
+    if (P.sortsLowToHigh(st->getGeneUID())){
+      ll += val;
+    }
+    else{
+      ll += max - val;
+    }
+  }
+
+  //if (DEBUG_LEVEL > 1){
+  //  cout << "\t\t\t\t\tThe level is " << ll << "\n";
+  //}
+  return ll;
 }

@@ -49,6 +49,13 @@ std::vector<float> Encodings::getLevels(const Specie * s) const{
 	return *levels.at(s->getGeneUID());
 }
 
+Specie * Encodings::getSpecie(int i) const{
+  if (i < 0 || i > totalSpecies()){
+    return NULL;	
+  }
+  return s->get(i);
+}
+
 int Encodings::getMaxLevel(const Specie * s) const{
   if (s == NULL || s->getGeneUID() >= (int)levels.size()){
     return -1;

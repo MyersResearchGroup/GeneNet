@@ -462,6 +462,7 @@ void GeneNet(Species &S, Experiments &E, NetCon &C, Thresholds &T, Encodings &L,
 
 
   //int ParentSetsRemoved = 0;
+  TSDPoint::setMaxEncodings(L);
 
   for (int i = 0; i < S.size(); i++){
     scoreCache = new map<Specie*, map<Set, map<Set, vector<float> > > >();
@@ -558,13 +559,11 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
   //cout << "G is " << tmpG << "\n";
   //cout << "P is " << tmpP << "\n";
   sort(TSDPoint::initialValues->begin(), TSDPoint::initialValues->end(), &TSDPoint::sortTSDPoints);
-
   /*
     for (vector<TSDPoint*>::iterator iter = TSDPoint::initialValues->begin(); iter != TSDPoint::initialValues->end(); iter++){
     cout << "\t" << (*iter)->rowValues << "\n";
     }
   */
-
   ofstream fout;
   if (DEBUG_LEVEL > 1){
     string sa = *globDir;
@@ -665,7 +664,9 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
         }
       }
       else if (i < end && next == NULL && base->cannotCompareLevels((*TSDPoint::initialValues)[i])){
-        //cout << "\t\t\t\t\tUnable to compare " << base->rowValues << " with " << (*TSDPoint::initialValues)[i]->rowValues << "\n";
+        if (DEBUG_LEVEL > 1){
+          cout << "\t\t\t\t\tUnable to compare " << base->rowValues << " with " << (*TSDPoint::initialValues)[i]->rowValues << "\n";
+        }
         //make sure that we can even compare base to the next one and it hasn't jumped
         base = NULL;
         i--;
@@ -901,27 +902,25 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
           rising = 0;	
           seen = 0;
           prob1 = -1;
-          int lattice_level = -1;
-          for (int j = baseI; j < i && lattice_level < LatticeLevel(next,P,L); j++){
+          int lattice_level = (*TSDPoint::initialValues)[baseI]->LatticeLevel(P);
+          for (int j = baseI; j < i && lattice_level < next->LatticeLevel(P); j++){
             //if (DEBUG_LEVEL > 1){
             //  cout << "\t\t\t\tTrying to add in base " << i-j << "\n";
             //}
             TSDPoint * basePotential = (*TSDPoint::initialValues)[j];
-            if (LatticeLevel(basePotential,P,L) != lattice_level){
+            if (basePotential->LatticeLevel(P) > lattice_level){
               if (DEBUG_LEVEL > 1){
                 cout << "\t\t\t\t\tRead to the end of a lattice level\n";
               }
               //See if lattice_level has enough data
               if (seen <= nValue/10.0f && seen < 20){
                 //try the next lattice level
-                lattice_level = LatticeLevel(basePotential,P,L);
+                lattice_level = basePotential->LatticeLevel(P);
                 base = basePotential;
                 seen = basePotential->seen[s.getGeneUID()];
                 rising = basePotential->risings[s.getGeneUID()];
               }
               else{
-                //calculate the probability
-                prob1 = rising/seen;
                 j = i;
                 if (DEBUG_LEVEL > 1){
                   cout << "\t\t\t\t\tThose are a good base set\n";
@@ -945,6 +944,15 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
               }
             }
           }
+          //See if lattice_level has enough data
+          if (!(seen <= nValue/10.0f && seen < 20)){            
+            //calculate the probability
+            prob1 = rising/seen;
+            if (DEBUG_LEVEL > 1){
+              cout << "\t\t\t\t\tFound probability of " << prob1 << "\n";
+            }
+          }
+
           string nextStr = "";
           nextStr = next->rowValues;
           next = NULL;
@@ -1123,12 +1131,19 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
       relaxedTheBounds = true;
       newT.relaxInitialParentsThresholds();
       cout << "There are not enough parents for " << s << ", relaxing the thresholds to [" << newT.getTA() << ", " << newT.getTF() << "]\n";
-      if (newT.getTF() <= 1+floatCompareValue && newT.getTA() <= 1+floatCompareValue){
+      if (newT.getTF() <= 1+floatCompareValue && newT.getTA() >= 1 - floatCompareValue){
         cout << "CANNOT RELAX BOUNDS MORE TO LET " << T.getsip_letNThrough() << " parent through\n";
         canRelaxMore = false;
       }
+      if (newT.getTF() < 1){
+        newT.setTF(1.0);
+      }
+      if (newT.getTA() > 1){
+        newT.setTA(1.0);
+      }
     }
   }
+  
   if (relaxedTheBounds){
     if (DEBUG_LEVEL > COMPETITION_LOG){
       competitionLog << "The bounds were relaxed\n";
@@ -1144,6 +1159,7 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
       rescoreSet->setScore(-1, alpha);
     }
   }
+  
   if (DEBUG_LEVEL > COMPETITION_LOG){
     competitionLog << competitionString.str() <<"\n";
   }
@@ -1683,37 +1699,7 @@ void readLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & T
   lvl_file.close();
 }
 
-int LatticeLevel(TSDPoint * bin, const Set& P, const Encodings& L){
-  if (bin == NULL){
-    cout << "ERROR: Calling LatticeLevel with a null\n";
-    exit(0);
-  }
 
-  //if (DEBUG_LEVEL > 1){
-  //  cout << "\t\t\t\tCalculating lattice level for " << bin->rowValues << " and " << P << "\n";
-  //}
-
-  int ll = 0;
-  for(int j = 0; j < P.size(); j++){
-    Specie * st = P.get(j);
-    char valc [2];
-    valc[0]= bin->rowValues[st->getGeneUID()];
-    valc[1] = 0;
-    int val = atoi(valc);
-    int max = L.getMaxLevel(st);
-    if (P.sortsLowToHigh(st->getGeneUID())){
-      ll += val;
-    }
-    else{
-      ll += max - val;
-    }
-  }
-
-  //if (DEBUG_LEVEL > 1){
-  //  cout << "\t\t\t\t\tThe level is " << ll << "\n";
-  //}
-  return ll;
-}
 
 bool areConnected(TSDPoint * bottom, TSDPoint * top, const Set& P, const Encodings& L){
   //if (DEBUG_LEVEL > 1){

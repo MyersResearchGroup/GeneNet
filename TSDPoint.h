@@ -26,7 +26,8 @@ public:
 	std::vector<int> risings;
 	friend float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, const Thresholds& T, const Encodings& L);
 	friend bool areConnected(TSDPoint * bottom, TSDPoint * top, const Set& P, const Encodings& L);
-        friend int LatticeLevel(TSDPoint * bin, const Set& P, const Encodings& L);
+        int LatticeLevel(const Set& P);
+        static void setMaxEncodings(const Encodings & L);
 protected:
 	TSDPoint(std::string rowValues);
 	virtual ~TSDPoint();
@@ -40,9 +41,10 @@ private:
 	static std::vector<TSDPoint*> * initialValues;
 	static int numS;
 	bool increaseMinuses(int * v, int stringSize, int size);
-	std::string rowValues;
 	static Set * G;
 	static Set * P;
+        static std::vector<int> maxEncodings;
+	std::string rowValues;
 };
 
 #endif /*TSDPOINT_H_*/

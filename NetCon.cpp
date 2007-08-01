@@ -130,7 +130,7 @@ std::string NetCon::removeLosers(const Specie & s, const DoubleSet& s1, float * 
     return cs.str();
   }
   //find the winner
-  float max = 0;
+  float max = -1;
   std::ostringstream winner;
   for (int i = 0; i < s1.size(); i++){
     if (fabs(scores[i]) > max){
