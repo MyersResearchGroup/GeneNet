@@ -1074,7 +1074,7 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
   ostringstream contendersString;
   ostringstream backgroundIV;
   backgroundIV << "<";
-  for (int i = 0; i < Specie::getNumSpecie(); i++){
+  for (int i = 1; i < Specie::getNumSpecie(); i++){
     backgroundIV << "n";
   }
   backgroundIV << ">";
@@ -1122,7 +1122,7 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
     if (C.getParentsFor(s)->size() < T.getsip_letNThrough()){
       relaxedTheBounds = true;
       newT.relaxInitialParentsThresholds();
-      cout << "There are no parents for " << s << ", relaxing the thresholds to [" << newT.getTA() << ", " << newT.getTF() << "]\n";
+      cout << "There are not enough parents for " << s << ", relaxing the thresholds to [" << newT.getTA() << ", " << newT.getTF() << "]\n";
       if (newT.getTF() <= 1+floatCompareValue && newT.getTA() <= 1+floatCompareValue){
         cout << "CANNOT RELAX BOUNDS MORE TO LET " << T.getsip_letNThrough() << " parent through\n";
         canRelaxMore = false;
