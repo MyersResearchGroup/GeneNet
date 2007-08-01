@@ -1206,18 +1206,19 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
     currentBases[currentNumOfBasesUsed-1] = currentNumOfBasesUsed-2;
     while(incrementBaseSet(currentBases,currentNumOfBasesUsed,baseSet.size())){
       Set currentWorking;
-      bool allAtSameInfluenceLevel = true;
-      float influenceLevel = fabs(baseSet.getIndividualScore(baseSet.get(currentBases[0])->getGeneUID()));
+      float min = 999;
+      float max = -999;
       for (int i = 0; i < currentNumOfBasesUsed; i++){
         float m = baseSet.getIndividualScore(baseSet.get(currentBases[i])->getGeneUID());
         currentWorking.insert(baseSet.get(currentBases[i]),m);
-        if (!(fabs(m) + T.getTM() > influenceLevel && influenceLevel + T.getTM() > fabs(m))){
-          allAtSameInfluenceLevel = false;
-          i = currentNumOfBasesUsed;	
+        if (m < min){
+          min = m;
+        }
+        if (m > max){
+          max = m;
         }
       }
-
-      if (allAtSameInfluenceLevel){
+      if (min + T.getTM() >= max){
         if (DEBUG_LEVEL>0){
           cout << "Checking if set " << currentWorking << " is better than the subsets\n";
         }
