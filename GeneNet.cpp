@@ -1192,11 +1192,9 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
   if (DEBUG_LEVEL > COMPETITION_LOG){
     competitionLog << "Multiple Parents for " << s << "\n";
   }
-  bool addedASetAtLevel = baseSet.size() > 1;
   int currentNumOfBasesUsed = 2;
-  while(addedASetAtLevel && currentNumOfBasesUsed <= T.getMaxParentSetSize()){
+  while(currentNumOfBasesUsed <= T.getMaxParentSetSize()){
     cout << "\tCreating parents sets of " << currentNumOfBasesUsed << " bases\n";
-    addedASetAtLevel = false;
     int * currentBases = new int[currentNumOfBasesUsed];
     //fill the current with the first few
     for (int i = 0; i < currentNumOfBasesUsed-1; i++){
@@ -1233,7 +1231,6 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
 
         currentWorking.setScore(-1,score);
         if (C.addIfScoreBetterThanSubsets(s,currentWorking)){
-          addedASetAtLevel = true;
           if (DEBUG_LEVEL>0){
             cout << "\tIt Was Better than the subsets!\n";
             if (DEBUG_LEVEL > COMPETITION_LOG){
