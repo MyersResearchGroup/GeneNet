@@ -16,7 +16,7 @@ Thresholds::Thresholds(double A, double R, double V, int RisingAmount, int Windo
 	maxParentSetSize = MaxParentSetSize;
 	competeMultipleHighLowBool = CompeteMultipleHighLowBool;
 	//postFilter = PostFilter;
-	sip_letNThrough = 3;
+	sip_letNThrough = 1;
 	//tp = 0.51;
 }
 
