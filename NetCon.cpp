@@ -41,7 +41,7 @@ const NetCon & NetCon::operator=(const NetCon & s){
 }
 
 
-void NetCon::unionIt(const Set & mySet, int TYPE, const Specie& s, float score){
+void NetCon::unionIt(const Set & mySet, int TYPE, const Specie& s, double score){
 	Set s2(mySet);
 	s2.setScore(-1,score);
 	if (s.getGeneUID() < 0 || TYPE <= 0 || TYPE >= MAX_TYPE_NUMBER){
@@ -109,7 +109,7 @@ std::string NetCon::removeSubsets(const Specie & s){
 
 }
 
-std::string NetCon::filterByScore(const Specie & s,float f){
+std::string NetCon::filterByScore(const Specie & s,double f){
 	if (s.getGeneUID() < 0 || s.getGeneUID() >= (int)myConnections.size()){
 		std::cout << "ERROR: Removing subsets for an invalid set\n";
 		return "";
@@ -124,13 +124,13 @@ int NetCon::totalParents(const Specie& s){
 	return myConnections.at(s.getGeneUID())->size();
 }
 
-std::string NetCon::removeLosers(const Specie & s, const DoubleSet& s1, float * scores, std::ostringstream &contenders){
+std::string NetCon::removeLosers(const Specie & s, const DoubleSet& s1, double * scores, std::ostringstream &contenders){
   std::ostringstream cs;
   if (s.getGeneUID() < 0 || s.getGeneUID() >= (int)myConnections.size()){
     return cs.str();
   }
   //find the winner
-  float max = -1;
+  double max = -1;
   std::ostringstream winner;
   for (int i = 0; i < s1.size(); i++){
     if (fabs(scores[i]) > max){

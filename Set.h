@@ -10,13 +10,13 @@ class Specie;
 class Set
 {
 public:
-	static const float DELTA = 0.0001;
+	static const double DELTA = 0.0001;
 	Set();
 	Set(const Set & s);
 	virtual ~Set();
 	int size() const;
 	Specie * get(int i) const;
-	void insert(Specie * s, float individualScore);
+	void insert(Specie * s, double individualScore);
 	
 	bool contains(const Set& s1) const;
 	bool containsSpecieID(int s1) const;
@@ -25,12 +25,12 @@ public:
 	
 	const Set & operator=(const Set & s);
 	
-	float getScore() const;
-	void setScore(int specieUID, float x);
-	float getIndividualScore(int specieUID) const;
+	double getScore() const;
+	void setScore(int specieUID, double x);
+	double getIndividualScore(int specieUID) const;
 	
-	float getCompetitionScore() const;
-	void setCompetitionScore( float x);
+	double getCompetitionScore() const;
+	void setCompetitionScore( double x);
 
         std::string toIV() const;
         std::string toIndividualIV() const;
@@ -40,10 +40,10 @@ public:
 	friend bool operator >  (const Set& s1, const Set& s2);
 private:
 	std::vector<Specie*> mySet;
-	std::vector<float> individualScores;
+	std::vector<double> individualScores;
 
-	float myScore;
-	float competitionScore;
+	double myScore;
+	double competitionScore;
 };
 
 Set unionIt(const Set& s1,const Set& s2);

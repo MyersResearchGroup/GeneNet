@@ -25,7 +25,7 @@ void Encodings::initialize(Species * species, Experiments * experiments, Thresho
 void Encodings::clearLevels(){
   cout << "Clearning Levels\n";
 	while(levels.size() > 0){
-		std::vector<float> * f = levels.back();
+		std::vector<double> * f = levels.back();
 		levels.pop_back();
 		delete f;
 	}
@@ -41,9 +41,9 @@ int Encodings::totalSpecies() const{
 	return s->size();
 }
 
-std::vector<float> Encodings::getLevels(const Specie * s) const{
+std::vector<double> Encodings::getLevels(const Specie * s) const{
 	if (s == NULL || s->getGeneUID() >= (int)levels.size()){
-		std::vector<float> f;
+		std::vector<double> f;
 		return f;	
 	}
 	return *levels.at(s->getGeneUID());
@@ -88,10 +88,10 @@ bool Encodings::useBins(int oldNumBins, bool useSpeciesLevels, bool succ, bool p
           if (useSpeciesLevels){
             numBins = oldLevels[i];
           }
-		std::vector<float> v = e->getSortedValues(i);
+		std::vector<double> v = e->getSortedValues(i);
 		int current = 0;
-		float left = v.size();
-		float binSize = left/numBins;
+		double left = v.size();
+		double binSize = left/numBins;
 		int seen = 0;
 		int levelsAssigned = 0;
 		if (DEBUG_LEVEL > 0){
@@ -99,7 +99,7 @@ bool Encodings::useBins(int oldNumBins, bool useSpeciesLevels, bool succ, bool p
 		}
 		while(levelsAssigned < numBins-1 && current < (int)v.size()){
 			seen++; //seen is one more than current, as [0] is 1 'seen'
-			//ramp up the floats that are the same in this round, watching out for the end
+			//ramp up the doubles that are the same in this round, watching out for the end
 			while (current < ((int)v.size())-2 && v.at(current) == v.at(current+1)){
 				if (DEBUG_LEVEL > 3){
 					cout << "\t\t\t" << current << " < " << ((int)v.size())-2 << " && " << v.at(current) << "==" << v.at(current+1) << "\n";
@@ -117,9 +117,9 @@ bool Encodings::useBins(int oldNumBins, bool useSpeciesLevels, bool succ, bool p
 				//add in a new level vector if there isn't one
 				while ((int)levels.size() <= i){
 					//cout << "Adding a vector at" << levels.size() << "\n";
-					levels.push_back(new std::vector<float>());
+					levels.push_back(new std::vector<double>());
 				}
-				std::vector<float> * f = levels.at(i);
+				std::vector<double> * f = levels.at(i);
 				if (DEBUG_LEVEL > 0){
 					cout << "\t\tAssigning level " << (int)f->size() << " for specie " << i << " at " << v.at(current) << "\n";
 				}
@@ -128,7 +128,7 @@ bool Encodings::useBins(int oldNumBins, bool useSpeciesLevels, bool succ, bool p
 				seen = 0;
 				//base the new bin size on how many results are left
 				left = v.size() - (current+1);
-				binSize = left / (float)(numBins - levelsAssigned);
+				binSize = left / (double)(numBins - levelsAssigned);
 				if (DEBUG_LEVEL > 0){
 					cout << "\t\tNew bin Size:" << binSize << " = " << left << " / (" << numBins << " - " << levelsAssigned << ")\n";
 				}
@@ -145,9 +145,9 @@ bool Encodings::useBins(int oldNumBins, bool useSpeciesLevels, bool succ, bool p
                           //add in a new level vector if there isn't one
                           if ((int)levels.size() == i){
                             //cout << "Adding a vector at" << levels.size() << "\n";
-                            levels.push_back(new std::vector<float>());
+                            levels.push_back(new std::vector<double>());
                           }
-                          std::vector<float> * f = levels.at(i);
+                          std::vector<double> * f = levels.at(i);
                           if (DEBUG_LEVEL > 0){
                             cout << "\t\tAssigning level " << (int)f->size() << " for specie " << i << " at " << j << "\n";
                           }
@@ -168,7 +168,7 @@ void Encodings::printLevels(){
 	for (int i = 0; i < (int)levels.size(); i++){
 		Specie * p = Specie::getInstance("??",i);
 		std::cout << "Levels for " << *p << " are: ";
-		std::vector<float> * v = levels.at(i);
+		std::vector<double> * v = levels.at(i);
 		for (int j = 0; j < (int) v->size(); j++){
 			std::cout << " " << v->at(j);
 		}
@@ -178,11 +178,11 @@ void Encodings::printLevels(){
 bool Encodings::useFile(ifstream & lvl_file, bool checkOrdering, bool succ, bool pred){
 	clearLevels();
 	for (int i = 0; i <= totalSpecies(); i++){
-		levels.push_back(new std::vector<float>());
-		std::vector<float> * f = levels.at(i);
+		levels.push_back(new std::vector<double>());
+		std::vector<double> * f = levels.at(i);
 		string name;
 		int num_levels;
-		float tmp;
+		double tmp;
 		char c;
 		lvl_file >> name;
 		name = name.substr(0,name.size()-1); // remove the , at the end
@@ -249,18 +249,18 @@ bool Encodings::useNumbers(int oldNumBins, bool useSpeciesLevels, bool succ, boo
           if (useSpeciesLevels){
             numBins = oldLevels[i];
           }
-		std::vector<float> v = e->getSortedValues(i);
+		std::vector<double> v = e->getSortedValues(i);
 		if (v.size() < 2){
 			cout << "UNABLE TO USE EXP " << i << " The size is too small " << v.size() << "\n";
 		}
 		else{
-			float top = v.back();
-			float bottom = v.at(0);
-			float binSize = (top-bottom) / numBins;
+			double top = v.back();
+			double bottom = v.at(0);
+			double binSize = (top-bottom) / numBins;
                         while ((int)levels.size() <= i){
-                          levels.push_back(new std::vector<float>());
+                          levels.push_back(new std::vector<double>());
                         }
-			std::vector<float> * f = levels.at(i);
+			std::vector<double> * f = levels.at(i);
 			for (int i = 1; i < numBins; i++){
 				f->push_back(bottom+i*binSize);
 			}
@@ -282,8 +282,8 @@ void Encodings::fillTSD(bool succ, bool pred){
   TSDPoint::InitializePoints();
   for (int i = 0; i < e->totalExperiments(); i++){
     for (int j = 0; j < e->totalRows(i) - t->getWindowSize(); j++){
-      std::vector<float> * current = e->getRow(i, j);
-      std::vector<float> * next = e->getRow(i, j+t->getWindowSize());
+      std::vector<double> * current = e->getRow(i, j);
+      std::vector<double> * next = e->getRow(i, j+t->getWindowSize());
       //std::vector<string> encoded;
       
       //Remember, that species doesn't include the first 'time' column
@@ -346,7 +346,7 @@ void Encodings::fillTSD(bool succ, bool pred){
 }
 
 
-float Encodings::getProb(const Specie * child, const std::vector<int> * l1, const std::vector<int> * l2) const{
+double Encodings::getProb(const Specie * child, const std::vector<int> * l1, const std::vector<int> * l2) const{
 	//look into the tsd files at the child's probabilities
 	//merge 'unused' parents into the required set
 
@@ -369,7 +369,7 @@ float Encodings::getProb(const Specie * child, const std::vector<int> * l1, cons
 			v[i] = -1;
 		}
 	}
-	float prob = TSDPoint::calculateProbability(child->getGeneUID(),v, size, maxSize);
+	double prob = TSDPoint::calculateProbability(child->getGeneUID(),v, size, maxSize);
 	delete [] v;
 	delete [] size;
 	return prob;

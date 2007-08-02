@@ -139,7 +139,7 @@ public:
    		TS_ASSERT(exp.getRow(0,-1) == NULL);
    		TS_ASSERT(exp.getRow(4,0) == NULL);
    		TS_ASSERT(exp.getRow(0,4) == NULL);
-		std::vector<float> * row = exp.getRow(0,0);
+		std::vector<double> * row = exp.getRow(0,0);
 		TS_ASSERT(row != NULL);
 		TS_ASSERT_EQUALS((int)row->size(),2);
 		TS_ASSERT_DELTA(row->at(0),7,0.0001);
@@ -171,7 +171,7 @@ public:
    		TS_ASSERT(exp1.addTimePoint(1,0,1,4.6));
    		TS_ASSERT(exp1.addTimePoint(2,0,0,9.9));
    		TS_ASSERT(exp1.addTimePoint(2,0,1,4.7)); //a different species at column 1
-   		std::vector<float> f = exp1.getSortedValues(0);
+   		std::vector<double> f = exp1.getSortedValues(0);
    		TS_ASSERT_EQUALS((int)f.size(),4);
    		TS_ASSERT_DELTA(f.at(0),3.3,0.0001);
    		TS_ASSERT_DELTA(f.at(1),9.9,0.0001);
@@ -543,8 +543,8 @@ public:
    		e.initialize(&s,&exp1,&T);
    		TS_ASSERT_EQUALS(e.totalSpecies(), 2);
    		TS_ASSERT(e.useBins(2));
-   		std::vector<float> f1 = e.getLevels(one);
-   		std::vector<float> f2 = e.getLevels(two);
+   		std::vector<double> f1 = e.getLevels(one);
+   		std::vector<double> f2 = e.getLevels(two);
    		TS_ASSERT_EQUALS((int)f1.size(),1);
    		TS_ASSERT_EQUALS(f1.at(0),3);
    		TS_ASSERT_EQUALS((int)f2.size(),1);
@@ -698,7 +698,7 @@ public:
 		DoubleSet d;
 		d.unionIt(lowerOdd);
 		d.unionIt(sets[2]);
-		float f[2];
+		double f[2];
 		f[0] = 0.2;
 		f[1] = 0.1;
 		netTest.removeLosers(*s[4],d,f);

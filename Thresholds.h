@@ -5,15 +5,15 @@
 class Thresholds
 {
 public:
-	Thresholds(float A, float R, float V, int RisingAmount, int WindowSize, int NumBins, float InfluenceLevelDelta, float RelaxInitialParentsDelta, int MaxParentSetSize, bool CompeteMultipleHighLowBool);
-	float getTF() const {return tf;}
-	float getTA() const {return ta;}
-	float getTI() const {return ti;}
+	Thresholds(double A, double R, double V, int RisingAmount, int WindowSize, int NumBins, double InfluenceLevelDelta, double RelaxInitialParentsDelta, int MaxParentSetSize, bool CompeteMultipleHighLowBool);
+	double getTF() const {return tf;}
+	double getTA() const {return ta;}
+	double getTI() const {return ti;}
 	int getBins() const {return numBins;}
 	int getRisingAmount() const {return risingAmount;}
 	int getWindowSize() const {return windowSize;}
-	float getTM() const {return tm;}
-	float getRelaxInitialParentsDelta() const {return relaxInitialParentsDelta;}
+	double getTM() const {return tm;}
+	double getRelaxInitialParentsDelta() const {return relaxInitialParentsDelta;}
 	void relaxInitialParentsThresholds();
 	bool harshenInitialParentsThresholds();
 	int getMaxParentSetSize() const {return maxParentSetSize;}
@@ -21,35 +21,35 @@ public:
 	void setCompeteMultipleHighLow(bool a) {competeMultipleHighLowBool = a;}
 
 
-	void setTF(float F) {tf = F;}
-	void setTA(float F) {ta = F;}
-	void setTI(float F) {ti = F;}
+	void setTF(double F) {tf = F;}
+	void setTA(double F) {ta = F;}
+	void setTI(double F) {ti = F;}
 	void setBins(int F) {numBins = F;}
 	void setRisingAmount(int F) {risingAmount = F;}
 	void setWindowSize(int F) {windowSize = F;}
-	void setTM(float F) {tm = F;}
-	void setRelaxInitialParentsDelta(float F) {relaxInitialParentsDelta = F;}
+	void setTM(double F) {tm = F;}
+	void setRelaxInitialParentsDelta(double F) {relaxInitialParentsDelta = F;}
 	void setMaxParentSetSize(int F ) {maxParentSetSize = F;}
 	
 	void setsip_letNThrough(int i){sip_letNThrough = i;}
 	int getsip_letNThrough() const {return sip_letNThrough;}
 
-	//float getPostFilter(){return postFilter;}
+	//double getPostFilter(){return postFilter;}
 	virtual ~Thresholds();
 private:
-	float tf;
-	float ta;
-	float ti;
+	double tf;
+	double ta;
+	double ti;
+	double tm;
+	double tp;
 	int risingAmount;
 	int windowSize;
 	int numBins;
-	float tm;
-	float relaxInitialParentsDelta;
+	double relaxInitialParentsDelta;
 	int maxParentSetSize;
 	bool competeMultipleHighLowBool;
-	//float postFilter
+	//double postFilter
 	int sip_letNThrough;
-	float tp;
 };
 
 #endif /*THRESHOLDS_H_*/

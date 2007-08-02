@@ -7,7 +7,7 @@
 
 Experiments::Experiments()
 {
-	experiments = new vector<vector<vector<float>*>*>();
+	experiments = new vector<vector<vector<double>*>*>();
 }
 Experiments::Experiments(const Experiments & exp){
 	fillExperiments(exp);
@@ -21,11 +21,11 @@ Experiments::~Experiments()
 void Experiments::deleteExperiments(){
 	while(experiments->size() > 0 ){
 		while (experiments->at(experiments->size()-1)->size() > 0 ){
-			vector<float> * p = experiments->at(experiments->size()-1)->back();
+			vector<double> * p = experiments->at(experiments->size()-1)->back();
 			experiments->at(experiments->size()-1)->pop_back();
 			delete p;
 		}
-		vector<vector<float>*> * p = experiments->back();
+		vector<vector<double>*> * p = experiments->back();
 		experiments->pop_back();
 		delete p;
 	}
@@ -41,14 +41,14 @@ const Experiments & Experiments::operator=(const Experiments & e){
 }
 
 void Experiments::fillExperiments(const Experiments & exp){
-	experiments = new vector<vector<vector<float>*>*>();
+	experiments = new vector<vector<vector<double>*>*>();
 	for (int i = 0; i < (int)exp.experiments->size(); i++){
-		vector<vector<float>*> * first = exp.experiments->at(i);
-		vector<vector<float>*> * a = new vector<vector<float>*>();
+		vector<vector<double>*> * first = exp.experiments->at(i);
+		vector<vector<double>*> * a = new vector<vector<double>*>();
 		experiments->push_back(a);
 		for (int j = 0; j < (int)first->size(); j++){
-			vector<float> * second = first->at(j);
-			vector<float> * b = new vector<float>;
+			vector<double> * second = first->at(j);
+			vector<double> * b = new vector<double>;
 			a->push_back(b);
 			for (int k = 0; k < (int)second->size(); k++){
 				b->push_back(second->at(k));
@@ -57,7 +57,7 @@ void Experiments::fillExperiments(const Experiments & exp){
 	}
 }
 
-bool Experiments::addTimePoint(int experiment, int row, int column, float data){
+bool Experiments::addTimePoint(int experiment, int row, int column, double data){
 	//cout << "Trying to add point: e,r,c " << experiment << " " << row << " " << column << endl;
 	//disallow negative points
 	if (experiment < 0 || row < 0 || column < 0 || data < 0){
@@ -75,10 +75,10 @@ bool Experiments::addTimePoint(int experiment, int row, int column, float data){
 				return false;
 			}
 		}
-		experiments->push_back(new vector<vector<float>*>());
+		experiments->push_back(new vector<vector<double>*>());
 		//cout << "Adding an experiment: ";
 	}
-	vector<vector<float>*>* exp = experiments->at(experiment);
+	vector<vector<double>*>* exp = experiments->at(experiment);
 	
 	//only allow one row to be added at a time, but can add to same row
 	if (row != (int)exp->size() && row != (int)exp->size()-1){
@@ -91,21 +91,21 @@ bool Experiments::addTimePoint(int experiment, int row, int column, float data){
 				return false;
 			}
 		}
-		exp->push_back(new vector<float>());	
+		exp->push_back(new vector<double>());	
 		//cout << "Adding a row: ";
 	}
 	
-	vector<float> * r = exp->at(row);
+	vector<double> * r = exp->at(row);
 	
 	//only allow one int to be added at a time
-	if (column != (float)r->size()){
+	if (column != (double)r->size()){
 		return false;	
 	}
 	r->push_back(data);
 	//cout <<"Adding Data: "<< data << endl;
 	return true;
 }
-float Experiments::getTimePoint(int experiment, int row, int column){
+double Experiments::getTimePoint(int experiment, int row, int column){
 	//disallow negative points
 	if (experiment < 0 || row < 0 || column < 0){
 		return -1;	
@@ -126,17 +126,17 @@ float Experiments::getTimePoint(int experiment, int row, int column){
 
 
 
-std::vector<float> Experiments::getSortedValues(int column){
-	std::vector<float> v;
+std::vector<double> Experiments::getSortedValues(int column){
+	std::vector<double> v;
 	//std::cout << "There are " << (int)experiments->size() << " experiments\n";
 	for (int i = 0; i < (int)experiments->size(); i++){
-		vector<vector<float>*>* exp = experiments->at(i);
+		vector<vector<double>*>* exp = experiments->at(i);
 		for (int row = 0; row < (int)exp->size(); row++){
-			vector<float> * r = exp->at(row);
+			vector<double> * r = exp->at(row);
 			//make sure that s can be found in EVERY experiment
 			if (column < 0 || column >= (int)r->size()){
 				std::cout << "ERROR: for some reason this specie is not found in every experiment\n";
-				std::vector<float> empty;
+				std::vector<double> empty;
 				return empty;
 			}
 			else{
@@ -149,10 +149,10 @@ std::vector<float> Experiments::getSortedValues(int column){
 	return v;
 }
 
-std::vector<float> * Experiments::getRow(int experiment, int row){
-	std::vector<float> * v = NULL;
+std::vector<double> * Experiments::getRow(int experiment, int row){
+	std::vector<double> * v = NULL;
 	if (0 <= experiment && experiment < (int)experiments->size()){
-		vector<vector<float>*>* exp = experiments->at(experiment);
+		vector<vector<double>*>* exp = experiments->at(experiment);
 		if (0 <= row && row < (int)exp->size()){
 			return exp->at(row);
 		}

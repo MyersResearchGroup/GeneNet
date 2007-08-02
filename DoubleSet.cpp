@@ -139,7 +139,7 @@ std::string DoubleSet::removeSubsets(){
         return out.str();
 }
 
-std::string DoubleSet::filterByScore(float f){
+std::string DoubleSet::filterByScore(double f){
         std::ostringstream out;
 	for (int i = 0; i < (int)myDoubleSet.size(); i++){
 		if (fabs(myDoubleSet.at(i)->getScore()) <= f){

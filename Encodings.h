@@ -19,14 +19,14 @@ public:
 	bool useBins(int numBins, bool useSpeciesLevels, bool succ, bool pred);
 	bool useNumbers(int numBins, bool useSpeciesLevels, bool succ, bool pred);
 	bool useFile(ifstream & lvl_file, bool checkOrdering, bool succ, bool pred);
-	std::vector<float> getLevels(const Specie * s) const;
+	std::vector<double> getLevels(const Specie * s) const;
         int getMaxLevel(const Specie * s) const;
-	float getProb(const Specie * child, const std::vector<int> * l1, const std::vector<int> * l2) const;
+	double getProb(const Specie * child, const std::vector<int> * l1, const std::vector<int> * l2) const;
 	void printLevels();
         Specie * getSpecie(int i) const;
 private:
 	void clearLevels();
-	std::vector<std::vector<float>*> levels;
+	std::vector<std::vector<double>*> levels;
 	Species * s;
 	Experiments * e;
 	Thresholds * t;

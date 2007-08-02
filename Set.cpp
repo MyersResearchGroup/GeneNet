@@ -22,18 +22,18 @@ Set::Set(const Set & s){
 	individualScores = s.individualScores;
 }
 
-float Set::getScore() const{
+double Set::getScore() const{
 	return myScore;
 }
 
-float Set::getCompetitionScore() const{
+double Set::getCompetitionScore() const{
 	return competitionScore;	
 }
-void Set::setCompetitionScore(float x){
+void Set::setCompetitionScore(double x){
 	competitionScore = x;	
 }
 
-float Set::getIndividualScore(int specieUID) const{
+double Set::getIndividualScore(int specieUID) const{
 	for (int i = 0; i < (int) mySet.size(); i++){
 		if (specieUID == mySet.at(i)->getGeneUID()){
 			return individualScores[i];
@@ -44,7 +44,7 @@ float Set::getIndividualScore(int specieUID) const{
 	return -1;
 }
 
-void Set::setScore(int specieUID, float x){
+void Set::setScore(int specieUID, double x){
 	if (specieUID == -1){
 		myScore = x;
 		//if there is only 1 specie, give it this score as well
@@ -126,10 +126,10 @@ Specie * Set::get(int i) const{
 	assert(i >= 0 && i < size());
 	return mySet[i];
 }
-void Set::insert(Specie * s, float individualScore){
+void Set::insert(Specie * s, double individualScore){
 	//keep the ordering
 	bool added = false;
-	std::vector<float>::iterator where = individualScores.begin();
+	std::vector<double>::iterator where = individualScores.begin();
 	for (std::vector<Specie *>::iterator iter = mySet.begin(); iter != mySet.end() && added == false; iter++){
 		if (s->getGeneUID() == (*iter)->getGeneUID()){
 			added = true;

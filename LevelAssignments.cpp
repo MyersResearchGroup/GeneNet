@@ -47,7 +47,7 @@ const LevelAssignments & LevelAssignments::operator=(const LevelAssignments & s)
 	return *this;
 }
 
-bool LevelAssignments::incrementLevel(int * currentAssignment, std::vector<float> * info, int size){
+bool LevelAssignments::incrementLevel(int * currentAssignment, std::vector<double> * info, int size){
 	//base case, no size left
 	if (size <= 0){
 		return false;	
@@ -73,7 +73,7 @@ void LevelAssignments::creationHelper(const Set& P, const Encodings& L){
 	bool done = false;
 	int size = L.totalSpecies()+1; // for time
 	int * currentAssignment = new int[size];
-	std::vector<float> * info = new std::vector<float>[size];
+	std::vector<double> * info = new std::vector<double>[size];
 	currentAssignment[0] = -1;	//Assign time a -1
 	for (int i = 1; i < size; i++){
 		Specie * tmp = Specie::getInstance("tmp",i);

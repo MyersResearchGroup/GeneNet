@@ -25,7 +25,7 @@
 
 %union{
   char* name;
-  float number;
+  double number;
 }
 
 %token <name> NAME

@@ -17,14 +17,14 @@ public:
 	static void clearAll();
 	static void InitializePoints();
 	static TSDPoint * getTSDPoint(std::string rowValue);
-	static float calculateProbability(int child, int * holdSteady, int * totalSize, int size);
+	static double calculateProbability(int child, int * holdSteady, int * totalSize, int size);
 	void updateValue(int * childrenSeen, int * childrenRose, int size);
 	bool sameLevels(TSDPoint * i);
 	bool cannotCompareLevels(TSDPoint* i);
 
 	std::vector<int> seen;
 	std::vector<int> risings;
-	friend float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, const Thresholds& T, const Encodings& L);
+	friend double ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, const Thresholds& T, const Encodings& L);
 	friend bool areConnected(TSDPoint * bottom, TSDPoint * top, const Set& P, const Encodings& L);
         int LatticeLevel(const Set& P);
         static void setMaxEncodings(const Encodings & L);

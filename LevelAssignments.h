@@ -23,7 +23,7 @@ private:
 	void deleteAssignments(void);
 	void fillAssignments(const LevelAssignments & s);
 	void creationHelper(const Set& P, const Encodings& L);
-	bool incrementLevel(int * currentAssignment, std::vector<float> * info, int size);
+	bool incrementLevel(int * currentAssignment, std::vector<double> * info, int size);
 	std::vector<std::vector<int> * > myAssignments;
 	//Set * mySet;
 };

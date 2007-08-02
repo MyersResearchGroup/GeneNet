@@ -32,7 +32,7 @@ bool HAS_TO_HAVE_MAJORITY = false;
 bool CPP_USE_HARSHER_BOUNDS = false;
 bool KEEP_SORT_ORDER_INVERTED = true;
 bool CMP_NO_MAJORITY = false;
-float TOSS_VOTES_NUMBER = 1.0001;
+double TOSS_VOTES_NUMBER = 1.0001;
 bool TOSS_CHANGED_SINGLE_INFLUENCE = true;
 bool WRITE_LEVELS = false;
 bool READ_LEVELS = false;
@@ -44,11 +44,11 @@ bool BASIC_FINDBASEPROB = false;
 extern bool InvertSortOrder;
 
 int DEBUG_LEVEL = 0;
-float floatCompareValue = 0.000001;
+double doubleCompareValue = 0.000001;
 
 string * globDir = NULL;
 
-map<Specie*, map<Set, map<Set, vector<float> > > > * scoreCache = NULL;
+map<Specie*, map<Set, map<Set, vector<double> > > > * scoreCache = NULL;
 
 ofstream competitionLog;
 ofstream contenders;
@@ -208,7 +208,7 @@ void callGeneNet(const char * dir, Thresholds & T){
   }
   GeneNet(S,E,C,T,L,dir);
 
-  scoreCache = new map<Specie*, map<Set, map<Set, vector<float> > > >();
+  scoreCache = new map<Specie*, map<Set, map<Set, vector<double> > > >();
   writeDot(dir, &C, E, T, L);
   delete globDir;
   delete scoreCache;
@@ -216,15 +216,15 @@ void callGeneNet(const char * dir, Thresholds & T){
 }
 
 int main(int argc, char* argv[]){
-  float TF = 1.15;
-  float TA = 0.75;
-  float TI = 0.5;
+  double TF = 1.15;
+  double TA = 0.75;
+  double TI = 0.5;
   int RisingAmount = 1;
   int WindowSize = 1;
   int NumBins = 3;
-  float InfluenceLevelDelta = 0.01; //to allow parents to combine
-  //float InfluenceLevelDelta = 1.0; //to allow parents to combine
-  float RelaxInitialParentsDelta = 0.025;
+  double InfluenceLevelDelta = 0.01; //to allow parents to combine
+  //double InfluenceLevelDelta = 1.0; //to allow parents to combine
+  double RelaxInitialParentsDelta = 0.025;
   int MaxParentSetSize = 2;
   //int MaxParentSetSize = 3;
   bool CompeteMultipleHighLowBool = false;
@@ -465,7 +465,7 @@ void GeneNet(Species &S, Experiments &E, NetCon &C, Thresholds &T, Encodings &L,
   TSDPoint::setMaxEncodings(L);
 
   for (int i = 0; i < S.size(); i++){
-    scoreCache = new map<Specie*, map<Set, map<Set, vector<float> > > >();
+    scoreCache = new map<Specie*, map<Set, map<Set, vector<double> > > >();
     Specie * s = S.get(i);
     cout << "\nUsing specie " << *s << " as a child\n";
 
@@ -514,15 +514,15 @@ void EncodeExpts(Species& S, Experiments& E, Thresholds & T, Encodings& L, bool 
 }
 
 
-float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, const Thresholds& T, const Encodings& L){
-  float votesa; float votesr; float votesu;
+double ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, const Thresholds& T, const Encodings& L){
+  double votesa; double votesr; double votesu;
   votesa = 0; votesr = 0; votesu = 0;
 
 
   if ((*scoreCache)[&s][P][G].size() > 0){
-    vector<float> f = (*scoreCache)[&s][P][G];
+    vector<double> f = (*scoreCache)[&s][P][G];
     for (int i = 0; i < (int)f.size(); i++){
-      float probRatio = f[i];
+      double probRatio = f[i];
       if (probRatio > T.getTF() ){
         votesa++;
       }
@@ -546,7 +546,7 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
     return (votesa - votesr)/(votesa+votesr+votesu);
   }
 
-  vector<float> * fillProbVector = &(*scoreCache)[&s][P][G];
+  vector<double> * fillProbVector = &(*scoreCache)[&s][P][G];
   
   Set tmpG(G);
   Set tmpP(P);
@@ -587,12 +587,12 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
 
   TSDPoint * base = NULL;
   TSDPoint * next = NULL;
-  float rising = 0;
-  float seen = 0;
-  float nextR = 0;
-  float nextS = 0;
-  float prob1 = -1;
-  float nValue = 0;
+  double rising = 0;
+  double seen = 0;
+  double nextR = 0;
+  double nextS = 0;
+  double prob1 = -1;
+  double nValue = 0;
   int end = (int)TSDPoint::initialValues->size();
   if (BASIC_FINDBASEPROB){
     for (int i = 0; i <= end; i++){
@@ -655,8 +655,8 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
         }
       }
       else if (i < end && base->sameLevels((*TSDPoint::initialValues)[i])){
-        float r = (*TSDPoint::initialValues)[i]->risings[s.getGeneUID()];
-        float t = (*TSDPoint::initialValues)[i]->seen[s.getGeneUID()];
+        double r = (*TSDPoint::initialValues)[i]->risings[s.getGeneUID()];
+        double t = (*TSDPoint::initialValues)[i]->seen[s.getGeneUID()];
         rising += r;
         seen   += t;
         if (DEBUG_LEVEL > 1){
@@ -680,8 +680,8 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
         }
       }
       else if (i < end && next->sameLevels((*TSDPoint::initialValues)[i])){
-        float r = (*TSDPoint::initialValues)[i]->risings[s.getGeneUID()];
-        float t = (*TSDPoint::initialValues)[i]->seen[s.getGeneUID()];
+        double r = (*TSDPoint::initialValues)[i]->risings[s.getGeneUID()];
+        double t = (*TSDPoint::initialValues)[i]->seen[s.getGeneUID()];
         nextR += r;
         nextS += t;
         if (DEBUG_LEVEL > 1){
@@ -755,11 +755,11 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
             }
           }
           else{
-            float probN = nextR/nextS;
+            double probN = nextR/nextS;
             if (DEBUG_LEVEL>0){
               cout << "\t\t\t\tNext prob " << nextStr << " = " << nextR << " / " << nextS << " = " << probN << "\n";
             }
-            float probRatio = 0;
+            double probRatio = 0;
             if (prob1 <= 0.001){
               if (probN <= 0.001){
                 probRatio = 1;
@@ -863,8 +863,8 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
           cout << "\t\t\t\tNext = " << next->rowValues << "\n";	
         }
         while(i < end && next->sameLevels((*TSDPoint::initialValues)[i])){
-          float r = (*TSDPoint::initialValues)[i]->risings[s.getGeneUID()];
-          float t = (*TSDPoint::initialValues)[i]->seen[s.getGeneUID()];
+          double r = (*TSDPoint::initialValues)[i]->risings[s.getGeneUID()];
+          double t = (*TSDPoint::initialValues)[i]->seen[s.getGeneUID()];
           nextR += r;
           nextS += t;
           if (DEBUG_LEVEL > 1){
@@ -963,12 +963,12 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
             }
           }
           else{
-            float probN = nextR/nextS;
+            double probN = nextR/nextS;
             if (DEBUG_LEVEL>0){
               cout << "\t\t\t\tNext prob " << nextStr << " = " << nextR << " / " << nextS << " = " << probN << "\n";
             }
             
-            float probRatio = 0;
+            double probRatio = 0;
             if (prob1 <= 0.001){
               if (probN <= 0.001){
                 probRatio = 1;
@@ -1029,10 +1029,10 @@ float ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, c
   return (votesa - votesr)/(votesa+votesr+votesu);
 }
 
-float Score(const Specie& s, const Set& P, const Set& G, const Experiments& E, const Thresholds& T, const Encodings& L){
+double Score(const Specie& s, const Set& P, const Set& G, const Experiments& E, const Thresholds& T, const Encodings& L){
   cout << "TODO: this needs to be fixed so that n_values work correctly\n";
   exit(0);
-  float votesa = 0;  float votesr = 0;  float votesu = 0;
+  double votesa = 0;  double votesr = 0;  double votesu = 0;
   LevelAssignments lp(G,L);
   if (DEBUG_LEVEL>0){
     cout << "\tScoring using P as: " << P << "\n\t\tand G as " << G << "\n";
@@ -1040,11 +1040,11 @@ float Score(const Specie& s, const Set& P, const Set& G, const Experiments& E, c
   for (int i = 0; i < lp.size(); i++){
 
     LevelAssignments l(P,L);
-    float prob1 = L.getProb(&s,l.get(0),lp.get(i));
+    double prob1 = L.getProb(&s,l.get(0),lp.get(i));
 
     for (int j = 1; j < l.size(); j++){
-      float prob2 = L.getProb(&s,l.get(j),lp.get(i));
-      float probRatio = prob2 / prob1;
+      double prob2 = L.getProb(&s,l.get(j),lp.get(i));
+      double probRatio = prob2 / prob1;
 
       if (DEBUG_LEVEL>0){
         cout << "\t\t\t\t\tRatio is " << prob1 << " / " << prob2 << " = " << probRatio << "\n";
@@ -1102,7 +1102,7 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
       Specie * p = S.get(i);
       if (*p != s){
         cout << "\tTesting specie " << *p << " as a parent\n";
-        float alpha = ScoreBetter(s,*p->toSet(),*s.toSet(),E,newT,L);
+        double alpha = ScoreBetter(s,*p->toSet(),*s.toSet(),E,newT,L);
   			
         cout << "\tScore of " << alpha << " and threshold +-" << newT.getTI() << "\n";
         if (alpha >= newT.getTI()){
@@ -1134,7 +1134,7 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
       relaxedTheBounds = true;
       newT.relaxInitialParentsThresholds();
       cout << "There are not enough parents for " << s << ", relaxing the thresholds to [" << newT.getTA() << ", " << newT.getTF() << "] and Ti " << newT.getTI() << "\n";
-      if (newT.getTF() <= 1+floatCompareValue && newT.getTA() >= 1 - floatCompareValue){
+      if (newT.getTF() <= 1+doubleCompareValue && newT.getTA() >= 1 - doubleCompareValue){
         if (newT.getTI() <= 0.0001){
           cout << "CANNOT RELAX BOUNDS MORE TO LET " << T.getsip_letNThrough() << " parent through\n";
           canRelaxMore = false;
@@ -1163,7 +1163,7 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
       Set * rescoreSet = rescore->get(i);
       assert(rescoreSet->size() == 1);
       Specie * p = rescoreSet->get(0);
-      float alpha = ScoreBetter(s,*p->toSet(),*s.toSet(),E,T,L);
+      double alpha = ScoreBetter(s,*p->toSet(),*s.toSet(),E,T,L);
       cout << "\tScore of " << alpha << " and threshold +- " << T.getTI() << " for " << *p << "\n";
       rescoreSet->setScore(-1, alpha);
     }
@@ -1229,10 +1229,10 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
     currentBases[currentNumOfBasesUsed-1] = currentNumOfBasesUsed-2;
     while(incrementBaseSet(currentBases,currentNumOfBasesUsed,baseSet.size())){
       Set currentWorking;
-      float min = 999;
-      float max = -999;
+      double min = 999;
+      double max = -999;
       for (int i = 0; i < currentNumOfBasesUsed; i++){
-        float m = baseSet.getIndividualScore(baseSet.get(currentBases[i])->getGeneUID());
+        double m = baseSet.getIndividualScore(baseSet.get(currentBases[i])->getGeneUID());
         currentWorking.insert(baseSet.get(currentBases[i]),m);
         if (fabs(m) < min){
           min = fabs(m);
@@ -1251,7 +1251,7 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
         if (CMP_NO_MAJORITY){
           HAS_TO_HAVE_MAJORITY = false;
         }
-        float score = ScoreBetter(s,currentWorking,*s.toSet(),E,T,L);
+        double score = ScoreBetter(s,currentWorking,*s.toSet(),E,T,L);
         HAS_TO_HAVE_MAJORITY = false;
         InvertSortOrder = false;
 
@@ -1289,12 +1289,12 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
         if (CMP_NO_MAJORITY){
           HAS_TO_HAVE_MAJORITY = false;
         }
-        float score = ScoreBetter(s,currentWorking,*s.toSet(),E,T,L);
+        double score = ScoreBetter(s,currentWorking,*s.toSet(),E,T,L);
         HAS_TO_HAVE_MAJORITY = false;
         InvertSortOrder = false;
         //done checking score
         */
-        float score = T.getTM();
+        double score = T.getTM();
 
         contenders << "\t" << currentWorking.toIV() << " " << score << " spot 2 ";
         contenders << currentWorking.toIndividualIV() << "\n";
@@ -1321,13 +1321,13 @@ void CreateMultipleParents_Too_Costly(Specie& s, const Species& S, const Experim
     DoubleSet * nextWorking = new DoubleSet();
     for (int i = 0; i < baseSet->size(); i++){
       Set * p1 = baseSet->get(i); //getParent
-      float alpha1 = ScoreBetter(s,*p1,*s.toSet(),E,T,L);
+      double alpha1 = ScoreBetter(s,*p1,*s.toSet(),E,T,L);
       cout << "\tCompeting " << *p1 << " with score of " << alpha1 << " with the following:\n";
       for (int j = 0; j < workingSet->size(); j++){
         if (j != i){
           Set * p2 = workingSet->get(j); //getParent
-          float alpha2 = ScoreBetter(s,*p2,*s.toSet(),E,T,L);
-          float alphab = ScoreBetter(s,unionIt(*p1,*p2),*s.toSet(),E,T,L);
+          double alpha2 = ScoreBetter(s,*p2,*s.toSet(),E,T,L);
+          double alphab = ScoreBetter(s,unionIt(*p1,*p2),*s.toSet(),E,T,L);
           cout << "\t\tWITH " << *p2 << " with score of " << alpha2 << " (the above score again) " << alpha1 << "\n";
           cout << "\t\tBoth have score of " << alphab << "\n";
           if (fabs(alphab) >= fabs(alpha1) && fabs(alphab) >= fabs(alpha2)){
@@ -1361,7 +1361,7 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
     for (int i = 0; i < (int)matchups.size(); i++){
       DoubleSet Q = matchups[i];
       cout << "\tCompeting " << Q << "\n";
-      float * Scores = new float[Q.size()];
+      double * Scores = new double[Q.size()];
       for (int i = 0; i < Q.size(); i++){
         Set * q = Q.get(i);
         Set tmp = Q.colapseToSet();
@@ -1369,8 +1369,8 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
         tmp = unionIt(tmp,*s.toSet());
         //Bug introduction to match perls
         if(q->size()>1){
-          float a = q->getIndividualScore(q->get(0)->getGeneUID());
-          float b = q->getIndividualScore(q->get(1)->getGeneUID());
+          double a = q->getIndividualScore(q->get(0)->getGeneUID());
+          double b = q->getIndividualScore(q->get(1)->getGeneUID());
           if( (a > 0 && b < 0) || (a < 0 && b > 0) && KEEP_SORT_ORDER_INVERTED){
             InvertSortOrder = true;
           }
@@ -1464,7 +1464,7 @@ vector<DoubleSet> assignMatchups(const Specie& s, const Species& S, const Experi
 }
 
 /*
-  float Prob(const Specie s, const std::vector<int> * l1, const std::vector<int> * l2){
+  double Prob(const Specie s, const std::vector<int> * l1, const std::vector<int> * l2){
   return 1.0;
   }
 */
@@ -1487,12 +1487,12 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
     Set printed;
     for (int j = 0; j < d->size(); j++){
       Set * p = d->get(j);
-      float initialScore = p->getScore();
-      float competitionScore = p->getCompetitionScore();
-      float pScore = fabs(initialScore);
+      double initialScore = p->getScore();
+      double competitionScore = p->getCompetitionScore();
+      double pScore = fabs(initialScore);
       //rescoring to match perls
-      float mpa = 0;
-      float mpb = 0;
+      double mpa = 0;
+      double mpb = 0;
       if (p->size() > 1){
         mpa = p->getIndividualScore(p->get(0)->getGeneUID());
         mpb = p->getIndividualScore(p->get(1)->getGeneUID());
@@ -1504,7 +1504,7 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
         }
       }
       //format pScore
-      pScore = ((float)((int)(pScore * 1000.0)))/ 1000.0;
+      pScore = ((double)((int)(pScore * 1000.0)))/ 1000.0;
       InvertSortOrder = false;
       for (int k = 0; k < p->size(); k++){
         Specie * parent = p->get(k);
@@ -1556,12 +1556,12 @@ void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & 
 
 
   //get the histogram sizes
-  float histogram_size = 5;
+  double histogram_size = 5;
   vector<vector<int> > seen;
   vector<vector<int> > rose;
   vector<int> max_seen;
   int num_entries = 0;
-  const float h_offset = 1.05;
+  const double h_offset = 1.05;
   for (int i = 0; i <= L.totalSpecies(); i++){
     vector<int> a;
     vector<int> b;
@@ -1572,8 +1572,8 @@ void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & 
   //cout << "Put in " << L.totalSpecies()+1 << " into the seen and rose\n";
   for (int i = 0; i < E.totalExperiments(); i++){
     for (int j = 0; j < E.totalRows(i) - T.getWindowSize(); j++){
-      std::vector<float> * current = E.getRow(i, j);
-      std::vector<float> * next = E.getRow(i, j+T.getWindowSize());
+      std::vector<double> * current = E.getRow(i, j);
+      std::vector<double> * next = E.getRow(i, j+T.getWindowSize());
       num_entries++;
       /*
         cout << "Testing vector [";
@@ -1613,11 +1613,11 @@ void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & 
     histogram << "#amount seen rose\n";
     //const int num_boxes = 20;
     const int num_boxes = 15;
-    const float offset = 2.5;
-    //const float offset = 0;
-    float h_size = ((float)(seen[i].size())/(float)num_boxes); //The size of boxes in normal values
+    const double offset = 2.5;
+    //const double offset = 0;
+    double h_size = ((double)(seen[i].size())/(double)num_boxes); //The size of boxes in normal values
     int addInNum = (int)(((int)seen[i].size()) - h_size/2); //Add in the last few if things don't set exactly right
-    float cur_h_size = h_size;
+    double cur_h_size = h_size;
     for (int j = 0; j < (int)seen[i].size(); ){
       int seen_i = 0;
       int rose_i = 0;
@@ -1625,9 +1625,9 @@ void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & 
         seen_i += seen[i][j];
         rose_i += rose[i][j];
       }
-      histogram << ((float)((((cur_h_size-h_size)/h_size)*((float)(100.0f/(float)num_boxes))))+offset)<< " " << seen_i << " " << rose_i << "\n";
+      histogram << ((double)((((cur_h_size-h_size)/h_size)*((double)(100.0f/(double)num_boxes))))+offset)<< " " << seen_i << " " << rose_i << "\n";
       if(max_seen[i] < seen_i * h_offset){
-        max_seen[i] = (int)(((float)seen_i) * h_offset);
+        max_seen[i] = (int)(((double)seen_i) * h_offset);
       }
       cur_h_size += h_size;
     }
@@ -1638,7 +1638,7 @@ void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & 
   for (int i = 0; i <= L.totalSpecies(); i++){
     Specie * p = Specie::getInstance("??",i);
     lvl_file << p->getGeneName() << "";
-    std::vector<float> v = L.getLevels(p);
+    std::vector<double> v = L.getLevels(p);
 		
     //write the number of levels
     lvl_file << ", " << ((int) v.size()+1);
@@ -1676,9 +1676,9 @@ void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & 
     histogram << "set boxwidth " << histogram_size-1 << "\n";
     histogram << "\n#Use the nearest 5th for the line, but also include the real histogram level\n";
     for (int k = 0; k < (int) v.size(); k++){
-      int a = (int)((float)100*(float)v.at(k)/(float)seen[i].size());
+      int a = (int)((double)100*(double)v.at(k)/(double)seen[i].size());
       histogram <<  "#set arrow from " << a << ",0 to " << a << "," << max_seen[i] << " nohead lt 1 front\n";
-      float b = (int)a%5;
+      double b = (int)a%5;
       a -= (int)b;
       if (b > 2.5){
         a += 5;

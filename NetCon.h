@@ -30,13 +30,13 @@ public:
 	NetCon();
 	NetCon(const NetCon & n);
 	virtual ~NetCon();
-	void unionIt(const Set & mySet, int TYPE, const Specie& s, float score);
+	void unionIt(const Set & mySet, int TYPE, const Specie& s, double score);
 	bool containsAnyEdges(const Specie& s);
 	Set getSingleParentsFor(const Specie & s);
 	std::string removeSubsets(const Specie & s);
-	std::string filterByScore(const Specie & s,float f);
+	std::string filterByScore(const Specie & s,double f);
 	int totalParents(const Specie& s);
-	std::string removeLosers(const Specie& s, const DoubleSet& s1, float * scores, std::ostringstream & contenders);
+	std::string removeLosers(const Specie& s, const DoubleSet& s1, double * scores, std::ostringstream & contenders);
 
 	bool addIfScoreBetterThanSubsets(const Specie & s, const Set & set);
 

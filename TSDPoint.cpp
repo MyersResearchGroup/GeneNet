@@ -47,7 +47,7 @@ bool TSDPoint::incrementLevel(int * currentAssignment, int * holdSteady, int * t
 	}	
 }
 
-float TSDPoint::calculateProbability(int child, int * holdSteady, int * totalSize, int size){
+double TSDPoint::calculateProbability(int child, int * holdSteady, int * totalSize, int size){
 	std::ostringstream state;
 
 	assert(holdSteady[child] != -1);
@@ -143,8 +143,8 @@ float TSDPoint::calculateProbability(int child, int * holdSteady, int * totalSiz
 
 
 	//get the probability
-	float s = p->seen[child];
-	float r = p->risings[child];
+	double s = p->seen[child];
+	double r = p->risings[child];
 	if (DEBUG_LEVEL>0){
 		std::cout << "\t\t\tProb for '" << p->rowValues << "' child " << child << " is " << r << " / " << s << " = ";
 	}
@@ -160,7 +160,7 @@ float TSDPoint::calculateProbability(int child, int * holdSteady, int * totalSiz
 		}
 		return 0;	
 	}
-	float t = r/s;
+	double t = r/s;
 	if (DEBUG_LEVEL>0){
 		std::cout << t << "\n";
 	}
