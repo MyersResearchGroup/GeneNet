@@ -76,7 +76,7 @@ static void ShowUsage()
            _T("-ta [num] Sets the repression threshold.  Default 0.75\n")
            _T("-ti [num] Sets how high a score must be to be considered a parent.  Default 0.5\n")
            _T("-tm [num] Sets how close IVs must be in score to be considered for combination.  Default 0.01\n")
-           _T("-tn [num] Sets minimum number of parents to allow through in SelectInitialParents. Default 1\n")
+           _T("-tn [num] Sets minimum number of parents to allow through in SelectInitialParents. Default 3\n")
            _T("-tj [num] Sets the max parents of merged influence vectors, Default 2\n")
            _T("-tr [num] Sets how fast the bound is relaxed for tf and ta, Default 0.025\n")
 
