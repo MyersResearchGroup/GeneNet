@@ -1135,10 +1135,13 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
       newT.relaxInitialParentsThresholds();
       cout << "There are not enough parents for " << s << ", relaxing the thresholds to [" << newT.getTA() << ", " << newT.getTF() << "] and Ti " << newT.getTI() << "\n";
       if (newT.getTF() <= 1+floatCompareValue && newT.getTA() >= 1 - floatCompareValue){
-        newT.setTI(newT.getTI() - newT.getRelaxInitialParentsDelta());
-        if (newT.getTI() <= 0){
+        if (newT.getTI() <= 0.0001){
           cout << "CANNOT RELAX BOUNDS MORE TO LET " << T.getsip_letNThrough() << " parent through\n";
           canRelaxMore = false;
+        }
+        newT.setTI(newT.getTI() - newT.getRelaxInitialParentsDelta());
+        if (newT.getTI() < 0.0){
+          newT.setTI(0.0);
         }
       }
       if (newT.getTF() < 1){
@@ -1231,17 +1234,18 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
       for (int i = 0; i < currentNumOfBasesUsed; i++){
         float m = baseSet.getIndividualScore(baseSet.get(currentBases[i])->getGeneUID());
         currentWorking.insert(baseSet.get(currentBases[i]),m);
-        if (m < min){
-          min = m;
+        if (fabs(m) < min){
+          min = fabs(m);
         }
-        if (m > max){
-          max = m;
+        if (fabs(m) > max){
+          max = fabs(m);
         }
       }
       if (min + T.getTM() >= max){
         if (DEBUG_LEVEL>0){
           cout << "Checking if set " << currentWorking << " is better than the subsets\n";
         }
+
         //bug to match perl
         HAS_TO_HAVE_MAJORITY = true;
         if (CMP_NO_MAJORITY){
