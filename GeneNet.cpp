@@ -83,7 +83,7 @@ static void ShowUsage()
            _T("-d [num]  Sets the debug or output level.  Default 0\n")
            _T("-wr [num] Sets how much larger a number must be to be considered as a rise.  Default 1\n")
            _T("-ws [num] Sets how far the TSD points are when compared.  Default 1\n")
-           _T("-nb [num] Sets how many bins are used in the evaluation.  Default 3\n")
+           _T("-nb [num] Sets how many bins are used in the evaluation.  Default 4\n")
            _T("--lvl 	  Writes out the suggested levels for every specie\n")
            _T("--readLevels Reads the levels from level.lvl file for every specie\n")
            _T("--cpp_harshenBoundsOnTie	Determins if harsher bounds are used when parents tie in CPP.\n")
@@ -221,7 +221,7 @@ int main(int argc, char* argv[]){
   double TI = 0.5;
   int RisingAmount = 1;
   int WindowSize = 1;
-  int NumBins = 3;
+  int NumBins = 4;
   double InfluenceLevelDelta = 0.01; //to allow parents to combine
   //double InfluenceLevelDelta = 1.0; //to allow parents to combine
   double RelaxInitialParentsDelta = 0.025;
