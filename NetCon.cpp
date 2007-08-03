@@ -147,7 +147,7 @@ std::string NetCon::removeLosers(const Specie & s, const DoubleSet& s1, double *
       if (DEBUG_LEVEL > COMPETITION_LOG){
         cs << "Parents " << (*s1.get(i)) << " failed with " << scores[i] << "\n";
       }
-      contenders << "\t" << s1.get(i)->toIV() << " " << fabs(scores[i]) << " spot 6 " << winner.str() << "\n";
+      contenders << "\t" << s1.get(i)->toIV() << " " << fabs(scores[i]) << " case 7 " << winner.str() << "\n";
       myConnections.at(s.getGeneUID())->remove(*s1.get(i));
     }
     else{

@@ -36,8 +36,7 @@ void DoubleSet::fillMyDoubleSet(const DoubleSet & d){
 std::string DoubleSet::toIV() const{
   std::ostringstream cout;
   for (int i = 0; i < (int)myDoubleSet.size(); i++){
-    cout << myDoubleSet[i]->toIV();
-    cout << " ";
+    cout << myDoubleSet[i]->toIV() << " " << fabs(myDoubleSet[i]->getScore()) << " ";
   }
   return cout.str();
 }
@@ -119,13 +118,13 @@ std::string DoubleSet::removeSubsets(){
 				if (DEBUG_LEVEL > 0){
 					std::cout << "\t\tRemoving " << *s << " because it is a subset\n";
 				}			
-                                out << "\t" << s->toIV() << " " << fabs(s->getScore()) << " spot 4 " << myDoubleSet.at(i)->toIV() << " " << fabs(myDoubleSet.at(i)->getScore()) << "\n";
+                                out << "\t" << s->toIV() << " " << fabs(s->getScore()) << " case 4 " << myDoubleSet.at(i)->toIV() << " " << fabs(myDoubleSet.at(i)->getScore()) << "\n";
                                 /*
                                   if (m < 0){
-                                  contenders << "\t" << baseSet.get(currentBases[i])->toIV('r') << " " << fabs(m) << " spot 4 " ;
+                                  contenders << "\t" << baseSet.get(currentBases[i])->toIV('r') << " " << fabs(m) << " case 4 " ;
                                   }
                                   else{
-                                  contenders << "\t" << baseSet.get(currentBases[i])->toIV('a') << " " << fabs(m) << " spot 4 ";
+                                  contenders << "\t" << baseSet.get(currentBases[i])->toIV('a') << " " << fabs(m) << " case 4 ";
                                   }
                                   contenders << currentWorking.toIV() << " " << fabs(score) << "\n";
                                 */
@@ -147,12 +146,21 @@ std::string DoubleSet::filterByScore(double f){
 			if (DEBUG_LEVEL > 0){
 				std::cout << "\t\tRemoving " << *s << " because of score fabs(" << s->getScore() << ") < " << f << "\n";
 			}
-                        out << "\t" << s->toIV() << " " << fabs(s->getScore()) << " spot 5 " << f << "\n";
+                        out << "\t" << s->toIV() << " " << fabs(s->getScore()) << " case 5 " << f << "\n";
 			myDoubleSet.erase(myDoubleSet.begin()+i);
 			delete s;
 			i--;
 		}	
 	}
+        if ((int)myDoubleSet.size() > 0){
+          std::ostringstream backgroundIV;
+          backgroundIV << "<";
+          for (int i = 1; i < Specie::getNumSpecie(); i++){
+            backgroundIV << "n";
+          }
+          backgroundIV << ">";
+          out << "\t" << backgroundIV.str() << " 0.5 case 6 " << toIV() << "\n";
+        }
         return out.str();
 }
 

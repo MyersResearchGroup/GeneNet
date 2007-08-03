@@ -1110,7 +1110,7 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
           if (DEBUG_LEVEL > COMPETITION_LOG){
             competitionString << "\t" << *p << " passes as activation with " << alpha << "\n";
           }
-          contendersString << "\t" << p->toIV('r') << " " << -alpha << " spot 1r " << backgroundIV.str() << " " << newT.getTI() <<"\n";
+          contendersString << "\t" << p->toIV('r') << " " << -alpha << " case 1r " << backgroundIV.str() << " " << newT.getTI() <<"\n";
         }
         else if (alpha <= -newT.getTI()){
           cout << "\t\tMeans a represion parent\n";
@@ -1118,14 +1118,14 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
           if (DEBUG_LEVEL > COMPETITION_LOG){
             competitionString << "\t" << *p << " passes as repression with " << alpha << "\n";
           }
-          contendersString << "\t" << p->toIV('a') << " " << alpha << " spot 1a "  << backgroundIV.str() << " " << newT.getTI() <<"\n";
+          contendersString << "\t" << p->toIV('a') << " " << alpha << " case 1a "  << backgroundIV.str() << " " << newT.getTI() <<"\n";
         }
         else{
           if (DEBUG_LEVEL > COMPETITION_LOG){
             competitionString << "\t" << *p << " fails with " << alpha <<"\n";
           }	
-          contendersString << "\t" << p->toIV('a') << " " << alpha << " spot 1a "  << backgroundIV.str() << " " << newT.getTI() <<"\n";
-          contendersString << "\t" << p->toIV('r') << " " << -alpha << " spot 1r "  << backgroundIV.str() << " " << newT.getTI() <<"\n";
+          contendersString << "\t" << p->toIV('a') << " " << alpha << " case 1a "  << backgroundIV.str() << " " << newT.getTI() <<"\n";
+          contendersString << "\t" << p->toIV('r') << " " << -alpha << " case 1r "  << backgroundIV.str() << " " << newT.getTI() <<"\n";
         }
       }
     }
@@ -1270,7 +1270,7 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
               competitionLog << currentWorking << " fails with " << score << "\n";
             }
           }
-          contenders << "\t" << currentWorking.toIV() << " " << fabs(score) << " spot 3 ";
+          contenders << "\t" << currentWorking.toIV() << " " << fabs(score) << " case 3 ";
           contenders << currentWorking.toIndividualIV() << "\n";
         }
       }
@@ -1295,7 +1295,7 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
         */
         double score = T.getTM();
 
-        contenders << "\t" << currentWorking.toIV() << " " << score << " spot 2 ";
+        contenders << "\t" << currentWorking.toIV() << " " << score << " case 2 ";
         contenders << currentWorking.toIndividualIV() << "\n";
       }
     }
