@@ -6,8 +6,8 @@ class Thresholds
 {
 public:
 	Thresholds(double A, double R, double V, int RisingAmount, int WindowSize, int NumBins, double InfluenceLevelDelta, double RelaxInitialParentsDelta, int MaxParentSetSize, bool CompeteMultipleHighLowBool);
-	double getTF() const {return tf;}
 	double getTA() const {return ta;}
+	double getTR() const {return tr;}
 	double getTI() const {return ti;}
 	int getBins() const {return numBins;}
 	int getRisingAmount() const {return risingAmount;}
@@ -21,8 +21,8 @@ public:
 	void setCompeteMultipleHighLow(bool a) {competeMultipleHighLowBool = a;}
 
 
-	void setTF(double F) {tf = F;}
 	void setTA(double F) {ta = F;}
+	void setTR(double F) {tr = F;}
 	void setTI(double F) {ti = F;}
 	void setBins(int F) {numBins = F;}
 	void setRisingAmount(int F) {risingAmount = F;}
@@ -37,8 +37,8 @@ public:
 	//double getPostFilter(){return postFilter;}
 	virtual ~Thresholds();
 private:
-	double tf;
 	double ta;
+	double tr;
 	double ti;
 	double tm;
 	double tp;
