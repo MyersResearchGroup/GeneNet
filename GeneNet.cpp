@@ -72,13 +72,13 @@ static void ShowUsage()
 {
   _tprintf(
            _T("Usage: GeneNet [OPTIONS] [Dir]\n")
-           _T("-tf [num] Sets the activation threshold.  Default 1.15\n")
-           _T("-ta [num] Sets the repression threshold.  Default 0.75\n")
+           _T("-ta [num] Sets the activation threshold.  Default 1.15\n")
+           _T("-tr [num] Sets the repression threshold.  Default 0.75\n")
            _T("-ti [num] Sets how high a score must be to be considered a parent.  Default 0.5\n")
            _T("-tm [num] Sets how close IVs must be in score to be considered for combination.  Default 0.01\n")
            _T("-tn [num] Sets minimum number of parents to allow through in SelectInitialParents. Default 2\n")
            _T("-tj [num] Sets the max parents of merged influence vectors, Default 2\n")
-           _T("-tr [num] Sets how fast the bound is relaxed for tf and ta, Default 0.025\n")
+           _T("-tt [num] Sets how fast the bound is relaxed for ta and tr, Default 0.025\n")
 
            _T("-d [num]  Sets the debug or output level.  Default 0\n")
            _T("-wr [num] Sets how much larger a number must be to be considered as a rise.  Default 1\n")
@@ -119,8 +119,8 @@ CSimpleOpt::SOption g_rgOptions[] =
     { OPT_HELP,  _T("--help"),       			SO_NONE    },
     {  1,        _T("-d"),           			SO_REQ_SEP },
     {  2,        _T("--debug"),      			SO_REQ_SEP },
-    {  3,        _T("-tf"),           			SO_REQ_SEP },
-    {  4,        _T("-ta"),           			SO_REQ_SEP },
+    {  3,        _T("-ta"),           			SO_REQ_SEP },
+    {  4,        _T("-tr"),           			SO_REQ_SEP },
     {  5,        _T("-ti"),           			SO_REQ_SEP },
     {  6,        _T("-wr"),           			SO_REQ_SEP },
     {  7,        _T("--windowRisingAmount"),	SO_REQ_SEP },
@@ -130,7 +130,7 @@ CSimpleOpt::SOption g_rgOptions[] =
     { 11,        _T("--numBins"),				SO_REQ_SEP },
     { 12,        _T("-tm"),						SO_REQ_SEP },
     { 13,        _T("--influenceLevelDelta"),	SO_REQ_SEP },
-    { 14,        _T("-tr"),						SO_REQ_SEP },
+    { 14,        _T("-tt"),						SO_REQ_SEP },
     { 15,        _T("--relaxIPDelta"),			SO_REQ_SEP },
     { 16,        _T("-tn"),						SO_REQ_SEP },
     { 17,        _T("--cpp_harshenBoundsOnTie"),	SO_NONE },
@@ -216,8 +216,8 @@ void callGeneNet(const char * dir, Thresholds & T){
 }
 
 int main(int argc, char* argv[]){
-  double TF = 1.15;
-  double TA = 0.75;
+  double TA = 1.15;
+  double TR = 0.75;
   double TI = 0.5;
   int RisingAmount = 1;
   int WindowSize = 1;
@@ -228,7 +228,7 @@ int main(int argc, char* argv[]){
   int MaxParentSetSize = 2;
   //int MaxParentSetSize = 3;
   bool CompeteMultipleHighLowBool = false;
-  Thresholds T(TF,TA,TI,RisingAmount,WindowSize,NumBins,InfluenceLevelDelta,RelaxInitialParentsDelta,MaxParentSetSize, CompeteMultipleHighLowBool);
+  Thresholds T(TA,TR,TI,RisingAmount,WindowSize,NumBins,InfluenceLevelDelta,RelaxInitialParentsDelta,MaxParentSetSize, CompeteMultipleHighLowBool);
   cout << "GeneNet Arguments:\n";
   for (int i = 0; i < argc; i++){
     cout << "\t" << argv[i] << "\n";	
@@ -287,12 +287,12 @@ int main(int argc, char* argv[]){
         cout << "\tSetting Debug Level to '" << DEBUG_LEVEL << "'\n";
         break;
       case 3:
-        T.setTF(atof(args.OptionArg()));
-        cout << "\tSetting TF to '" << T.getTF() << "'\n";
-        break;
-      case 4:
         T.setTA(atof(args.OptionArg()));
         cout << "\tSetting TA to '" << T.getTA() << "'\n";
+        break;
+      case 4:
+        T.setTR(atof(args.OptionArg()));
+        cout << "\tSetting TR to '" << T.getTR() << "'\n";
         break;
       case 5:
         T.setTI(atof(args.OptionArg()));
@@ -522,10 +522,10 @@ double ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, 
     vector<double> f = (*scoreCache)[&s][P][G];
     for (int i = 0; i < (int)f.size(); i++){
       double probRatio = f[i];
-      if (probRatio > T.getTF() ){
+      if (probRatio > T.getTA() ){
         votesa++;
       }
-      else if (probRatio < T.getTA()){
+      else if (probRatio < T.getTR()){
         votesr++;
       }
       else{
@@ -800,11 +800,11 @@ double ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, 
                 }
                 fout << gLevels << " " << pLevels << " " << nextS << " " << nextR << " " << probN << "\n";
               }
-              if (probRatio > T.getTF() ){
+              if (probRatio > T.getTA() ){
                 fillProbVector->push_back(probRatio);
                 votesa++;
               }
-              else if (probRatio < T.getTA()){
+              else if (probRatio < T.getTR()){
                 fillProbVector->push_back(probRatio);
                 votesr++;
               }
@@ -986,11 +986,11 @@ double ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, 
               }
             }
             else{
-              if (probRatio > T.getTF() ){
+              if (probRatio > T.getTA() ){
                 fillProbVector->push_back(probRatio);
                 votesa++;
               }
-              else if (probRatio < T.getTA()){
+              else if (probRatio < T.getTR()){
                 fillProbVector->push_back(probRatio);
                 votesr++;
               }
@@ -1053,10 +1053,10 @@ double Score(const Specie& s, const Set& P, const Set& G, const Experiments& E, 
           cout << "\t\t\t\t\t\tNot A Valid Ratio\n";
         }
       }
-      else if (probRatio > T.getTF() ){
+      else if (probRatio > T.getTA() ){
         votesa++;
       }
-      else if (probRatio < T.getTA()){
+      else if (probRatio < T.getTR()){
         votesr++;
       }
       else{
@@ -1132,8 +1132,8 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
     if (C.getParentsFor(s)->size() < T.getsip_letNThrough()){
       relaxedTheBounds = true;
       newT.relaxInitialParentsThresholds();
-      cout << "There are not enough parents for " << s << ", relaxing the thresholds to [" << newT.getTA() << ", " << newT.getTF() << "] and Ti " << newT.getTI() << "\n";
-      if (newT.getTF() <= 1+doubleCompareValue && newT.getTA() >= 1 - doubleCompareValue){
+      cout << "There are not enough parents for " << s << ", relaxing the thresholds to [" << newT.getTR() << ", " << newT.getTA() << "] and Ti " << newT.getTI() << "\n";
+      if (newT.getTA() <= 1+doubleCompareValue && newT.getTR() >= 1 - doubleCompareValue){
         if (newT.getTI() <= 0.0001){
           cout << "CANNOT RELAX BOUNDS MORE TO LET " << T.getsip_letNThrough() << " parent through\n";
           canRelaxMore = false;
@@ -1143,11 +1143,11 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
           newT.setTI(0.0);
         }
       }
-      if (newT.getTF() < 1){
-        newT.setTF(1.0);
-      }
-      if (newT.getTA() > 1){
+      if (newT.getTA() < 1){
         newT.setTA(1.0);
+      }
+      if (newT.getTR() > 1){
+        newT.setTR(1.0);
       }
     }
   }
@@ -1400,7 +1400,7 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
     if (CPP_USE_HARSHER_BOUNDS){
       if (currentNumParents == C.totalParents(s)){
         bool f = T.harshenInitialParentsThresholds();
-        cout << "\tUsing harsher numbers, as " << currentNumParents << " == " << C.totalParents(s) << ", to " << T.getTF() << " " << T.getTA() << "\n";
+        cout << "\tUsing harsher numbers, as " << currentNumParents << " == " << C.totalParents(s) << ", to " << T.getTA() << " " << T.getTR() << "\n";
         if (f == false){
           //exit, as we cannot shrink any more
           progress = false;	
