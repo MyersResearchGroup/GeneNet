@@ -1421,6 +1421,8 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
   cout << "After Competion " << *C.getParentsFor(s) << " is the winner set for child " << s << "\n";
   
   contenders << "\t" << C.getParentsFor(s)->toIV() << " winner\n";
+
+  cout << "Gene = " << s << "\n";
 }
 
 bool setScoreSort(const Set* a, const Set* b){
