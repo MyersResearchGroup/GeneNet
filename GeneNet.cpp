@@ -159,7 +159,9 @@ string ShowFiles(int argc, TCHAR ** argv) {
   }
 
   for (int n = 0; n < glob.FileCount(); ++n) {
-    _tprintf(_T("file %2d: '%s'\n"), n, glob.File(n));
+    if (DEBUG_LEVEL > 0.5){
+      _tprintf(_T("file %2d: '%s'\n"), n, glob.File(n));
+    }
   }
   if (glob.FileCount() > 0){
     return glob.File(0);	
@@ -182,14 +184,19 @@ void callGeneNet(const char * dir, Thresholds & T){
   //used to let score function know about dir
   globDir = new string(dir);
 		
-  cout << "Reading the TSD files\n";
+  if (DEBUG_LEVEL>0.5){
+    cout << "Reading the TSD files\n";
+  }
   if (! fillFromTSD(dir, &S, &E, &C, &T, &L)){
     return;	
   }
-  cout << "Finished Reading the TSD files\n";
-
+  if (DEBUG_LEVEL>0.5){
+    cout << "Finished Reading the TSD files\n";
+  }
   //Remove out the 'time' from the species list
-  cout << "Removing the Time specie from the list\n";
+  if (DEBUG_LEVEL>0.5){
+    cout << "Removing the Time specie from the list\n";
+  }
   if (S.removeTimeSpecie() == false){
     cout << "ERROR!, unable to find time specie\n";
     return;	
@@ -203,7 +210,9 @@ void callGeneNet(const char * dir, Thresholds & T){
   {
     string s = dir;
     s.append("/contenders.txt");
-    cout << "Opening " << s << " for write\n";
+    if (DEBUG_LEVEL>0.5){
+      cout << "Opening " << s << " for write\n";
+    }
     contenders.open(s.c_str(),ios::out);
   }
   GeneNet(S,E,C,T,L,dir);
@@ -212,7 +221,9 @@ void callGeneNet(const char * dir, Thresholds & T){
   writeDot(dir, &C, E, T, L);
   delete globDir;
   delete scoreCache;
-  cout << "Exiting and destroying Species, Experiments, NetCon, Thresholds, Encodings\n";
+  if (DEBUG_LEVEL>0.5){
+    cout << "Exiting and destroying Species, Experiments, NetCon, Thresholds, Encodings\n";
+  }
 }
 
 int main(int argc, char* argv[]){
@@ -229,9 +240,11 @@ int main(int argc, char* argv[]){
   //int MaxParentSetSize = 3;
   bool CompeteMultipleHighLowBool = false;
   Thresholds T(TA,TR,TI,RisingAmount,WindowSize,NumBins,InfluenceLevelDelta,RelaxInitialParentsDelta,MaxParentSetSize, CompeteMultipleHighLowBool);
-  cout << "GeneNet Arguments:\n";
-  for (int i = 0; i < argc; i++){
-    cout << "\t" << argv[i] << "\n";	
+  if (DEBUG_LEVEL>0.5){
+    cout << "GeneNet Arguments:\n";
+    for (int i = 0; i < argc; i++){
+      cout << "\t" << argv[i] << "\n";	
+    }
   }
   // get the flags to use for SimpleOpt from the command line
   int nFlags = SO_O_USEALL;
@@ -284,52 +297,74 @@ int main(int argc, char* argv[]){
       case 1:
       case 2:
         DEBUG_LEVEL = atoi(args.OptionArg());
-        cout << "\tSetting Debug Level to '" << DEBUG_LEVEL << "'\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tSetting Debug Level to '" << DEBUG_LEVEL << "'\n";
+        }
         break;
       case 3:
         T.setTA(atof(args.OptionArg()));
-        cout << "\tSetting TA to '" << T.getTA() << "'\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tSetting TA to '" << T.getTA() << "'\n";
+        }
         break;
       case 4:
         T.setTR(atof(args.OptionArg()));
-        cout << "\tSetting TR to '" << T.getTR() << "'\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tSetting TR to '" << T.getTR() << "'\n";
+        }
         break;
       case 5:
         T.setTI(atof(args.OptionArg()));
-        cout << "\tSetting TI to '" << T.getTI() << "'\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tSetting TI to '" << T.getTI() << "'\n";
+        }
         break;
       case 6:
       case 7:
         T.setRisingAmount(atoi(args.OptionArg()));
-        cout << "\tSetting windowRisingAmount to '" << T.getRisingAmount() << "'\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tSetting windowRisingAmount to '" << T.getRisingAmount() << "'\n";
+        }
         break;
       case 8:
       case 9:
         T.setWindowSize(atoi(args.OptionArg()));
-        cout << "\tSetting windowSize to '" << T.getWindowSize() << "'\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tSetting windowSize to '" << T.getWindowSize() << "'\n";
+        }
         break;
       case 10:
       case 11:
         T.setBins(atoi(args.OptionArg()));
-        cout << "\tSetting numBins to '" << T.getBins() << "'\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tSetting numBins to '" << T.getBins() << "'\n";
+        }
         break;
       case 12:
       case 13:
         T.setTM(atof(args.OptionArg()));
-        cout << "\tSetting TM to '" << T.getTM() << "'\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tSetting TM to '" << T.getTM() << "'\n";
+        }
         break;
       case 14:
       case 15:
         T.setRelaxInitialParentsDelta(atof(args.OptionArg()));
-        cout << "\tSetting relaxIPDelta to '" << T.getRelaxInitialParentsDelta() << "'\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tSetting relaxIPDelta to '" << T.getRelaxInitialParentsDelta() << "'\n";
+        }
         break;
       case 16:
         T.setsip_letNThrough(atoi(args.OptionArg()));
-        cout << "\tSetting TN (allows n IVs though first round) to '" << T.getsip_letNThrough() << "'\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tSetting TN (allows n IVs though first round) to '" << T.getsip_letNThrough() << "'\n";
+        }
         break;
       case 26:
         T.setMaxParentSetSize(atoi(args.OptionArg()));
-        cout << "\tSetting TJ to '" << T.getMaxParentSetSize() << "'\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tSetting TJ to '" << T.getMaxParentSetSize() << "'\n";
+        }
         break;
       default:
         cout << "ERROR: unhandled argument\n";
@@ -343,51 +378,75 @@ int main(int argc, char* argv[]){
       switch (args.OptionId()) {
       case 17:
         CPP_USE_HARSHER_BOUNDS = true;
-        cout << "\tSetting CPP to use harsher bounds\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tSetting CPP to use harsher bounds\n";
+        }
         break;
       case 18:
         KEEP_SORT_ORDER_INVERTED = false;
-        cout << "\tSetting sort order to not be inverted for AR\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tSetting sort order to not be inverted for AR\n";
+        }
         break;
       case 19:
         T.setCompeteMultipleHighLow(true);
-        cout << "\tSetting CMP competitions to be seeded\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tSetting CMP competitions to be seeded\n";
+        }
         break;
       case 20:
         CMP_NO_MAJORITY = true;
-        cout << "\tSetting CMP and score to use the actual score, and not disallow a > r+n or r > a+n\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tSetting CMP and score to use the actual score, and not disallow a > r+n or r > a+n\n";
+        }
         break;
       case 21:
         TOSS_VOTES_NUMBER = 0.0001;
-        cout << "\tSetting score to assign a score of 0 to only scores < 0.0001 and not score that have only a single vote\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tSetting score to assign a score of 0 to only scores < 0.0001 and not score that have only a single vote\n";
+        }
         break;
       case 22:
         TOSS_CHANGED_SINGLE_INFLUENCE = false;
-        cout << "\tNo longer tossing single parents that changed influence durring competition\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tNo longer tossing single parents that changed influence durring competition\n";
+        }
         break;
       case 23:
         WRITE_LEVELS = true;
-        cout << "\tWriting out the levels\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tWriting out the levels\n";
+        }
         break;
       case 24:
         READ_LEVELS = true;
-        cout << "\tReading the levels\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tReading the levels\n";
+        }
         break;
       case 27:
         EQUAL_SPACING_PER_BIN = true;
-        cout << "\tUsing Equal spacing per bin'\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tUsing Equal spacing per bin'\n";
+        }
         break;
       case 28:
         SUCC = false;
-        cout << "\tNot using successors\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tNot using successors\n";
+        }
         break;
       case 29:
         PRED = true;
-        cout << "\tUsing predecessors\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tUsing predecessors\n";
+        }
         break;
       case 30:
         BASIC_FINDBASEPROB = true;
-        cout << "\tUsing the basic FindBaseProb\n";
+        if (DEBUG_LEVEL>0.5){
+          cout << "\tUsing the basic FindBaseProb\n";
+        }
         break;
       default:
         cout << "ERROR: unhandled argument\n";
@@ -406,10 +465,14 @@ int main(int argc, char* argv[]){
   callGeneNet(s.c_str(), T);
 
   //clear things
-  cout << "Clearing the species that we created\n";
+  if (DEBUG_LEVEL>0.5){
+    cout << "Clearing the species that we created\n";
+  }
   Specie::clearAllInstances();
-  cout << "Done\n";
-	
+  if (DEBUG_LEVEL>0.5){
+    cout << "Done\n";
+  }
+
   return 0;
 }
 
@@ -420,7 +483,9 @@ bool fillFromTSD(const char dir[], Species * S, Experiments * E, NetCon * C, Thr
   ostringstream oss;
   int i = 1;
   oss << dir << "/run-" << i << ".tsd";
-  cout << "Got '" << oss.str() << "' for call\n";
+  if (DEBUG_LEVEL>0.5){
+    cout << "Got '" << oss.str() << "' for call\n";
+  }
   infile.open(oss.str().c_str());
   while (infile){
     bool f = yaccParse(fopen(oss.str().c_str(),"r"), S, E,i-1);
@@ -435,7 +500,9 @@ bool fillFromTSD(const char dir[], Species * S, Experiments * E, NetCon * C, Thr
     infile.close();
     infile.open(oss.str().c_str());
   }
-  cout << "Read in " << i-1 << " tsd files\n";
+  //if (DEBUG_LEVEL>0.5){
+    cout << "Read in " << i-1 << " tsd files\n";
+  //}
   infile.close();
   if (i == 1){
     cout << "\tERROR:, no TSD files found\n";
@@ -446,9 +513,13 @@ bool fillFromTSD(const char dir[], Species * S, Experiments * E, NetCon * C, Thr
 
 void GeneNet(Species &S, Experiments &E, NetCon &C, Thresholds &T, Encodings &L, const char * dir){
 
-  cout << "Encoding the experiments\n";
+  if (DEBUG_LEVEL>0.5){
+    cout << "Encoding the experiments\n";
+  }
   EncodeExpts(S,E,T,L, false);
-  cout << "Finished encoding\n";
+  if (DEBUG_LEVEL>0.5){
+    cout << "Finished encoding\n";
+  }
 
   if (READ_LEVELS){
     readLevels(dir, L,E,T);
@@ -466,7 +537,9 @@ void GeneNet(Species &S, Experiments &E, NetCon &C, Thresholds &T, Encodings &L,
   for (int i = 0; i < S.size(); i++){
     scoreCache = new map<Specie*, map<Set, map<Set, vector<double> > > >();
     Specie * s = S.get(i);
-    cout << "\nUsing specie " << *s << " as a child\n";
+    if (DEBUG_LEVEL>0.5){
+      cout << "\nUsing specie " << *s << " as a child\n";
+    }
 
     if (!C.containsAnyEdges(*s)){
       Experiments Ep = E.removeMutations(s);
@@ -488,15 +561,21 @@ void GeneNet(Species &S, Experiments &E, NetCon &C, Thresholds &T, Encodings &L,
     delete scoreCache;
   }
   
-  cout << "All Network Connections are\n" << C << "\tbut score may be changed using an and sort for multiple parents\n";
+  if (DEBUG_LEVEL>0.5){
+    cout << "All Network Connections are\n" << C << "\tbut score may be changed using an and sort for multiple parents\n";
+  }
   //cout << "Parent Sets Removed By Post Filter: " << ParentSetsRemoved << "\n";
-  cout << "Exiting the GeneNet algorithm\n";
+  if (DEBUG_LEVEL>0.5){
+    cout << "Exiting the GeneNet algorithm\n";
+  }
 }
 
 
 void EncodeExpts(Species& S, Experiments& E, Thresholds & T, Encodings& L, bool read_levels){
   L.initialize(&S,&E,&T);
-  cout << "Filling hashes now\n";
+  if (DEBUG_LEVEL>0.5){
+    cout << "Filling hashes now\n";
+  }
 
   if(EQUAL_SPACING_PER_BIN){
     if (!L.useNumbers(T.getBins(), read_levels,SUCC,PRED)){
@@ -508,7 +587,9 @@ void EncodeExpts(Species& S, Experiments& E, Thresholds & T, Encodings& L, bool 
     cout << "ERROR! Equal Data Per Bin didn't work\n";
     exit(0);
   }
-  cout << "Finished initializing\n";
+  if (DEBUG_LEVEL>0.5){
+    cout << "Finished initializing\n";
+  }
   return;
 }
 
@@ -579,7 +660,9 @@ double ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, 
       sa.append(G.get(j)->getGeneName());
     }
     sa.append(".dat");
-    cout << "Opening " << s << " for write\n";
+    if (DEBUG_LEVEL>0.5){
+      cout << "Opening " << s << " for write\n";
+    }
     fout.open(sa.c_str(),ios::out);
     fout << "#P Levels, G Levels, seen, rising, prob\n";
   }
@@ -630,8 +713,10 @@ double ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, 
           }
 
           if (!isBase){
-            cout << "Base " << t->rowValues << " is not a base because of " << st->getGeneUID() << "\n";
-            cout << "\tSorts Low To High " << P.sortsLowToHigh(st->getGeneUID()) << " Max " << max << "\n";
+            if (DEBUG_LEVEL>0.5){
+              cout << "Base " << t->rowValues << " is not a base because of " << st->getGeneUID() << "\n";
+              cout << "\tSorts Low To High " << P.sortsLowToHigh(st->getGeneUID()) << " Max " << max << "\n";
+            }
           }
         }
         if (isBase){
@@ -699,14 +784,22 @@ double ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, 
 
             }
             else{
-              cout << "\t\t\t\tBase prob " << base->rowValues << " = " << rising << " / " << seen << " = " << prob1 << " BUT!!\n";
+              if (DEBUG_LEVEL>0.5){
+                cout << "\t\t\t\tBase prob " << base->rowValues << " = " << rising << " / " << seen << " = " << prob1 << " BUT!!\n";
+              }
               if (rising == 0 || seen == 0){
-                cout << "\t\t\t\t\t\tNot using current as base because = " << rising << " / " << seen;
+                if (DEBUG_LEVEL>0.5){
+                  cout << "\t\t\t\t\t\tNot using current as base because = " << rising << " / " << seen;
+                }
               }
               else{
-                cout << "\t\t\t\t\t\tNot using current as base because of N Value " << rising << " / " << seen << " and nValue " << nValue;
+                if (DEBUG_LEVEL>0.5){
+                  cout << "\t\t\t\t\t\tNot using current as base because of N Value " << rising << " / " << seen << " and nValue " << nValue;
+                }
               }
-              cout << " instead trying " << nextR << " / " << nextS << "\n";
+              if (DEBUG_LEVEL>0.5){
+                cout << " instead trying " << nextR << " / " << nextS << "\n";
+              }
             }
           }
           next = NULL;
@@ -1028,49 +1121,6 @@ double ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, 
   return (votesa - votesr)/(votesa+votesr+votesu);
 }
 
-double Score(const Specie& s, const Set& P, const Set& G, const Experiments& E, const Thresholds& T, const Encodings& L){
-  cout << "TODO: this needs to be fixed so that n_values work correctly\n";
-  exit(0);
-  double votesa = 0;  double votesr = 0;  double votesu = 0;
-  LevelAssignments lp(G,L);
-  if (DEBUG_LEVEL>0){
-    cout << "\tScoring using P as: " << P << "\n\t\tand G as " << G << "\n";
-  }
-  for (int i = 0; i < lp.size(); i++){
-
-    LevelAssignments l(P,L);
-    double prob1 = L.getProb(&s,l.get(0),lp.get(i));
-
-    for (int j = 1; j < l.size(); j++){
-      double prob2 = L.getProb(&s,l.get(j),lp.get(i));
-      double probRatio = prob2 / prob1;
-
-      if (DEBUG_LEVEL>0){
-        cout << "\t\t\t\t\tRatio is " << prob1 << " / " << prob2 << " = " << probRatio << "\n";
-      }
-      if (prob1 == -1 || prob2 == -1){
-        if (DEBUG_LEVEL>0){
-          cout << "\t\t\t\t\t\tNot A Valid Ratio\n";
-        }
-      }
-      else if (probRatio > T.getTA() ){
-        votesa++;
-      }
-      else if (probRatio < T.getTR()){
-        votesr++;
-      }
-      else{
-        votesu++;
-      }
-    }
-  }
-  if (DEBUG_LEVEL>0){
-    cout << "\t\tvotes (a,r,u) (" << votesa << " " << votesr << " " << votesu << ") or ";
-    cout << "(" << votesa << " - " << votesr << ")/(" << votesa+votesr+votesu << ")\n";
-  }
-  return (votesa - votesr)/(votesa+votesr+votesu);
-}
-
 void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, NetCon& C, const Thresholds& T, const Encodings& L){
   if (DEBUG_LEVEL > COMPETITION_LOG){
     competitionLog << "Child " << s << "\n";
@@ -1100,12 +1150,18 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
     for (int i = 0; i < S.size(); i++){
       Specie * p = S.get(i);
       if (*p != s){
-        cout << "\tTesting specie " << *p << " as a parent\n";
+        if (DEBUG_LEVEL > 0.5){
+          cout << "\tTesting specie " << *p << " as a parent\n";
+        }
         double alpha = ScoreBetter(s,*p->toSet(),*s.toSet(),E,newT,L);
   			
-        cout << "\tScore of " << alpha << " and threshold +-" << newT.getTI() << "\n";
+        if (DEBUG_LEVEL > 0.5){
+          cout << "\tScore of " << alpha << " and threshold +-" << newT.getTI() << "\n";
+        }
         if (alpha >= newT.getTI()){
-          cout << "\t\tMeans an activation parent\n";
+          if (DEBUG_LEVEL > 0.5){
+            cout << "\t\tMeans an activation parent\n";
+          }
           C.unionIt(*p->toSet(),C.ACTIVATION,s,alpha);
           if (DEBUG_LEVEL > COMPETITION_LOG){
             competitionString << "\t" << *p << " passes as activation with " << alpha << "\n";
@@ -1113,7 +1169,9 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
           contendersString << "\t" << p->toIV('r') << " " << -alpha << " case 1r " << backgroundIV.str() << " " << newT.getTI() <<"\n";
         }
         else if (alpha <= -newT.getTI()){
-          cout << "\t\tMeans a represion parent\n";
+          if (DEBUG_LEVEL > 0.5){
+            cout << "\t\tMeans a represion parent\n";
+          }
           C.unionIt(*p->toSet(),C.REPRESSION,s,alpha);
           if (DEBUG_LEVEL > COMPETITION_LOG){
             competitionString << "\t" << *p << " passes as repression with " << alpha << "\n";
@@ -1132,10 +1190,14 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
     if (C.getParentsFor(s)->size() < T.getsip_letNThrough()){
       relaxedTheBounds = true;
       newT.relaxInitialParentsThresholds();
-      cout << "There are not enough parents for " << s << ", relaxing the thresholds to [" << newT.getTR() << ", " << newT.getTA() << "] and Ti " << newT.getTI() << "\n";
+      if (DEBUG_LEVEL > 0.5){
+        cout << "There are not enough parents for " << s << ", relaxing the thresholds to [" << newT.getTR() << ", " << newT.getTA() << "] and Ti " << newT.getTI() << "\n";
+      }
       if (newT.getTA() <= 1+doubleCompareValue && newT.getTR() >= 1 - doubleCompareValue){
         if (newT.getTI() <= 0.0001){
-          cout << "CANNOT RELAX BOUNDS MORE TO LET " << T.getsip_letNThrough() << " parent through\n";
+          if (DEBUG_LEVEL > 0.5){
+            cout << "CANNOT RELAX BOUNDS MORE TO LET " << T.getsip_letNThrough() << " parent through\n";
+          }
           canRelaxMore = false;
         }
         newT.setTI(newT.getTI() - newT.getRelaxInitialParentsDelta());
@@ -1156,14 +1218,18 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
     if (DEBUG_LEVEL > COMPETITION_LOG){
       competitionLog << "The bounds were relaxed\n";
     }
-    cout << "Rescoring parents with harsher numbers, as we relaxed the bounds\n";
+    if (DEBUG_LEVEL > 0.5){
+      cout << "Rescoring parents with harsher numbers, as we relaxed the bounds\n";
+    }
     DoubleSet * rescore = C.getParentsFor(s);
     for (int i = 0; i < rescore->size(); i++){
       Set * rescoreSet = rescore->get(i);
       assert(rescoreSet->size() == 1);
       Specie * p = rescoreSet->get(0);
       double alpha = ScoreBetter(s,*p->toSet(),*s.toSet(),E,T,L);
-      cout << "\tScore of " << alpha << " and threshold +- " << T.getTI() << " for " << *p << "\n";
+      if (DEBUG_LEVEL > 0.5){
+        cout << "\tScore of " << alpha << " and threshold +- " << T.getTI() << " for " << *p << "\n";
+      }
       rescoreSet->setScore(-1, alpha);
     }
   }
@@ -1173,7 +1239,9 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
   }
   contenders << contendersString.str();
   //now print out the parents
-  cout << "Initial parents for " << s << " are: " <<  *C.getParentsFor(s) << "\n";  	
+  if (DEBUG_LEVEL > 0.5){
+    cout << "Initial parents for " << s << " are: " <<  *C.getParentsFor(s) << "\n";  	
+  }
 }
 
 bool incrementBaseSet(int * c, int arraySize, int numberOfBases){
@@ -1211,14 +1279,18 @@ bool incrementBaseSet(int * c, int arraySize, int numberOfBases){
 
 void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, NetCon& C, const Thresholds& T, const Encodings& L){
   Set baseSet = C.getParentsFor(s)->colapseToSet();
-  cout << "In Create Multiple Parents for " << s << " with " << *C.getParentsFor(s) << "\n";
-  cout << "\tWhich colapses to " << baseSet << "\n";
+  if (DEBUG_LEVEL > 0.5){
+    cout << "In Create Multiple Parents for " << s << " with " << *C.getParentsFor(s) << "\n";
+    cout << "\tWhich colapses to " << baseSet << "\n";
+  }
   if (DEBUG_LEVEL > COMPETITION_LOG){
     competitionLog << "Multiple Parents for " << s << "\n";
   }
   int currentNumOfBasesUsed = 2;
   while(currentNumOfBasesUsed <= T.getMaxParentSetSize()){
-    cout << "\tCreating parents sets of " << currentNumOfBasesUsed << " bases\n";
+    if (DEBUG_LEVEL > 0.5){
+      cout << "\tCreating parents sets of " << currentNumOfBasesUsed << " bases\n";
+    }
     int * currentBases = new int[currentNumOfBasesUsed];
     //fill the current with the first few
     for (int i = 0; i < currentNumOfBasesUsed-1; i++){
@@ -1305,50 +1377,16 @@ void CreateMultipleParents(Specie& s, const Species& S, const Experiments& E, Ne
   }
   contenders << C.filterByScore(s,T.getTI());
   
-  cout << "Multiple parents for " << s << " are: " << *C.getParentsFor(s) << "\n";
-}
-
-
-void CreateMultipleParents_Too_Costly(Specie& s, const Species& S, const Experiments& E, NetCon& C, const Thresholds& T, const Encodings& L){
-  cout << "TODO: This function needs an update so that only parents with similar scores are combined\n";
-  exit(0);
-  
-  DoubleSet * baseSet = C.getParentsFor(s);
-  DoubleSet * workingSet = new DoubleSet(*baseSet);
-  cout << "In Create Multiple Parents for " << s << " with " << *baseSet << "\n";
-  while(workingSet->size() > 1){
-    DoubleSet * nextWorking = new DoubleSet();
-    for (int i = 0; i < baseSet->size(); i++){
-      Set * p1 = baseSet->get(i); //getParent
-      double alpha1 = ScoreBetter(s,*p1,*s.toSet(),E,T,L);
-      cout << "\tCompeting " << *p1 << " with score of " << alpha1 << " with the following:\n";
-      for (int j = 0; j < workingSet->size(); j++){
-        if (j != i){
-          Set * p2 = workingSet->get(j); //getParent
-          double alpha2 = ScoreBetter(s,*p2,*s.toSet(),E,T,L);
-          double alphab = ScoreBetter(s,unionIt(*p1,*p2),*s.toSet(),E,T,L);
-          cout << "\t\tWITH " << *p2 << " with score of " << alpha2 << " (the above score again) " << alpha1 << "\n";
-          cout << "\t\tBoth have score of " << alphab << "\n";
-          if (fabs(alphab) >= fabs(alpha1) && fabs(alphab) >= fabs(alpha2)){
-            //TODO We need to fix this
-            Set tmp = unionIt(*p1,*p2);
-            nextWorking->unionIt(tmp);
-            C.unionIt(tmp,C.EITHER,s,alphab);
-            cout << "\t\t\tWhich is good enough to union them\n";
-          }
-        }
-      }
-    }
-    delete workingSet;
-    workingSet = nextWorking;
+  if (DEBUG_LEVEL > 0.5){
+    cout << "Multiple parents for " << s << " are: " << *C.getParentsFor(s) << "\n";
   }
-  delete workingSet;
-  C.removeSubsets(s);
-  cout << "Multiple parents for " << s << " are: " << *C.getParentsFor(s) << "\n";
 }
+
 
 void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, NetCon& C, const Thresholds& T_old, const Encodings& L){
-  cout << "Competing parents for child " << s << "\n";
+  if (DEBUG_LEVEL > 0.5){
+    cout << "Competing parents for child " << s << "\n";
+  }
   bool progress = C.totalParents(s) > 1;
   Thresholds T(T_old);
   if (DEBUG_LEVEL > COMPETITION_LOG){
@@ -1359,7 +1397,9 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
     vector<DoubleSet> matchups = assignMatchups(s,S,E,C,T,L);
     for (int i = 0; i < (int)matchups.size(); i++){
       DoubleSet Q = matchups[i];
-      cout << "\tCompeting " << Q << "\n";
+      if (DEBUG_LEVEL > 0.5){
+        cout << "\tCompeting " << Q << "\n";
+      }
       double * Scores = new double[Q.size()];
       for (int i = 0; i < Q.size(); i++){
         Set * q = Q.get(i);
@@ -1383,11 +1423,13 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
         }
         InvertSortOrder = false;
       }
-      cout << "\tScores: ";
-      for (int i = 0; i < Q.size(); i++){
-        cout << Scores[i] << " ";
+      if (DEBUG_LEVEL > 0.5){
+        cout << "\tScores: ";
+        for (int i = 0; i < Q.size(); i++){
+          cout << Scores[i] << " ";
+        }
+        cout << "\n";
       }
-      cout << "\n";
       ostringstream cS;
       ostringstream contendersString;
       cS.str(C.removeLosers(s,Q,Scores,contendersString));
@@ -1400,7 +1442,9 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
     if (CPP_USE_HARSHER_BOUNDS){
       if (currentNumParents == C.totalParents(s)){
         bool f = T.harshenInitialParentsThresholds();
-        cout << "\tUsing harsher numbers, as " << currentNumParents << " == " << C.totalParents(s) << ", to " << T.getTA() << " " << T.getTR() << "\n";
+        if (DEBUG_LEVEL > 0.5){
+          cout << "\tUsing harsher numbers, as " << currentNumParents << " == " << C.totalParents(s) << ", to " << T.getTA() << " " << T.getTR() << "\n";
+        }
         if (f == false){
           //exit, as we cannot shrink any more
           progress = false;	
@@ -1418,7 +1462,9 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
   if (DEBUG_LEVEL > COMPETITION_LOG){
     competitionLog << "Winner " << *C.getParentsFor(s) <<  "\n\n\n\n";
   }
-  cout << "After Competion " << *C.getParentsFor(s) << " is the winner set for child " << s << "\n";
+  if (DEBUG_LEVEL > 0.5){
+    cout << "After Competion " << *C.getParentsFor(s) << " is the winner set for child " << s << "\n";
+  }
   
   contenders << "\t" << C.getParentsFor(s)->toIV() << " winner\n";
 
@@ -1472,7 +1518,9 @@ vector<DoubleSet> assignMatchups(const Specie& s, const Species& S, const Experi
 void writeDot(const char dir[], NetCon * C, const Experiments& E, const Thresholds& T, const Encodings& L){
   string s = dir;
   s.append("/method.dot");
-  cout << "Opening " << s << " for write\n";
+  if (DEBUG_LEVEL > 0.5){
+    cout << "Opening " << s << " for write\n";
+  }
   ofstream ofile(s.c_str(),ios::out);
   //write out the species
   ofile << "digraph G {\n";
@@ -1480,7 +1528,9 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
     Specie * s = Specie::getInstance("tmp",i);
     ofile << "s" << i << " [shape=ellipse,color=black,label=\"" << s->getGeneName() << "\"];\n";
   }
-  cout << "Finished writing the species list\n";
+  if (DEBUG_LEVEL > 0.5){
+    cout << "Finished writing the species list\n";
+  }
   //write out the connections
   for (int i = 1; i < Specie::getNumSpecie(); i++){
     Specie * s = Specie::getInstance("tmp",i);
@@ -1499,9 +1549,13 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
         mpb = p->getIndividualScore(p->get(1)->getGeneUID());
         if((mpa > 0 && mpb < 0) || (mpa < 0 && mpb > 0) && KEEP_SORT_ORDER_INVERTED){
           InvertSortOrder = true;
-          cout << "Tring to get a different score than " << pScore << " with " << *s << " " << *p << "\n";
+          if (DEBUG_LEVEL > 0.5){
+            cout << "Tring to get a different score than " << pScore << " with " << *s << " " << *p << "\n";
+          }
           pScore = ScoreBetter(*s,*p,*s->toSet(),E,T,L);
-          cout << "After the score, with new score " << pScore << "\n";
+          if (DEBUG_LEVEL > 0.5){
+            cout << "After the score, with new score " << pScore << "\n";
+          }
         }
       }
       //format pScore
@@ -1552,7 +1606,9 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
 void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & T){
   string s = dir;
   s.append("/levels.lvl");
-  cout << "Opening " << s << " for write\n";
+  if (DEBUG_LEVEL > 0.5){
+    cout << "Opening " << s << " for write\n";
+  }
   ofstream lvl_file(s.c_str(),ios::out);
 
 
@@ -1700,8 +1756,10 @@ void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & 
 void readLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & T){
   string s = dir;
   s.append("/levels.lvl");
-  cout << "Opening " << s << " for read\n";
-  cout << "Reading file for levels\n";
+  if (DEBUG_LEVEL > 0.5){
+    cout << "Opening " << s << " for read\n";
+    cout << "Reading file for levels\n";
+  }
   ifstream lvl_file(s.c_str(),ios::in);
   if(! L.useFile(lvl_file, !WRITE_LEVELS, SUCC,PRED)){
     cout << "ERROR: Unable to read levels file\n";

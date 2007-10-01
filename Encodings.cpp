@@ -23,7 +23,9 @@ void Encodings::initialize(Species * species, Experiments * experiments, Thresho
 }
 
 void Encodings::clearLevels(){
-  cout << "Clearning Levels\n";
+  if (DEBUG_LEVEL > 0.5){
+    cout << "Clearning Levels\n";
+  }
 	while(levels.size() > 0){
 		std::vector<double> * f = levels.back();
 		levels.pop_back();
@@ -157,7 +159,9 @@ bool Encodings::useBins(int oldNumBins, bool useSpeciesLevels, bool succ, bool p
                         }
 		}
 	}
-	printLevels();
+        if (DEBUG_LEVEL > 0.5){
+          printLevels();
+        }
 	fillTSD(succ, pred);
         delete [] oldLevels;
 	return true;
@@ -223,7 +227,9 @@ bool Encodings::useFile(ifstream & lvl_file, bool checkOrdering, bool succ, bool
 			}
 		}
 	}
-	printLevels();
+        if (DEBUG_LEVEL > 0.5){
+          printLevels();
+        }
 	fillTSD(succ, pred);
 	return true;
 }

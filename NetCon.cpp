@@ -45,8 +45,10 @@ void NetCon::unionIt(const Set & mySet, int TYPE, const Specie& s, double score)
 	Set s2(mySet);
 	s2.setScore(-1,score);
 	if (s.getGeneUID() < 0 || TYPE <= 0 || TYPE >= MAX_TYPE_NUMBER){
-		std::cout << "ERROR, UnionIt failed because of bad type\n";
-		return;
+          if (DEBUG_LEVEL>0){
+            std::cout << "ERROR, UnionIt failed because of bad type\n";
+          }
+          return;
 	}
 	for (int j = myConnections.size(); j <= s.getGeneUID(); j++){
 		myConnections.push_back(new DoubleSet());	
@@ -56,8 +58,10 @@ void NetCon::unionIt(const Set & mySet, int TYPE, const Specie& s, double score)
 
 bool NetCon::addIfScoreBetterThanSubsets(const Specie & s, const Set & set){
 	if (s.getGeneUID() < 0 || s.getGeneUID() >= (int)myConnections.size()){
-		std::cout << "ERROR, AddIfScoreLargerThanSubsets failed because of bad specie\n";
-		return false;
+          if (DEBUG_LEVEL>0){
+            std::cout << "ERROR, AddIfScoreLargerThanSubsets failed because of bad specie\n";
+          }
+          return false;
 	}
 	return myConnections.at(s.getGeneUID())->addIfScoreBetterThanSubsets(set);
 }
@@ -102,8 +106,10 @@ DoubleSet * NetCon::getParentsFor(const Specie & s){
 
 std::string NetCon::removeSubsets(const Specie & s){
 	if (s.getGeneUID() < 0 || s.getGeneUID() >= (int)myConnections.size()){
-		std::cout << "ERROR: Removing subsets for an invalid set\n";
-		return "";
+          if (DEBUG_LEVEL>0){
+            std::cout << "ERROR: Removing subsets for an invalid set\n";
+          }
+          return "";
 	}
 	return myConnections.at(s.getGeneUID())->removeSubsets();
 
@@ -111,8 +117,10 @@ std::string NetCon::removeSubsets(const Specie & s){
 
 std::string NetCon::filterByScore(const Specie & s,double f){
 	if (s.getGeneUID() < 0 || s.getGeneUID() >= (int)myConnections.size()){
-		std::cout << "ERROR: Removing subsets for an invalid set\n";
-		return "";
+          if (DEBUG_LEVEL>0){
+            std::cout << "ERROR: Removing subsets for an invalid set\n";
+          }
+          return "";
 	}
 	return myConnections.at(s.getGeneUID())->filterByScore(f);
 }
