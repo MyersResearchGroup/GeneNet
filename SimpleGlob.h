@@ -95,11 +95,11 @@ public:
     static int strcmp(const wchar_t *s1, const wchar_t *s2)     { return ::wcscmp(s1, s2); }
 
     static int stricmp(const char *s1, const char *s2)          { return sg_stricmp((const SOCHAR_T *)s1, (const SOCHAR_T *)s2); }
-#ifdef _WIN32
-    static int stricmp(const wchar_t *s1, const wchar_t *s2)    { return ::wcsicmp(s1, s2); }
-#else
-    static int stricmp(const wchar_t *s1, const wchar_t *s2)    { return ::wcscasecmp(s1, s2); }
-#endif // _WIN32
+  //#ifdef _WIN32
+    //  static int stricmp(const wchar_t *s1, const wchar_t *s2)    { return ::wcsicmp(s1, s2); }
+  //#else
+    //  static int stricmp(const wchar_t *s1, const wchar_t *s2)    { return ::wcscasecmp(s1, s2); }
+  //#endif // _WIN32
 };
 
 // ----------------------------------------------------------------------------
@@ -342,8 +342,8 @@ public:
             nFlags |= GLOB_NOCHECK;
         if (m_uiFlags & SG_GLOB_TILDE)
             nFlags |= GLOB_TILDE;
-        if (m_uiFlags & SG_GLOB_ONLYDIR)
-            nFlags |= GLOB_ONLYDIR;
+	//        if (m_uiFlags & SG_GLOB_ONLYDIR)
+        //    nFlags |= GLOB_ONLYDIR;
         //if (m_uiFlags & SG_GLOB_ONLYFILE) // not supported by glob
         //    nFlags |= GLOB_ONLYFILE;
         //if (m_uiFlags & SG_GLOB_NODOT)    // not supported by glob
