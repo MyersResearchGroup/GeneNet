@@ -2,6 +2,7 @@
 #include <iostream>
 
 extern double doubleCompareValue;
+extern int DEBUG_LEVEL;
 
 Thresholds::Thresholds(double A, double R, double V, int RisingAmount, int WindowSize, int NumBins, double InfluenceLevelDelta, double RelaxInitialParentsDelta, int MaxParentSetSize, bool CompeteMultipleHighLowBool)
 {
@@ -36,8 +37,10 @@ void Thresholds::relaxInitialParentsThresholds(){
 	}
 	
 	if (ta <= 1+doubleCompareValue && tr <= 1+doubleCompareValue){
-		std::cout << "ERROR:  Activation or Represison thresholds reduced too much: " << ta << " " << tr << "\n";
-		//exit(0);
+          if (DEBUG_LEVEL>0){
+            std::cout << "ERROR:  Activation or Represison thresholds reduced too much: " << ta << " " << tr << "\n";
+            //exit(0);
+          }
 	}
 }
 
@@ -45,8 +48,10 @@ bool Thresholds::harshenInitialParentsThresholds(){
 	ta += relaxInitialParentsDelta;
 	tr -= relaxInitialParentsDelta;
 	if (ta > 5 || tr < 0){
-		std::cout << "ERROR:  Activation or Represison thresholds harshened too much: " << ta << " " << tr << "\n";
-		return false;
+          if (DEBUG_LEVEL>0){
+            std::cout << "ERROR:  Activation or Represison thresholds harshened too much: " << ta << " " << tr << "\n";
+            return false;
+          }
 	}
 	return true;
 }

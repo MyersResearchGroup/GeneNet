@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 
+extern int DEBUG_LEVEL;
 
 Experiments::Experiments()
 {
@@ -175,7 +176,9 @@ int Experiments::totalRows(int experiment){
 
 //TODO: work with mutations
 Experiments Experiments::removeMutations(Specie * s){
-	cout << "Remove mutations not implemented\n";
+  if (DEBUG_LEVEL > 0.5){
+    cout << "Remove mutations not implemented\n";
+  }
 	return *this;
 }
 

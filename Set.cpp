@@ -4,6 +4,7 @@
 #include <cmath>
 #include <sstream>
 
+extern int DEBUG_LEVEL;
 
 Set::Set()
 {
@@ -90,9 +91,11 @@ bool Set::sortsLowToHigh(int specieUID) const{
 	}
 	bool returnValue;
 	if (isActivator == -1){
+          if (DEBUG_LEVEL>0){
 		std::cout << "Specie uid " << specieUID << " not found, but is should have been found, or this was a bad call for isActivator\n";
 		assert(false);
 		returnValue = false;
+          }
 	}
 	else if (activators == 0 || repressors == 0){
 		returnValue = true;	
