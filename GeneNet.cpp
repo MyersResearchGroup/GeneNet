@@ -500,9 +500,9 @@ bool fillFromTSD(const char dir[], Species * S, Experiments * E, NetCon * C, Thr
     infile.close();
     infile.open(oss.str().c_str());
   }
-  //if (DEBUG_LEVEL>0.5){
+  if (DEBUG_LEVEL>0.5){
     cout << "Read in " << i-1 << " tsd files\n";
-  //}
+  }
   infile.close();
   if (i == 1){
     cout << "\tERROR:, no TSD files found\n";
@@ -1469,6 +1469,7 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
   contenders << "\t" << C.getParentsFor(s)->toIV() << " winner\n";
 
   cout << "Gene = " << s << "\n";
+  cout.flush();
 }
 
 bool setScoreSort(const Set* a, const Set* b){

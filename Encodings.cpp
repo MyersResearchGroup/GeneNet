@@ -139,10 +139,12 @@ bool Encodings::useBins(int oldNumBins, bool useSpeciesLevels, bool succ, bool p
 		}		
 		//we ran out of data, too many bins
 		if (current >= (int)v.size()){
+		  if (DEBUG_LEVEL > 0) {
 			cout << "ERROR: Too many bins for the data available for specie " << i << "\n";
                         cout << "\tIt will get some null values but we will try to push on\n";
+		  }
 			//return false;
-                        int j = 9990;
+		  int j = 9990;
                         while (levelsAssigned < numBins-1){
                           //add in a new level vector if there isn't one
                           if ((int)levels.size() == i){
