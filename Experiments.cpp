@@ -61,9 +61,9 @@ void Experiments::fillExperiments(const Experiments & exp){
 bool Experiments::addTimePoint(int experiment, int row, int column, double data){
 	//cout << "Trying to add point: e,r,c " << experiment << " " << row << " " << column << endl;
 	//disallow negative points
-	if (experiment < 0 || row < 0 || column < 0 || data < 0){
-		return false;	
-	}
+	//if (experiment < 0 || row < 0 || column < 0 || data < 0){
+	//	return false;	
+	//}
 	//only allow one experiment to be added at a time, but can add to same exp
 	if (experiment != (int)experiments->size() && experiment != (int)experiments->size()-1){
 		return false;	
