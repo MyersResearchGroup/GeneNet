@@ -326,6 +326,7 @@ public:
 
     int Add(const SOCHAR *a_pszFileSpec) {
         // set all of the flags
+
         int nFlags = 0;
         if (m_nReservedSlots > 0) {
             m_oGlobData.gl_offs = (size_t) m_nReservedSlots;
