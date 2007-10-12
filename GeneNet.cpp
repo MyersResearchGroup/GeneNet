@@ -1518,7 +1518,7 @@ vector<DoubleSet> assignMatchups(const Specie& s, const Species& S, const Experi
 */
 void writeDot(const char dir[], NetCon * C, const Experiments& E, const Thresholds& T, const Encodings& L){
   string s = dir;
-  s.append("/method.dot");
+  s.append("/method.ckt");
   if (DEBUG_LEVEL > 0.5){
     cout << "Opening " << s << " for write\n";
   }
