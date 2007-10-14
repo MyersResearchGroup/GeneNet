@@ -11,6 +11,10 @@ $(GENENET_EXE): $(SRCS) $(OBJS)
 	g++ -Wl,--hash-style=sysv -oGeneNet $(OBJS)
 	mv GeneNet ../bin/
 
+windows: $(SRCS) $(OBJS)
+	g++ -oGeneNet $(OBJS)
+	mv GeneNet.exe ../bin/
+
 %.o: %.cpp
 	g++ -O3 -Wall -c -fmessage-length=0 -o$@ $<
 lex.o: lex.l yacc.o
