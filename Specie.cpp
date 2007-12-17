@@ -20,19 +20,44 @@ void Specie::clearAllInstances(){
 	}
 }
 
-Specie * Specie::getInstance(std::string name, int uid){
+Specie * Specie::addInstance(std::string name, int uid){
 	if (allSpecies == NULL){
-		allSpecies = new std::map<int, Specie*>();	
+	  allSpecies = new std::map<int, Specie*>();	
 	}
 	
 	if (allSpecies->find(uid) == allSpecies->end()){
+	  //std::cout << "Creating specie " << name << " uid " << uid << "\n";
+	  Specie * t = new Specie(name,uid);
+	  //std::cout << "Created specie " << t->getGeneName() << " uid " << t->getGeneUID() << "\n";
+	  (*allSpecies)[uid] = t;
+	  //std::cout << "after insert\n";
+	}
+	return (*allSpecies)[uid];
+}
+
+Specie * Specie::getInstance(std::string name, int uid){
+	if (allSpecies == NULL){
+	  return NULL;
+	  //allSpecies = new std::map<int, Specie*>();	
+	}
+	
+	if (allSpecies->find(uid) == allSpecies->end()){
+	  return NULL;
 		//std::cout << "Creating specie " << name << " uid " << uid << "\n";
-		Specie * t = new Specie(name,uid);
+		//Specie * t = new Specie(name,uid);
 		//std::cout << "Created specie " << t->getGeneName() << " uid " << t->getGeneUID() << "\n";
-		(*allSpecies)[uid] = t;
+		//(*allSpecies)[uid] = t;
 		//std::cout << "after insert\n";
 	}
 	return (*allSpecies)[uid];
+}
+
+int Specie::getSpecies(std::string name){
+  for (unsigned int i=0;i<allSpecies->size();i++) {
+    if ((*allSpecies)[i]->name == name)
+      return i;
+  }
+  return -1;
 }
 
 Specie::Specie(std::string n, int uid)

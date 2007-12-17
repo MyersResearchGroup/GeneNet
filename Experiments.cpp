@@ -59,7 +59,7 @@ void Experiments::fillExperiments(const Experiments & exp){
 }
 
 bool Experiments::addTimePoint(int experiment, int row, int column, double data){
-	//cout << "Trying to add point: e,r,c " << experiment << " " << row << " " << column << endl;
+        //cout << "Trying to add point: e,r,c " << experiment << " " << row << " " << column << " " << data << endl;
 	//disallow negative points
 	//if (experiment < 0 || row < 0 || column < 0 || data < 0){
 	//	return false;	
@@ -99,10 +99,11 @@ bool Experiments::addTimePoint(int experiment, int row, int column, double data)
 	vector<double> * r = exp->at(row);
 	
 	//only allow one int to be added at a time
-	if (column != (double)r->size()){
-		return false;	
+	while (column >= (double)r->size()){
+	  r->push_back(data);
+	  //return false;	
 	}
-	r->push_back(data);
+	r->at(column)=data;
 	//cout <<"Adding Data: "<< data << endl;
 	return true;
 }
