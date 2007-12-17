@@ -14,6 +14,8 @@
   bool success = false;
   Experiments * globalExp;
   Species * globalSpecies;
+  int * speciesCol;
+  int i;
 
   extern char * yytext;
 
@@ -38,32 +40,28 @@ start: '(' '(' the_names ')' ',' lines ')'	{
 											success = true;
 										}
   the_names: names					{
-  										total_names = current_col;
+    total_names = Specie::getNumSpecie();
   										current_row = 0;
   										current_col = 0;
   										//cout << "YACC names all matched\n";
 									}
   names: QUOTE NAME QUOTE ',' {
-  										//printf("NAME: %s\n",$2);
-  										Specie * s = Specie::getInstance($2,current_col);
-  										bool f = globalSpecies->addSpecie(s);
-  										if (f == false){
-  											cout << "YACC PARSER FOUND ERROR 1\n";
-  											success = false;
-  										}
-  										current_col++;
-  										//cout << "\tsuccess\n";
+    int i = Specie::getSpecies($2);
+    if (i >= 0) { 
+      // printf("NAME: %s i=%d in col %d\n",$2,i,current_col);
+      speciesCol[i]=current_col;
+    }
+    current_col++;
+    //cout << "\tsuccess\n";
   								} names
   | QUOTE NAME QUOTE 				{
-  										//printf("Last? NAME: %s\n",$2);
-  										Specie * s = Specie::getInstance($2,current_col);
-  										bool f = globalSpecies->addSpecie(s);
-  										if (f == false){
-  											cout << "YACC PARSER FOUND ERROR 2\n";
-  											success = false;
-  										}
-  										current_col++;
-  									}
+    int i = Specie::getSpecies($2);
+    if (i >= 0) { 
+      //printf("Last? NAME: %s i=%d in col %d\n",$2,i,current_col);
+      speciesCol[i]=current_col;
+    }
+    current_col++;
+								  }
   ;
 
   lines: '(' the_list ')' ',' lines	{
@@ -78,23 +76,33 @@ start: '(' '(' the_names ')' ',' lines ')'	{
   									}
 
   list:  NUMBER ',' {
-  							//printf("Matched %f\n",$1);
-  							bool f = globalExp->addTimePoint(current_exp,current_row,current_col, $1);
-  							if (f == false){
-  								cout << "YACC PARSER FOUND ERROR 3\n";
-  								success = false;
-  							}
-  							current_col++;
-  						 } list
+    for (i=0;i<Specie::getNumSpecie();i++)
+      if (speciesCol[i]==current_col) 
+	break;
+    if (i < Specie::getNumSpecie()) { 
+      //printf("Matched %f\n",$1);
+      bool f = globalExp->addTimePoint(current_exp,current_row,i, $1);
+      if (f == false){
+	cout << "YACC PARSER FOUND ERROR 3\n";
+	success = false;
+      }
+    }
+    current_col++;
+ } list
   | NUMBER 				 {
-  							//printf("Matched %f\n",$1);
-  							bool f = globalExp->addTimePoint(current_exp,current_row,current_col, $1);
-							if (f == false){
-  								cout << "YACC PARSER FOUND ERROR 4\n";
-								success = false;
-							}
-  							current_col++;
-  						 }
+    for (i=0;i<Specie::getNumSpecie();i++)
+      if (speciesCol[i]==current_col) 
+	break;
+    if (i < Specie::getNumSpecie()) { 
+      //printf("Matched %f\n",$1);
+      bool f = globalExp->addTimePoint(current_exp,current_row,i, $1);
+      if (f == false){
+	cout << "YACC PARSER FOUND ERROR 4\n";
+	success = false;
+      }
+    }
+    current_col++;
+   }
   ;
 
 %%
@@ -118,6 +126,7 @@ main(){
 
 
 bool yaccParse(FILE * f, Species * S, Experiments * E, int experimentNum){
+  speciesCol = new int[Specie::getNumSpecie()];
   success = false;
   yyin = f;
   globalSpecies = S;
@@ -126,5 +135,6 @@ bool yaccParse(FILE * f, Species * S, Experiments * E, int experimentNum){
   do{
     yyparse();
   }while(!feof(yyin));
+  delete[] speciesCol;
   return success;
 }

@@ -9,7 +9,9 @@ class DoubleSet;
 class Specie
 {
 public:
-	static Specie * getInstance(std::string name, int uid);
+	static Specie * addInstance(std::string name, int uid);
+        static Specie * getInstance(std::string name, int uid);
+        static int getSpecies(std::string name);
 	static void clearAllInstances();
 	static int getNumSpecie();
 	int getGeneUID() const;

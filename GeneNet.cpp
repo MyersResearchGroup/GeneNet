@@ -172,9 +172,58 @@ string ShowFiles(int argc, TCHAR ** argv) {
   }
 }
 
-
-
-
+bool readBackground(const char dir[], Species * S, NetCon * C){
+  Specie * s;
+  s = Specie::addInstance("time",0);
+  S->addSpecie(s);
+  char temp[256];
+  char s1[256];
+  char s2[256];
+  char species[256][256];
+  char speciesLabel[256][256];
+  ifstream fp_in; 
+  fp_in.open("background.gcm", ios::in);
+  int num=1;
+  while (fp_in.eof()==0) {
+    fp_in.getline(temp,256);
+    if (strstr(temp,"shape")!=NULL) {
+      strcpy(species[num],temp);
+      (*strchr(species[num],' '))='\0';
+      char *temp2 = strstr(temp,"label")+7;
+      *strchr(temp2,'\"') = '\0';
+      strcpy(speciesLabel[num],temp2);
+      printf("%d %s %s\n",num,species[num],speciesLabel[num]);
+      s = Specie::addInstance(temp2,num);
+      S->addSpecie(s);
+      num++;
+    } else if (strstr(temp,"arrowhead")!=NULL) {
+      strcpy(s1,temp);
+      (*strchr(s1,' '))='\0';
+      strcpy(s2,strchr(temp,'>')+2);
+      (*strchr(s2,' '))='\0';
+      char *temp2 = strstr(temp,"arrowhead")+10;
+      temp2[3] = '\0';
+      int i=0;
+      for (i=0;i<num;i++)
+	if (strcmp(species[i],s1)==0)
+	  break;
+      if (i==num) 
+	printf("%s not found\n",s1);
+      int j=0;
+      for (j=0;j<num;j++)
+	if (strcmp(species[j],s2)==0)
+	  break;
+      if (j==num) 
+	printf("%s not found\n",s2);
+      if (strcmp(temp2,"vee")==0)
+	printf("%s activates %s\n",speciesLabel[i],speciesLabel[j]);
+      else 
+	printf("%s represses %s\n",speciesLabel[i],speciesLabel[j]);
+    }
+  }
+  fp_in.close();   
+  return true;
+}
 
 void callGeneNet(const char * dir, Thresholds & T){
   Species S;
@@ -184,6 +233,12 @@ void callGeneNet(const char * dir, Thresholds & T){
   //used to let score function know about dir
   globDir = new string(dir);
 		
+  if (DEBUG_LEVEL>0.5){
+    cout << "Reading background knowledge\n";
+  }
+  if (! readBackground(dir, &S, &C)){
+    return;	
+  }
   if (DEBUG_LEVEL>0.5){
     cout << "Reading the TSD files\n";
   }
