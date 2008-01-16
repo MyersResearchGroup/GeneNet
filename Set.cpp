@@ -4,6 +4,8 @@
 #include <cmath>
 #include <sstream>
 
+#define Set__DELTA 0.0001
+
 extern int DEBUG_LEVEL;
 
 Set::Set()
@@ -89,7 +91,7 @@ bool Set::sortsLowToHigh(int specieUID) const{
 			}
 		}
 	}
-	bool returnValue;
+	bool returnValue = 0;
 	if (isActivator == -1){
           if (DEBUG_LEVEL>0){
 		std::cout << "Specie uid " << specieUID << " not found, but is should have been found, or this was a bad call for isActivator\n";
@@ -266,7 +268,7 @@ bool operator == (const Set& s1, const Set& s2){
 	if(s1.size() != s2.size()){
 		return false;	
 	}
-	if (!(s1.getScore() + Set::DELTA > s2.getScore() && s2.getScore() + Set::DELTA > s1.getScore())){
+	if (!(s1.getScore() + Set__DELTA > s2.getScore() && s2.getScore() + Set__DELTA > s1.getScore())){
 		return false;	
 	}
 	for (int i = 0; i < s1.size(); i++){
@@ -298,10 +300,10 @@ bool operator <  (const Set& s1, const Set& s2){
 			return false;	
 		}
 	}
-	if (fabs(s1.getScore()) + Set::DELTA < fabs(s2.getScore())){
+	if (fabs(s1.getScore()) + Set__DELTA < fabs(s2.getScore())){
 		return true;	
 	}
-	else if (fabs(s1.getScore()) > fabs(s2.getScore()) + Set::DELTA){
+	else if (fabs(s1.getScore()) > fabs(s2.getScore()) + Set__DELTA){
 		return false;
 	}
 	//they are the same

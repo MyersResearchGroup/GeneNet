@@ -8,11 +8,11 @@ all: $(GENENET_EXE)
 
 #GeneNet creation Tool Chain
 $(GENENET_EXE): $(SRCS) $(OBJS)
-	g++ -Wl,--hash-style=sysv -oGeneNet $(OBJS)
+	g++ -o GeneNet $(OBJS)
 	mv GeneNet ../bin/
 
 windows: $(SRCS) $(OBJS)
-	g++ -oGeneNet $(OBJS)
+	g++ -o GeneNet $(OBJS)
 	mv GeneNet.exe ../bin/
 
 %.o: %.cpp
