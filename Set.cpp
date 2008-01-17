@@ -4,7 +4,7 @@
 #include <cmath>
 #include <sstream>
 
-#define Set__DELTA 0.0001
+#define Set__DELTA 0.00001
 
 extern int DEBUG_LEVEL;
 
