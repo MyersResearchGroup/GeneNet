@@ -71,6 +71,11 @@ start: '(' '(' the_names ')' ',' lines ')'	{
   										current_col = 0;
   									}
   the_list: list					{
+    for (i=0;i<Specie::getNumSpecie();i++) {
+      if (speciesCol[i] == (-1)) {
+	globalExp->addTimePoint(current_exp,current_row,i, 0);
+      }
+    }
 		  							current_row++;
   									current_col = 0;
   									}
@@ -127,6 +132,9 @@ main(){
 
 bool yaccParse(FILE * f, Species * S, Experiments * E, int experimentNum){
   speciesCol = new int[Specie::getNumSpecie()];
+  for (int i = 0; i < Specie::getNumSpecie(); i++) {
+    speciesCol[i] = (-1);
+  }
   success = false;
   yyin = f;
   globalSpecies = S;
