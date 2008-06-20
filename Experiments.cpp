@@ -137,7 +137,7 @@ std::vector<double> Experiments::getSortedValues(int column){
 			vector<double> * r = exp->at(row);
 			//make sure that s can be found in EVERY experiment
 			if (column < 0 || column >= (int)r->size()){
-				std::cout << "ERROR: for some reason this specie is not found in every experiment\n";
+				std::cout << "ERROR: for some reason this species is not found in every experiment\n";
 				std::vector<double> empty;
 				return empty;
 			}
