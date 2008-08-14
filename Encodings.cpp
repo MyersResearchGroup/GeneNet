@@ -97,7 +97,7 @@ bool Encodings::useBins(int oldNumBins, bool useSpeciesLevels, bool succ, bool p
 		int seen = 0;
 		int levelsAssigned = 0;
 		if (DEBUG_LEVEL > 0){
-			cout << "\tAssing levels for specie " << i << " numBins " << numBins << ", Bin size: " << binSize << ", Amount left " << left << ", Amount seen " << seen << "\n";
+			cout << "\tAssigning levels for specie " << i << " numBins " << numBins << ", Bin size: " << binSize << ", Amount left " << left << ", Amount seen " << seen << "\n";
 		}
 		while(levelsAssigned < numBins-1 && current < (int)v.size()){
 			seen++; //seen is one more than current, as [0] is 1 'seen'
@@ -192,14 +192,14 @@ bool Encodings::useFile(ifstream & lvl_file, bool checkOrdering, bool succ, bool
 		char c;
 		lvl_file >> name;
 		name = name.substr(0,name.size()-1); // remove the , at the end
-		if (name != Specie::getInstance("??",i)->getGeneName()){
-			cout << "ERROR: reading file names do not match in lvl file\n";
-			cout << "'" << name << "' != '" << Specie::getInstance("??",i)->getGeneName() << "'\n";
-			exit(0);
-		}
-		else{
-			//cout << "Names match " << name << "\n";	
-		}
+// 		if (name != Specie::getInstance("??",i)->getGeneName()){
+// 			cout << "ERROR: reading file names do not match in lvl file\n";
+// 			cout << "'" << name << "' != '" << Specie::getInstance("??",i)->getGeneName() << "'\n";
+// 			exit(0);
+// 		}
+// 		else{
+// 			//cout << "Names match " << name << "\n";	
+// 		}
 		lvl_file >> num_levels;
 		if(num_levels > 9){
 			cout << "TOO Many BINS!\n";
