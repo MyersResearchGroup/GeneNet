@@ -50,8 +50,8 @@ bool Thresholds::harshenInitialParentsThresholds(){
 	if (ta > 5 || tr < 0){
           if (DEBUG_LEVEL>0){
             std::cout << "ERROR:  Activation or Represison thresholds harshened too much: " << ta << " " << tr << "\n";
-            return false;
           }
+          return false;
 	}
 	return true;
 }
