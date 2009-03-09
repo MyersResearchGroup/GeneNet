@@ -86,12 +86,12 @@ static void ShowUsage()
            _T("-nb [num] Sets how many bins are used in the evaluation.  Default 4\n")
            _T("--lvl 	  Writes out the suggested levels for every specie\n")
            _T("--readLevels Reads the levels from level.lvl file for every specie\n")
-           _T("--cpp_harshenBoundsOnTie	Determins if harsher bounds are used when parents tie in CPP.\n")
+           _T("--cpp_harshenBoundsOnTie	Determines if harsher bounds are used when parents tie in CPP.\n")
            _T("--cpp_cmp_output_donotInvertSortOrder	Sets the inverted sort order in the 3 places back to normal")
-           _T("--cpp_seedParents	Determins if parents should be ranked by score, not tsd order in CPP.\n")
-           _T("--cmp_score_mustNotWinMajority	Determins if score should be used when following conditions are not met a > r+n || r > a + n\n")
-           _T("--score_donotTossSingleRatioParents		Determins if single ratio parents should be kept\n")
-           _T("--output_donotTossChangedInfluenceSingleParents	Determins if parents that change influence should not be tossed\n")
+           _T("--cpp_seedParents	Determines if parents should be ranked by score, not tsd order in CPP.\n")
+           _T("--cmp_score_mustNotWinMajority	Determines if score should be used when following conditions are not met a > r+n || r > a + n\n")
+           _T("--score_donotTossSingleRatioParents		Determines if single ratio parents should be kept\n")
+           _T("--output_donotTossChangedInfluenceSingleParents	Determines if parents that change influence should not be tossed\n")
            _T("-binNumbers	Equal spacing per bin\n")
            _T("-noSUCC to not use successors in calculating probabilities\n")
            _T("-PRED use preicessors in calculating probabilities\n")
@@ -538,6 +538,7 @@ bool fillFromTSD(const char dir[], Species * S, Experiments * E, NetCon * C, Thr
   ostringstream oss;
   int i = 1;
   oss << dir << "/run-" << i << ".tsd";
+  cout << "Reading " << oss.str() << endl;
   if (DEBUG_LEVEL>0.5){
     cout << "Got '" << oss.str() << "' for call\n";
   }

@@ -47,8 +47,9 @@ start: '(' '(' the_names ')' ',' lines ')'	{
 									}
   names: QUOTE NAME QUOTE ',' {
     int i = Specie::getSpecies($2);
+    //    printf("READING: %s i=%d in col %d\n",$2,i,current_col);
     if (i >= 0) { 
-      // printf("NAME: %s i=%d in col %d\n",$2,i,current_col);
+      //printf("NAME: %s i=%d in col %d\n",$2,i,current_col);
       speciesCol[i]=current_col;
     }
     current_col++;
@@ -56,6 +57,7 @@ start: '(' '(' the_names ')' ',' lines ')'	{
   								} names
   | QUOTE NAME QUOTE 				{
     int i = Specie::getSpecies($2);
+    //printf("READING: %s i=%d in col %d\n",$2,i,current_col);
     if (i >= 0) { 
       //printf("Last? NAME: %s i=%d in col %d\n",$2,i,current_col);
       speciesCol[i]=current_col;
