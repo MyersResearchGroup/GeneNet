@@ -159,7 +159,7 @@ std::string DoubleSet::filterByScore(double f){
             backgroundIV << "n";
           }
           backgroundIV << ">";
-          out << "\t" << backgroundIV.str() << " 0.5 case 6 " << toIV() << "\n";
+          out << "\t" << backgroundIV.str() << " " << f << " case 6 " << toIV() << "\n";
         }
         return out.str();
 }

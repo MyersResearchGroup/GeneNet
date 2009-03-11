@@ -24,7 +24,7 @@ void Encodings::initialize(Species * species, Experiments * experiments, Thresho
 
 void Encodings::clearLevels(){
   if (DEBUG_LEVEL > 0.5){
-    cout << "Clearning Levels\n";
+    cout << "Clearing Levels\n";
   }
 	while(levels.size() > 0){
 		std::vector<double> * f = levels.back();
@@ -184,14 +184,24 @@ void Encodings::printLevels(){
 bool Encodings::useFile(ifstream & lvl_file, bool checkOrdering, bool succ, bool pred){
 	clearLevels();
 	for (int i = 0; i <= totalSpecies(); i++){
-		levels.push_back(new std::vector<double>());
-		std::vector<double> * f = levels.at(i);
+	  levels.push_back(new std::vector<double>());
+	}
+	for (int i = 0; i <= totalSpecies(); i++){
+	        //levels.push_back(new std::vector<double>());
+		std::vector<double> * f = NULL; // = levels.at(i);
 		string name;
 		int num_levels;
 		double tmp;
 		char c;
 		lvl_file >> name;
 		name = name.substr(0,name.size()-1); // remove the , at the end
+		for (int j = 0; j <= totalSpecies(); j++){
+		  if (name == Specie::getInstance("??",j)->getGeneName()){
+		    f = levels.at(j);
+		    break;
+		  }
+		}
+		
 // 		if (name != Specie::getInstance("??",i)->getGeneName()){
 // 			cout << "ERROR: reading file names do not match in lvl file\n";
 // 			cout << "'" << name << "' != '" << Specie::getInstance("??",i)->getGeneName() << "'\n";
@@ -224,7 +234,7 @@ bool Encodings::useFile(ifstream & lvl_file, bool checkOrdering, bool succ, bool
 				}
 			}
 			if ((int)f->size() + 1 != num_levels){ //1 less level barier than levels
-				cout << "ERROR:, read in an incorect number of levels " << (int)f->size() << " not " << num_levels << "\n";
+				cout << "ERROR: read in an incorect number of levels " << (int)f->size() << " not " << num_levels << "\n";
 				return false;
 			}
 		}
