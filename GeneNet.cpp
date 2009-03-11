@@ -538,12 +538,12 @@ bool fillFromTSD(const char dir[], Species * S, Experiments * E, NetCon * C, Thr
   ostringstream oss;
   int i = 1;
   oss << dir << "/run-" << i << ".tsd";
-  cout << "Reading " << oss.str() << endl;
   if (DEBUG_LEVEL>0.5){
     cout << "Got '" << oss.str() << "' for call\n";
   }
   infile.open(oss.str().c_str());
   while (infile){
+    cout << "Reading " << oss.str() << endl;
     bool f = yaccParse(fopen(oss.str().c_str(),"r"), S, E,i-1);
     if (f == false){
       cout << "Bad time series data file at " << i << "\n";
@@ -1181,6 +1181,13 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
   if (DEBUG_LEVEL > COMPETITION_LOG){
     competitionLog << "Child " << s << "\n";
   }
+  
+  contenders << "<";
+  for (int i = 0; i < S.size(); i++){
+    Specie * p = S.get(i);
+    contenders << *p;
+  }
+  contenders << ">" << endl;
   contenders << "Child " << s << "\n";
 
   ostringstream competitionString;
