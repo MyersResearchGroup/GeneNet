@@ -38,7 +38,7 @@ void Thresholds::relaxInitialParentsThresholds(){
 	
 	if (ta <= 1+doubleCompareValue && tr <= 1+doubleCompareValue){
           if (DEBUG_LEVEL>0){
-            std::cout << "ERROR:  Activation or Represison thresholds reduced too much: " << ta << " " << tr << "\n";
+            std::cout << "ERROR: Activation or Represison thresholds reduced too much: " << ta << " " << tr << "\n";
             //exit(0);
           }
 	}

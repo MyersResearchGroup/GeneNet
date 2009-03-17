@@ -53,7 +53,7 @@ map<Specie*, map<Set, map<Set, vector<double> > > > * scoreCache = NULL;
 ofstream competitionLog;
 ofstream contenders;
 
-
+char background[256][256];
 
 #if defined(_MSC_VER)
 # include <windows.h>
@@ -184,6 +184,9 @@ bool readBackground(const char dir[], Species * S, NetCon * C){
   ifstream fp_in; 
   fp_in.open("background.gcm", ios::in);
   int num=1;
+  for (int i = 0; i < 256; i++) 
+    for (int j = 0; j < 256; j++)
+      background[i][j]='u';
   while (fp_in.eof()==0) {
     fp_in.getline(temp,256);
     if (strstr(temp,"shape")!=NULL) {
@@ -215,12 +218,22 @@ bool readBackground(const char dir[], Species * S, NetCon * C){
 	  break;
       if (j==num) 
 	printf("%s not found\n",s2);
-      if (strcmp(temp2,"vee")==0)
+      if (strcmp(temp2,"vee")==0) {
 	printf("%s activates %s\n",speciesLabel[i],speciesLabel[j]);
-      else 
+	background[j][i-1]='a';
+      } else if (strcmp(temp2,"tee")==0) {
 	printf("%s represses %s\n",speciesLabel[i],speciesLabel[j]);
+	background[j][i-1]='r';
+      } else { 
+	printf("%s has no influence on %s\n",speciesLabel[i],speciesLabel[j]);
+	background[j][i-1]='n';
+      }
     }
   }
+  for (int i = 1; i < num;i++)
+    background[i][num-1]='\0';
+  for (int i = 1; i < num;i++)
+    printf("%s %s\n",speciesLabel[i],background[i]);
   fp_in.close();   
   return true;
 }
@@ -1212,6 +1225,7 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
     C.getParentsFor(s)->clearAllSets();
     for (int i = 0; i < S.size(); i++){
       Specie * p = S.get(i);
+      if (background[s.getGeneUID()][(*p).getGeneUID()-1]=='n') continue;
       if (*p != s){
         if (DEBUG_LEVEL > 0.5){
           cout << "\tTesting specie " << *p << " as a parent\n";
@@ -1549,9 +1563,9 @@ vector<DoubleSet> assignMatchups(const Specie& s, const Species& S, const Experi
   //seeding by score?
   //std::sort(b.begin(), b.end(), &setScoreSort);
   int odd = 0;
-  if (a->size() % 2 == 1){ // the highest gets a by if there is an odd number
+  /*  if (a->size() % 2 == 1){ // the highest gets a by if there is an odd number
     odd++;
-  }
+    }*/
   if (T.competeMultipleHighLow()){
     //order the sets by scores
     //Pick the lowest and highest scores to compete
