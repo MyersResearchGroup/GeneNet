@@ -6,6 +6,7 @@
 #include "Set.h"
 #include "Specie.h"
 #include "Encodings.h"
+#include <stdlib.h>
 
 extern int DEBUG_LEVEL;
 
