@@ -3,6 +3,7 @@
 #include "TSDPoint.h"
 #include <iostream>
 #include <sstream>
+#include <stdlib.h>
 
 extern int DEBUG_LEVEL;
 

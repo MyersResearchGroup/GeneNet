@@ -4,6 +4,7 @@
 #include <set>
 #include <vector>
 #include <map>
+#include <algorithm>
 
 class Specie;
 class Set;

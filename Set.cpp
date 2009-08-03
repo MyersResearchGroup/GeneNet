@@ -3,6 +3,7 @@
 #include <cassert>
 #include <cmath>
 #include <sstream>
+#include <stdlib.h>
 
 #define Set__DELTA 0.00001
 
