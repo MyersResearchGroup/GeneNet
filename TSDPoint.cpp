@@ -121,7 +121,7 @@ double TSDPoint::calculateProbability(int child, int * holdSteady, int * totalSi
 					char c[2];
 					c[0] = (*iter)->rowValues[i];
 					c[1] = 0; //to terminate the atoi function
-					if (std::atoi(c) != holdSteady[i]){
+					if (atoi(c) != holdSteady[i]){
 						//std::cout << "at " << i << " '" << std::atoi(c) << "' or '" << c << "' != '" << holdSteady[i] << "'";
 						matched = false;
 						i = size;
@@ -230,8 +230,10 @@ bool TSDPoint::increaseMinuses(int * v, int stringSize, int size){
 void TSDPoint::updateValue(int * childrenSeen, int * childrenRose, int size){
 	//update yourself
 	updateValueStop(childrenSeen, childrenRose, size);
-	if (std::find(initialValues->begin(), initialValues->end(),this) == initialValues->end()){
-		initialValues->push_back(this);
+	for (std::vector<TSDPoint *>::iterator iter = initialValues->begin(); iter != initialValues->end(); iter++){
+	  if ((*iter) == this) {
+	    //	if (std::find(initialValues->begin(), initialValues->end(),this) == initialValues->end()){
+	        initialValues->push_back(this);
 		/*
 		bool inserted = false;
 		for (std::vector<TSDPoint *>::iterator iter = initialValues->begin(); iter != initialValues->end() && inserted == false; iter++){
@@ -244,6 +246,7 @@ void TSDPoint::updateValue(int * childrenSeen, int * childrenRose, int size){
 			initialValues->push_back(this);
 		}
 		*/
+	  }
 	}
 
 	//do all the subsets
