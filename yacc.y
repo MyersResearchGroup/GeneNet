@@ -87,7 +87,7 @@ start: '(' '(' the_names ')' ',' lines ')'	{
       if (speciesCol[i]==current_col) 
 	break;
     if (i < Specie::getNumSpecie()) { 
-      //printf("Matched %f\n",$1);
+      //printf("Matched %i %f\n",i,$1);
       bool f = globalExp->addTimePoint(current_exp,current_row,i, $1);
       if (f == false){
 	cout << "YACC PARSER FOUND ERROR 3\n";
@@ -101,7 +101,7 @@ start: '(' '(' the_names ')' ',' lines ')'	{
       if (speciesCol[i]==current_col) 
 	break;
     if (i < Specie::getNumSpecie()) { 
-      //printf("Matched %f\n",$1);
+      //printf("Matched %i %f\n",i,$1);
       bool f = globalExp->addTimePoint(current_exp,current_row,i, $1);
       if (f == false){
 	cout << "YACC PARSER FOUND ERROR 4\n";
