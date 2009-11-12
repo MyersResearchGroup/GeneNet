@@ -315,7 +315,7 @@ void Encodings::fillTSD(bool succ, bool pred){
       for (int k = 0; k < numColumns; k++){
         seen[k] = 1;
         rose[k] = 0;
-        if (current->at(k)+t->getRisingAmount() <= next->at(k)){
+        if (current->at(k) /*+t->getRisingAmount()*/ < next->at(k)){
           rose[k] = 1;
         }
       }

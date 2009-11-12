@@ -1729,7 +1729,7 @@ void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & 
         }
         //cout << "\tSeen[" << k << "] now has " << (int)seen[k].size() << " things, and adding at " << (int)(current->at(k)/histogram_size) << " into it\n";
         seen[k][num]++;
-        if (current->at(k)+T.getRisingAmount() <= next->at(k)){
+        if (current->at(k) /*+T.getRisingAmount()*/ < next->at(k)){
           rose[k][num]++;
         }
       }
