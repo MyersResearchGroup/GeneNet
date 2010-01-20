@@ -102,50 +102,50 @@ static void ShowUsage()
 
 CSimpleOpt::SOption g_rgFlags[] =
   {
-    { SO_O_EXACT,    _T("--exact"),     SO_NONE },
-    { SO_O_NOSLASH,  _T("--noslash"),   SO_NONE },
-    { SO_O_SHORTARG, _T("--shortarg"),  SO_NONE },
-    { SO_O_CLUMP,    _T("--clump"),     SO_NONE },
-    { SO_O_NOERR,    _T("--noerr"),     SO_NONE },
+    { SO_O_EXACT,    _T((char *)"--exact"),     SO_NONE },
+    { SO_O_NOSLASH,  _T((char *)"--noslash"),   SO_NONE },
+    { SO_O_SHORTARG, _T((char *)"--shortarg"),  SO_NONE },
+    { SO_O_CLUMP,    _T((char *)"--clump"),     SO_NONE },
+    { SO_O_NOERR,    _T((char *)"--noerr"),     SO_NONE },
     SO_END_OF_OPTIONS
   };
 
 enum { OPT_HELP = 1000 };
 CSimpleOpt::SOption g_rgOptions[] =
   {
-    { OPT_HELP,  _T("-?"),           			SO_NONE    },
-    { OPT_HELP,  _T("-h"),           			SO_NONE    },
-    { OPT_HELP,  _T("-help"),        			SO_NONE    },
-    { OPT_HELP,  _T("--help"),       			SO_NONE    },
-    {  1,        _T("-d"),           			SO_REQ_SEP },
-    {  2,        _T("--debug"),      			SO_REQ_SEP },
-    {  3,        _T("-ta"),           			SO_REQ_SEP },
-    {  4,        _T("-tr"),           			SO_REQ_SEP },
-    {  5,        _T("-ti"),           			SO_REQ_SEP },
-    {  6,        _T("-wr"),           			SO_REQ_SEP },
-    {  7,        _T("--windowRisingAmount"),	SO_REQ_SEP },
-    {  8,        _T("-ws"),           			SO_REQ_SEP },
-    {  9,        _T("--windowSize"),			SO_REQ_SEP },
-    { 10,        _T("-nb"),						SO_REQ_SEP },
-    { 11,        _T("--numBins"),				SO_REQ_SEP },
-    { 12,        _T("-tm"),						SO_REQ_SEP },
-    { 13,        _T("--influenceLevelDelta"),	SO_REQ_SEP },
-    { 14,        _T("-tt"),						SO_REQ_SEP },
-    { 15,        _T("--relaxIPDelta"),			SO_REQ_SEP },
-    { 16,        _T("-tn"),						SO_REQ_SEP },
-    { 17,        _T("--cpp_harshenBoundsOnTie"),	SO_NONE },
-    { 18,        _T("--cpp_cmp_output_donotInvertSortOrder"),		SO_NONE },
-    { 19,        _T("--cpp_seedParents"),		SO_NONE },
-    { 20,        _T("--cmp_score_mustNotWinMajority"),	SO_NONE },
-    { 21,        _T("--score_donotTossSingleRatioParents"),	SO_NONE },
-    { 22,        _T("--output_donotTossChangedInfluenceSingleParents"),	SO_NONE },
-    { 23,        _T("--lvl"),	SO_NONE },
-    { 24,        _T("--readLevels"),	SO_NONE },
-    { 26,        _T("-tj"),							SO_REQ_SEP },
-    { 27,        _T("-binNumbers"),	SO_NONE },
-    { 28,        _T("-noSUCC"),	        SO_NONE },
-    { 29,        _T("-PRED"),	        SO_NONE },
-    { 30,        _T("-basicFBP"),	        SO_NONE },
+    { OPT_HELP,  _T((char *)"-?"),           			SO_NONE    },
+    { OPT_HELP,  _T((char *)"-h"),           			SO_NONE    },
+    { OPT_HELP,  _T((char *)"-help"),        			SO_NONE    },
+    { OPT_HELP,  _T((char *)"--help"),       			SO_NONE    },
+    {  1,        _T((char *)"-d"),           			SO_REQ_SEP },
+    {  2,        _T((char *)"--debug"),      			SO_REQ_SEP },
+    {  3,        _T((char *)"-ta"),           			SO_REQ_SEP },
+    {  4,        _T((char *)"-tr"),           			SO_REQ_SEP },
+    {  5,        _T((char *)"-ti"),           			SO_REQ_SEP },
+    {  6,        _T((char *)"-wr"),           			SO_REQ_SEP },
+    {  7,        _T((char *)"--windowRisingAmount"),	SO_REQ_SEP },
+    {  8,        _T((char *)"-ws"),           			SO_REQ_SEP },
+    {  9,        _T((char *)"--windowSize"),			SO_REQ_SEP },
+    { 10,        _T((char *)"-nb"),						SO_REQ_SEP },
+    { 11,        _T((char *)"--numBins"),				SO_REQ_SEP },
+    { 12,        _T((char *)"-tm"),						SO_REQ_SEP },
+    { 13,        _T((char *)"--influenceLevelDelta"),	SO_REQ_SEP },
+    { 14,        _T((char *)"-tt"),						SO_REQ_SEP },
+    { 15,        _T((char *)"--relaxIPDelta"),			SO_REQ_SEP },
+    { 16,        _T((char *)"-tn"),						SO_REQ_SEP },
+    { 17,        _T((char *)"--cpp_harshenBoundsOnTie"),	SO_NONE },
+    { 18,        _T((char *)"--cpp_cmp_output_donotInvertSortOrder"),		SO_NONE },
+    { 19,        _T((char *)"--cpp_seedParents"),		SO_NONE },
+    { 20,        _T((char *)"--cmp_score_mustNotWinMajority"),	SO_NONE },
+    { 21,        _T((char *)"--score_donotTossSingleRatioParents"),	SO_NONE },
+    { 22,        _T((char *)"--output_donotTossChangedInfluenceSingleParents"),	SO_NONE },
+    { 23,        _T((char *)"--lvl"),	SO_NONE },
+    { 24,        _T((char *)"--readLevels"),	SO_NONE },
+    { 26,        _T((char *)"-tj"),							SO_REQ_SEP },
+    { 27,        _T((char *)"-binNumbers"),	SO_NONE },
+    { 28,        _T((char *)"-noSUCC"),	        SO_NONE },
+    { 29,        _T((char *)"-PRED"),	        SO_NONE },
+    { 30,        _T((char *)"-basicFBP"),	        SO_NONE },
 
     SO_END_OF_OPTIONS
   };
@@ -325,25 +325,26 @@ int main(int argc, char* argv[]){
   CSimpleOpt args(flags.FileCount(), flags.Files(), g_rgOptions, nFlags);
   while (args.Next()) {
     if (args.LastError() != SO_SUCCESS) {
-      TCHAR * pszError = _T("Unknown error");
+      TCHAR pszError[255];
+      strcpy(pszError,_T("Unknown error"));
       switch (args.LastError()) {
       case SO_SUCCESS:
-        pszError = _T("This should not happen, but keeps a warning away to leave it in\n");
+        strcpy(pszError,_T("This should not happen, but keeps a warning away to leave it in\n"));
         break;
       case SO_OPT_INVALID:
-        pszError = _T("Unrecognized option");
+        strcpy(pszError,_T("Unrecognized option"));
         break;
       case SO_OPT_MULTIPLE:
-        pszError = _T("Option matched multiple strings");
+        strcpy(pszError,_T("Option matched multiple strings"));
         break;
       case SO_ARG_INVALID:
-        pszError = _T("Option does not accept argument");
+        strcpy(pszError,_T("Option does not accept argument"));
         break;
       case SO_ARG_INVALID_TYPE:
-        pszError = _T("Invalid argument format");
+        strcpy(pszError,_T("Invalid argument format"));
         break;
       case SO_ARG_MISSING:
-        pszError = _T("Required argument is missing");
+        strcpy(pszError,_T("Required argument is missing"));
         break;
       }
       _tprintf(
