@@ -19,7 +19,7 @@
 
   extern char * yytext;
 
-  int yyerror(char*c);
+  int yyerror(const char*c);
   //extern "C" {
     int yylex(void);
   //}
@@ -114,7 +114,7 @@ start: '(' '(' the_names ')' ',' lines ')'	{
 
 %%
 
-  int yyerror(char*c){
+  int yyerror(const char*c){
     fprintf(stderr, "ERROR: '%s' with '%s'\n", c, yytext);
     return 1;
   }
