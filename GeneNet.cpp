@@ -192,7 +192,7 @@ bool readBackground(const char dir[], Species * S, NetCon * C){
     if (strstr(temp,"shape")!=NULL) {
       strcpy(species[num],temp);
       (*strchr(species[num],' '))='\0';
-      char *temp2 = strstr(temp,"label")+7;
+      char *temp2 = strstr(temp,"ID")+4;
       *strchr(temp2,'\"') = '\0';
       strcpy(speciesLabel[num],temp2);
       printf("%d %s %s\n",num,species[num],speciesLabel[num]);
