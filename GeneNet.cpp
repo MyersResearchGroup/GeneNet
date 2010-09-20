@@ -1610,7 +1610,8 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
   ofile << "digraph G {\n";
   for (int i = 1; i < Specie::getNumSpecie(); i++){
     Specie * s = Specie::getInstance("tmp",i);
-    ofile << "s" << i << " [shape=ellipse,color=black,label=\"" << s->getGeneName() << "\"];\n";
+    ofile << s->getGeneName() << " [shape=ellipse,color=black,label=\"" << s->getGeneName() << "\"];\n";
+    //ofile << "s" << i << " [shape=ellipse,color=black,label=\"" << s->getGeneName() << "\"];\n";
   }
   if (DEBUG_LEVEL > 0.5){
     cout << "Finished writing the species list\n";
@@ -1649,7 +1650,8 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
         Specie * parent = p->get(k);
         if (!printed.containsSpecieID(parent->getGeneUID())){
           printed.insert(parent,pScore);
-          ofile << "s" << parent->getGeneUID() << " -> s" << i << " ";
+          ofile << parent->getGeneName() << " -> " << s->getGeneName() << " ";
+	  //ofile << "s" << parent->getGeneUID() << " -> s" << i << " ";
           string color;
           string arrowhead;
           bool isActivator = true;
