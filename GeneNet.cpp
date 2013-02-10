@@ -673,9 +673,23 @@ double ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, 
   double votesa; double votesr; double votesu;
   votesa = 0; votesr = 0; votesu = 0;
 
-
-  if ((*scoreCache)[&s][P][G].size() > 0){
-    vector<double> f = (*scoreCache)[&s][P][G];
+  int backgroundAct = 0;
+  int backgroundRep = 0;
+  for (int j = 0; j < P.size(); j++){
+    if (background[s.getGeneUID()][P.get(j)->getGeneUID()-1]=='a') {
+      backgroundAct++;
+    } else if (background[s.getGeneUID()][P.get(j)->getGeneUID()-1]=='r') {
+      backgroundRep++;
+    }
+    if (backgroundAct > backgroundRep || (backgroundAct > 0 && backgroundAct==backgroundRep)) {
+      return backgroundAct + backgroundRep;
+    } else if (backgroundAct < backgroundRep) {
+      return (-1)*(backgroundAct+backgroundRep);
+    }
+  }
+  Set newG = G - P;
+  if ((*scoreCache)[&s][P][newG].size() > 0){
+    vector<double> f = (*scoreCache)[&s][P][newG];
     for (int i = 0; i < (int)f.size(); i++){
       double probRatio = f[i];
       if (probRatio > T.getTA() ){
@@ -701,9 +715,9 @@ double ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, 
     return (votesa - votesr)/(votesa+votesr+votesu);
   }
 
-  vector<double> * fillProbVector = &(*scoreCache)[&s][P][G];
+  vector<double> * fillProbVector = &(*scoreCache)[&s][P][newG];
   
-  Set tmpG(G);
+  Set tmpG(newG);
   Set tmpP(P);
   if (DEBUG_LEVEL>0){
     cout << "\t\tWe are sorting with inverted " << InvertSortOrder << " P set:" << tmpP << " and G set " << tmpG << "\n";
@@ -730,9 +744,9 @@ double ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, 
       sa.append(P.get(j)->getGeneName());
     }
     sa.append("_-");
-    for (int j = 0; j < G.size(); j++){
+    for (int j = 0; j < newG.size(); j++){
       sa.append("_");
-      sa.append(G.get(j)->getGeneName());
+      sa.append(newG.get(j)->getGeneName());
     }
     sa.append(".dat");
     if (DEBUG_LEVEL>0.5){
@@ -903,9 +917,9 @@ double ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, 
                   power = power * 10;
                 }
                 power = 1;
-                for (int j = 0; j < G.size(); j++){
+                for (int j = 0; j < newG.size(); j++){
                   char c[2];
-                  c[0] = base->rowValues[G.get(j)->getGeneUID()];
+                  c[0] = base->rowValues[newG.get(j)->getGeneUID()];
                   c[1] = 0;
                   int a = atoi(c);
                   gLevels += a * power;
@@ -958,9 +972,9 @@ double ScoreBetter(Specie& s, const Set& P, const Set& G, const Experiments& E, 
                   power = power * 10;
                 }
                 power = 1;
-                for (int j = 0; j < G.size(); j++){
+                for (int j = 0; j < newG.size(); j++){
                   char c[2];
-                  c[0] = nextStr[G.get(j)->getGeneUID()];
+                  c[0] = nextStr[newG.get(j)->getGeneUID()];
                   c[1] = 0;
                   int a = atoi(c);
                   gLevels += a * power;
@@ -1232,12 +1246,11 @@ void SelectInitialParents (Specie& s, const Species& S, const Experiments& E, Ne
     for (int i = 0; i < S.size(); i++){
       Specie * p = S.get(i);
       if (background[s.getGeneUID()][(*p).getGeneUID()-1]=='n') continue;
-      if (*p != s){
+      if (1/**p != s*/){
         if (DEBUG_LEVEL > 0.5){
           cout << "\tTesting specie " << *p << " as a parent\n";
         }
         double alpha = ScoreBetter(s,*p->toSet(),*s.toSet(),E,newT,L);
-  			
         if (DEBUG_LEVEL > 0.5){
           cout << "\tScore of " << alpha << " and threshold +-" << newT.getTI() << "\n";
         }
@@ -1488,7 +1501,11 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
         Set * q = Q.get(i);
         Set tmp = Q.colapseToSet();
         tmp = tmp - *q;
-        tmp = unionIt(tmp,*s.toSet());
+	Set sSet;
+	if (!q->contains(*s.toSet())) {
+	  sSet = *s.toSet();
+	}
+        tmp = unionIt(tmp,sSet);
         //Bug introduction to match perls
         if(q->size()>1){
           double a = q->getIndividualScore(q->get(0)->getGeneUID());
@@ -1497,6 +1514,9 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
             InvertSortOrder = true;
           }
         }
+	if (DEBUG_LEVEL > 0.5){
+	  cout << "\tWith G set " << tmp << "\n";
+	}
         Scores[i] = ScoreBetter(s,*q,tmp,E,T,L);
         for (int j = 0; j < C.getParentsFor(s)->size(); j++){
           Set * a = C.getParentsFor(s)->get(i);
@@ -1657,7 +1677,8 @@ void writeDot(const char dir[], NetCon * C, const Experiments& E, const Threshol
           bool isActivator = true;
           //the direction of the arc is based on the individual score
           if(p->size() == 1 && TOSS_CHANGED_SINGLE_INFLUENCE && ((initialScore < 0 && competitionScore > 0)  || (initialScore > 0 && competitionScore < 0))){
-            ofile << "[color=\"gray\",label=\"" << pScore << "\",competitionScore=\"" << competitionScore << "\"]\n";
+            ofile << "[color=\"gray\",label=\"" << pScore << "\",competitionScore=\"" << competitionScore << 
+	      "\",arrowhead=odot]\n";
           }
           //					else if(p->size() == 2 && ((mpa > 0 && mpb > 0) || (mpa < 0 && mpb < 0)) && ((initialScore < 0 && competitionScore > 0)  || (initialScore > 0 && competitionScore < 0))){
           //						ofile << "[color=\"gray\",label=\"" << pScore << "\",competitionScore=\"" << competitionScore << "\"]\n";
