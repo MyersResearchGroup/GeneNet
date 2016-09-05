@@ -291,7 +291,8 @@ void callGeneNet(const char * dir, Thresholds & T){
   GeneNet(S,E,C,T,L,dir);
 
   scoreCache = new map<Specie*, map<Set, map<Set, vector<double> > > >();
-  writeDot(dir, &C, E, T, L);
+  writeDot("/method.gcm",dir, &C, E, T, L);
+  writeDot("/method.dot",dir, &C, E, T, L);
   delete globDir;
   delete scoreCache;
   if (DEBUG_LEVEL>0.5){
@@ -1619,9 +1620,9 @@ vector<DoubleSet> assignMatchups(const Specie& s, const Species& S, const Experi
   return 1.0;
   }
 */
-void writeDot(const char dir[], NetCon * C, const Experiments& E, const Thresholds& T, const Encodings& L){
+void writeDot(const char *file, const char dir[], NetCon * C, const Experiments& E, const Thresholds& T, const Encodings& L){
   string s = dir;
-  s.append("/method.gcm");
+  s.append(file);
   if (DEBUG_LEVEL > 0.5){
     cout << "Opening " << s << " for write\n";
   }
