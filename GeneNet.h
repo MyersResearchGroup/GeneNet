@@ -13,7 +13,7 @@ void CompetePossibleParents(Specie& s, const Species& S, const Experiments& E, N
 vector<DoubleSet> assignMatchups(const Specie& s, const Species& S, const Experiments& E,const NetCon& C, const Thresholds& T, const Encodings& L);
 //double Prob(const Specie s, const std::vector<int> * l1, const std::vector<int> * l2);
 bool fillFromTSD(const char dir[], Species * S, Experiments * E, NetCon * C, Thresholds* T, Encodings*L);
-void writeDot(const char dir[], NetCon * C, const Experiments& E, const Thresholds& T, const Encodings& L);
+void writeDot(const char *file,const char dir[], NetCon * C, const Experiments& E, const Thresholds& T, const Encodings& L);
 bool yaccParse(FILE * f, Species * S, Experiments * E, int experimentNum);
 void callGeneNet(const char * dir, Thresholds & T);
 void writeLevels(const char dir[], Encodings & L, Experiments & E, Thresholds & T);
