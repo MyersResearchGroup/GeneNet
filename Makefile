@@ -2,12 +2,8 @@
 SRCS := $(subst runAllTests.cpp,, $(wildcard *.cpp))
 OBJS := $(addsuffix .o, $(basename $(SRCS))) lex.o yacc.o
 
-GENENET_EXE = ../bin/GeneNet
 
-all: $(GENENET_EXE)
-
-#GeneNet creation Tool Chain
-$(GENENET_EXE): $(SRCS) $(OBJS)
+all: $(SRCS) $(OBJS)
 	g++ -o GeneNet $(OBJS)
 
 windows: $(SRCS) $(OBJS)
