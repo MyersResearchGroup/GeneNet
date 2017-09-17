@@ -12,9 +12,3 @@ If you want to compile GeneNet from source, simply run:
 ```make```
 
 This will create a binary called GeneNet in the ```GeneNet/bin``` directory. 
-
-Rename the executable ```GeneNet``` depending on your OS as follows:
-
-* Windows: ```GeneNet.exe``` 
-* Mac OS X:  ```GeneNet.mac64``` 
-* Linux:  ```GeneNet.linux64```
