@@ -11,11 +11,4 @@ If you want to compile GeneNet from source, simply run:
 
 ```make```
 
-This will create a binary called GeneNet.
-
-### From user-interface:
-Another option is to install [iBioSim](https://github.com/MyersResearchGroup/iBioSim).
-
-This options is recommended for beginners because the settings are generated automatically.
-
-For further information on how to use the learn view, refer to the [tutorial](http://www.async.ece.utah.edu/tools/BioSim/docs/iBioSim_SysBio_Tutorial.html#tth_sEc8).
+This will create a binary called GeneNet in the ```GeneNet/bin``` directory. 

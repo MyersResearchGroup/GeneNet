@@ -1,3 +1,4 @@
+
 #we need to remove the runAllTests.cpp from the list, as this is only used for debuging
 SRCS := $(subst runAllTests.cpp,, $(wildcard *.cpp))
 OBJS := $(addsuffix .o, $(basename $(SRCS))) lex.o yacc.o
@@ -23,5 +24,3 @@ yacc.o: yacc.y
 clean:
 	rm -rf $(shell cat .cvsignore)
 	rm -rf $(OBJS) $(GENENET_EXE) *~
-
-
